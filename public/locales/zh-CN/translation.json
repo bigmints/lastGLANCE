@@ -568,11 +568,11 @@
     "deleteUserAriaLabel": "删除 {{name}}",
     "sharedUsersPath": "共享用户路径",
     "sharedUsersPathPlaceholder": "/GLANCE/users/",
-    "sharedUsersPathHint": "WebDAV 上存储 glance-users.json 的路径。所有 GLANCE 应用必须使用相同路径。",
+    "sharedUsersPathHint": "存储 glance-users.json 的路径，位于 WebDAV 上或直接访问文件夹中。所有 GLANCE 应用必须使用相同路径。",
     "syncNow": "立即同步",
     "syncOk": "已同步！",
     "syncFailed": "同步失败",
-    "syncNotConfigured": "尚未配置云同步。请先在“设置 → 云同步”中配置 WebDAV。"
+    "syncNotConfigured": "尚未配置云同步。请先在“设置 → 云同步”中配置 WebDAV 或直接访问。"
   },
   "welcome": {
     "title": "欢迎使用 lastGLANCE",

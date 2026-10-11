@@ -588,11 +588,11 @@
     "deleteUserAriaLabel": "Видалити {{name}}",
     "sharedUsersPath": "Шлях до спільних користувачів",
     "sharedUsersPathPlaceholder": "/GLANCE/users/",
-    "sharedUsersPathHint": "Шлях у WebDAV, де зберігається glance-users.json. Має збігатися в усіх застосунках GLANCE.",
+    "sharedUsersPathHint": "Шлях, де зберігається glance-users.json, у WebDAV або в папці прямого доступу. Має збігатися в усіх застосунках GLANCE.",
     "syncNow": "Синхронізувати",
     "syncOk": "Синхронізовано!",
     "syncFailed": "Не вдалося синхронізувати",
-    "syncNotConfigured": "Хмарну синхронізацію не налаштовано. Спершу налаштуйте WebDAV у розділі Налаштування → Хмарна синхронізація."
+    "syncNotConfigured": "Хмарну синхронізацію не налаштовано. Спершу налаштуйте WebDAV або прямий доступ у розділі Налаштування → Хмарна синхронізація."
   },
   "welcome": {
     "title": "Вітаємо в lastGLANCE",
