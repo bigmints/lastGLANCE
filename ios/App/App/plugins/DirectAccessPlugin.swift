@@ -399,7 +399,7 @@ extension DirectAccessPlugin: UIDocumentPickerDelegate {
 
     /// Both pickers land here: the open picker with the file the user chose,
     /// the export picker with the moved file's new location.
-    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         guard let url = urls.first else {
             NSLog("[directAccess] pick: the picker returned no URL")
             finishPick(error: "the picker returned no file")
@@ -433,7 +433,6 @@ extension DirectAccessPlugin: UIDocumentPickerDelegate {
         do {
             let bookmark = try url.bookmarkData(options: [])
             UserDefaults.standard.set(bookmark, forKey: slot.bookmarkKey)
-            if slot == .snapshot { UserDefaults.standard.removeObject(forKey: legacyFolderKey) }
             caches[slot] = nil
             NSLog("[directAccess] picked %@ for %@ (security scope: %@)", url.path, slot.rawValue, scoped ? "yes" : "no")
             // The page updates its card and kicks a cycle from this; no reload.
@@ -447,7 +446,7 @@ extension DirectAccessPlugin: UIDocumentPickerDelegate {
         }
     }
 
-    func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
+    public func documentPickerWasCancelled(_ controller: UIDocumentPickerViewController) {
         NSLog("[directAccess] pick cancelled")
         finishPick(result: ["cancelled": true])
     }
