@@ -12,6 +12,7 @@ import {
 import { getDbIntentsConfig, saveDbIntentsConfig } from '@/intents/dbConfig'
 import { getDirectAccessIntentsEnabledFlag, setDirectAccessIntentsEnabled } from '@/intents/directAccessIntentsConfig'
 import { directAccessTransport } from '@/sync/directAccess'
+import { DirectAccessFileRow } from '@/components/SyncSettingsModal/DirectAccessFileRow'
 import { getVaultConfig } from '@/sync/vaultConfig'
 import { ActivityLogModal } from '@/components/ActivityLogModal/ActivityLogModal'
 import { PassphraseModal } from '@/components/PassphraseModal/PassphraseModal'
@@ -521,7 +522,10 @@ export function IntegrationSettingsModal({ onClose, onSaved }: Props) {
               </div>
               {daIntentsEnabled && (
                 daConnected ? (
-                  <p className="text-xs text-slate-400 dark:text-slate-500">{t('integration.directAccessIntents.reload')}</p>
+                  <>
+                    <DirectAccessFileRow slot="events" />
+                    <p className="text-xs text-slate-400 dark:text-slate-500">{t('integration.directAccessIntents.reload')}</p>
+                  </>
                 ) : (
                   <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/40">
                     <p className="text-xs text-amber-700 dark:text-amber-300">{t('integration.directAccessIntents.notConnected')}</p>

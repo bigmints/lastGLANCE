@@ -568,11 +568,11 @@
     "deleteUserAriaLabel": "Elimina {{name}}",
     "sharedUsersPath": "Percorso utenti condivisi",
     "sharedUsersPathPlaceholder": "/GLANCE/users/",
-    "sharedUsersPathHint": "Percorso WebDAV dove è archiviato glance-users.json. Deve corrispondere in tutte le app GLANCE.",
+    "sharedUsersPathHint": "Percorso dove è archiviato glance-users.json, su WebDAV o nella cartella ad accesso diretto. Deve corrispondere in tutte le app GLANCE.",
     "syncNow": "Sincronizza ora",
     "syncOk": "Sincronizzato!",
     "syncFailed": "Sincronizzazione fallita",
-    "syncNotConfigured": "La sincronizzazione cloud non è configurata. Configura WebDAV in Impostazioni → Sincronizzazione cloud."
+    "syncNotConfigured": "La sincronizzazione cloud non è configurata. Configura WebDAV o l'accesso diretto in Impostazioni → Sincronizzazione cloud."
   },
   "welcome": {
     "title": "Benvenuto in lastGLANCE",
