@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X, Loader, AlertTriangle, CheckCircle, XCircle, ShieldAlert, Cloud } from 'lucide-react'
 import type { SyncEngine, DbSyncEngine, SyncErrorCode } from '@glance-apps/sync'
+import { getSyncFolder, normalizeSyncFolder } from '@/sync/syncFolder'
 import { setupEncryptionKey, clearEncryptionKey, ensureSyncFolder, resetEnsuredFolder, CRYPTO_CONFIG, getRemoteBackupsEnabled, setRemoteBackupsEnabled, DEFAULT_SYNC_FOLDER, SYNC_FOLDER_KEY } from '@/sync/engine'
 import { flushSecureWrites } from '@/sync/secureConfigShim'
 import { syncErrorText } from '@/sync/syncErrorText'
@@ -51,7 +52,7 @@ const VAULT_TEST_FAIL_TEXT: Record<'AUTH_FAILURE' | 'FORBIDDEN' | 'NETWORK_ERROR
 export function SyncSettingsModal({ engine, dbEngine, syncError, syncErrorCode, vaultSyncError, vaultSyncErrorCode, vaultSkipped, directAccess, onClose }: Props) {
   const { t } = useTranslation()
   const existingConfig = engine?.getConfig() ?? null
-  const initFolder = localStorage.getItem(SYNC_FOLDER_KEY) ?? DEFAULT_SYNC_FOLDER
+  const initFolder = getSyncFolder()
 
   const [provider, setProvider] = useState<string>(() => (existingConfig?.provider as string) ?? 'nextcloud')
   const [formData, setFormData] = useState<Record<string, string>>(() => {
@@ -147,15 +148,18 @@ export function SyncSettingsModal({ engine, dbEngine, syncError, syncErrorCode, 
       (prevVault?.vaultToken ?? '') !== (nextVault?.vaultToken ?? '') ||
       (prevVault?.accountId ?? '') !== (nextVault?.accountId ?? '')
 
+    // Stored normalized, so a leading or trailing slash can't double up in the
+    // WebDAV URL (krelltunez/dayGLANCE#2037).
+    const savedFolder = normalizeSyncFolder(folderPath)
     if (engine) {
       // Persist enabled:false (and keep credentials) when disabling; only clear the
       // config when every field is blank. Never drop it just because a required
       // field is empty — that reset the toggle back to on and wiped creds (#204).
       engine.setConfig(buildSyncConfigToSave({
         provider, formData, configFields: activeProvider?.configFields ?? [],
-        folderPath, syncEnabled, encEnabled,
+        folderPath: savedFolder, syncEnabled, encEnabled,
       }))
-      localStorage.setItem(SYNC_FOLDER_KEY, folderPath)
+      localStorage.setItem(SYNC_FOLDER_KEY, savedFolder)
       resetEnsuredFolder()
     }
     // A folder change or any vault change requires a reload so the engines are
@@ -177,7 +181,7 @@ export function SyncSettingsModal({ engine, dbEngine, syncError, syncErrorCode, 
     } else if (vaultChanged && nextVault) {
       clearCredentialHalt()
     }
-    if (folderPath !== originalFolder.current || vaultChanged) {
+    if (savedFolder !== originalFolder.current || vaultChanged) {
       flushSecureWrites().finally(() => window.location.reload())
     }
   }
