@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { createDirectAccessDeliverer } from './deliverers'
+import { createDirectAccessDeliverer, type DirectAccessDelivererDeps } from './deliverers'
 import { INTENTS_KEY_NOT_READY } from './outbox'
 import type { OutboxIntent } from './outbox'
 import type { EventSetTransport, RawEnvelope } from './eventSet'
@@ -25,7 +25,7 @@ describe('the Direct Access deliverer', () => {
 
   it('publishes a plaintext envelope with the intent\'s own id, and reports delivered once the file holds it', async () => {
     const published: RawEnvelope[] = []
-    const publish = vi.fn(async (_t: EventSetTransport, e: RawEnvelope, _io?: unknown) => { published.push(e); return true })
+    const publish = vi.fn<DirectAccessDelivererDeps['publish']>(async (_t, e) => { published.push(e); return true })
     const d = createDirectAccessDeliverer({ transport, isEnabled: () => true, encrypts: () => false, resolveKey: async () => ({ salt: 'c2FsdA==', key: null }), publish })
     expect(await d(intent)).toBe('delivered')
     expect(published[0]).toMatchObject({ event_id: intent.event_id, emitted_by: 'app.lastglance', action: 'create' })
@@ -36,7 +36,7 @@ describe('the Direct Access deliverer', () => {
 
   it('with the encrypt switch on it holds without a key for the file\'s salt, and seals with one', async () => {
     const published: RawEnvelope[] = []
-    const publish = vi.fn(async (_t: EventSetTransport, e: RawEnvelope, _io?: unknown) => { published.push(e); return true })
+    const publish = vi.fn<DirectAccessDelivererDeps['publish']>(async (_t, e) => { published.push(e); return true })
     const noKey = createDirectAccessDeliverer({ transport, isEnabled: () => true, encrypts: () => true, resolveKey: async () => ({ salt: 'c2FsdA==', key: null }), publish })
     expect(await noKey(intent)).toEqual({ status: 'transient-fail', reason: INTENTS_KEY_NOT_READY })
     expect(publish).not.toHaveBeenCalled()
