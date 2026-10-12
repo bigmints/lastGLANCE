@@ -349,3 +349,7 @@ export async function deleteCircle(syncId: string): Promise<void> {
 export async function getCircles(): Promise<PersonCircle[]> {
   return db.personCircles.orderBy('sort_order').toArray()
 }
+
+export async function getAllPersonDates(): Promise<PersonDate[]> {
+  return db.personDates.toArray()
+}

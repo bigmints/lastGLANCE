@@ -19,7 +19,10 @@
     "done": "Gotowe",
     "edit": "Edytuj",
     "settings": "Ustawienia",
-    "language": "Język"
+    "language": "Język",
+    "modeSwitch": "Przełącz między obowiązkami a ludźmi",
+    "modeChores": "Obowiązki",
+    "modePeople": "Ludzie"
   },
   "activityLog": {
     "title": "Dziennik aktywności",
@@ -688,5 +691,127 @@
     "integrations": "Integracje",
     "integrationsDesc": "Połącz lastGLANCE z dayGLANCE i z aplikacjami do automatyzacji.",
     "about": "Informacje"
+  },
+  "people": {
+    "close": "Zamknij",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "saving": "Zapisywanie…",
+    "delete": "Usuń",
+    "channel": {
+      "in_person": "Osobiście",
+      "call": "Rozmowa",
+      "video": "Wideorozmowa",
+      "text": "Wiadomość",
+      "email": "E-mail",
+      "other": "Inne"
+    },
+    "dateKind": {
+      "birthday": "Urodziny",
+      "anniversary": "Rocznica",
+      "custom": "Inna data"
+    },
+    "starterCircles": {
+      "family": "Rodzina",
+      "friends": "Przyjaciele",
+      "work": "Praca"
+    },
+    "home": {
+      "addPerson": "Dodaj osobę",
+      "circles": "Kręgi",
+      "reachOut": "Odezwij się",
+      "comingUp": "Wkrótce",
+      "everyone": "Wszyscy",
+      "noCircle": "Bez kręgu",
+      "emptyCircle": "Nikogo tu jeszcze nie ma.",
+      "addToCircle": "Dodaj osobę do kręgu {{circle}}",
+      "showArchived": "Pokaż zarchiwizowane ({{n}})",
+      "hideArchived": "Ukryj zarchiwizowane"
+    },
+    "empty": {
+      "title": "Bądź blisko swoich ludzi",
+      "body": "Dodaj osoby, z którymi chcesz utrzymywać kontakt, zapisuj, kiedy ostatnio rozmawialiście, a lastGLANCE pokaże, do kogo warto się odezwać i czyje urodziny się zbliżają.",
+      "addFirst": "Dodaj pierwszą osobę",
+      "starterCircles": "Zacznij od kręgów Rodzina, Przyjaciele i Praca"
+    },
+    "row": {
+      "noContactYet": "brak zapisanego kontaktu",
+      "label": "{{name}}, ostatni kontakt {{last}}",
+      "log": "Zapisz",
+      "logAriaLabel": "Zapisz kontakt z: {{name}}"
+    },
+    "detail": {
+      "edit": "Edytuj osobę",
+      "lastContact": "Ostatni kontakt: {{last}}",
+      "archived": "Zarchiwizowano",
+      "everyNWeeks": "co {{n}} tyg.",
+      "logContact": "Zapisz kontakt",
+      "prefers": "Preferuje: {{channel}}",
+      "dates": "Daty",
+      "notes": "Notatki",
+      "timeline": "Historia",
+      "noInteractions": "Jeszcze nic nie zapisano.",
+      "with": "z: {{names}}",
+      "archive": "Archiwizuj",
+      "unarchive": "Przywróć",
+      "deleteConfirm": "Usunąć: {{name}}?",
+      "deleteDetail": "Usunięte zostaną też daty tej osoby i kontakty zapisane tylko z nią. Tego nie można cofnąć."
+    },
+    "form": {
+      "addTitle": "Dodaj osobę",
+      "editTitle": "Edytuj osobę",
+      "add": "Dodaj",
+      "optional": "(opcjonalnie)",
+      "name": "Imię i nazwisko",
+      "nickname": "Pseudonim",
+      "circle": "Krąg",
+      "noCircle": "Bez kręgu",
+      "cadence": "Utrzymuj kontakt co (tygodnie)",
+      "cadencePlaceholder": "np. 2",
+      "cadenceHint": "Zostaw puste, aby tylko prowadzić zapis, bez przypomnień.",
+      "preferredChannel": "Zwykły sposób kontaktu",
+      "noPreference": "Bez preferencji",
+      "dates": "Ważne daty",
+      "addDate": "Dodaj datę",
+      "dateKind": "Rodzaj daty",
+      "dateLabelPlaceholder": "Co to jest? (np. Imieniny)",
+      "month": "Miesiąc",
+      "day": "Dzień",
+      "year": "Rok",
+      "yearPlaceholder": "Rok?",
+      "removeDate": "Usuń datę",
+      "details": "Notatki",
+      "detailsPlaceholder": "Imiona dzieci, upodobania, o co zapytać…",
+      "nameRequired": "Imię jest wymagane",
+      "cadenceInvalid": "Podaj liczbę tygodni większą od 0",
+      "yearInvalid": "Podaj rok od 1 do 9999 albo zostaw puste"
+    },
+    "log": {
+      "title": "Zapisz kontakt",
+      "editTitle": "Edytuj kontakt",
+      "how": "Jak",
+      "who": "Kto",
+      "addPerson": "Dodaj kogoś jeszcze…",
+      "removePerson": "Usuń: {{name}}",
+      "unknownPerson": "Ktoś",
+      "when": "Kiedy (domyślnie teraz)",
+      "note": "Notatka",
+      "notePlaceholder": "O czym rozmawialiście?",
+      "logIt": "Zapisz",
+      "needPerson": "Dodaj co najmniej jedną osobę",
+      "deleteConfirm": "Usunąć ten kontakt z historii?"
+    },
+    "circles": {
+      "title": "Kręgi",
+      "hint": "Grupuj ludzi, jak chcesz. Usunięcie kręgu nie usuwa jego osób.",
+      "rename": "Zmień nazwę: {{name}}",
+      "moveUp": "Przesuń w górę: {{name}}",
+      "moveDown": "Przesuń w dół: {{name}}",
+      "delete": "Usuń: {{name}}",
+      "newPlaceholder": "Nowy krąg",
+      "add": "Dodaj",
+      "deleteConfirm": "Usunąć krąg {{name}}?",
+      "deleteDetail": "Jego osoby zostaną, bez kręgu."
+    }
   }
 }

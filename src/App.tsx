@@ -40,6 +40,9 @@ import { completionsLabel } from '@/utils/completionsLabel'
 import { createEngine, initSessionKey, setupEncryptionKey, runAutoBackups, ensureSyncFolder, CRYPTO_CONFIG, DB_CRYPTO_CONFIG, getSyncWebdavConfig } from '@/sync/engine'
 import { createDbEngine } from '@/sync/dbEngine'
 import { isPeopleEnabled } from '@/people/flag'
+import { PeopleHome } from '@/components/People/PeopleHome'
+import { hasOpenSurface } from '@/utils/dismissStack'
+import { peekPendingOpenChore } from '@/native/pendingOpenChore'
 import { createPeopleFileEngine } from '@/people/sync/fileEngine'
 import { createPeopleDbEngine } from '@/people/sync/dbEngine'
 import { registerPeopleDbEngine } from '@/people/sync/dirtyTracker'
@@ -57,6 +60,12 @@ import { useTranslation } from 'react-i18next'
 // ── Header heatmap ─────────────────────────────────────────────────────────────
 
 type HeatDay = { date: string; count: number; isFuture: boolean }
+
+type AppMode = 'chores' | 'people'
+const MODE_KEY = 'lg-mode'
+// Events that open something in the chores view (notification taps, widgets,
+// launcher shortcuts, shares). In People mode they switch back to chores.
+const CHORE_EVENTS = ['lg:open-chore', 'lg:open-chore-pending', 'lg:open-search', 'lg:new-chore', 'lg:widget-filter-soon']
 
 function buildHeaderHeatmap(counts: Map<string, number>): HeatDay[][] {
   const today = dayjs()
@@ -160,6 +169,28 @@ function AppInner() {
   // gated stays false and the hard gate below never renders).
   const billing = useSubscription()
   const [editMode, setEditMode] = useState(false)
+  // Chores | People. The switch exists only while the People flag is on; with
+  // it off the app is chores-only, whatever was last remembered.
+  const [peopleEnabled] = useState(isPeopleEnabled)
+  // A notification tap that launched the app is about a chore, so it opens on
+  // chores whatever mode was last used.
+  const [mode, setModeState] = useState<AppMode>(() =>
+    peopleEnabled && localStorage.getItem(MODE_KEY) === 'people' && !peekPendingOpenChore() ? 'people' : 'chores')
+  const setMode = (next: AppMode) => {
+    setModeState(next)
+    setEditMode(false)
+    try { localStorage.setItem(MODE_KEY, next) } catch { /* private mode: not remembered */ }
+  }
+  const modeRef = useRef(mode)
+  modeRef.current = mode
+  const choresMode = mode === 'chores'
+
+  useEffect(() => {
+    if (!peopleEnabled) return
+    const toChores = () => { if (modeRef.current !== 'chores') setModeState('chores') }
+    for (const name of CHORE_EVENTS) window.addEventListener(name, toChores)
+    return () => { for (const name of CHORE_EVENTS) window.removeEventListener(name, toChores) }
+  }, [peopleEnabled])
   const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem('lg-welcome-dismissed'))
   const [welcomeClearing, setWelcomeClearing] = useState(false)
   const [showBackup, setShowBackup] = useState(false)
@@ -550,16 +581,18 @@ function AppInner() {
       const tag = (e.target as HTMLElement).tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target as HTMLElement).isContentEditable) return
       if (anyModalOpenRef.current || e.metaKey || e.ctrlKey || e.altKey) return
+      // People sheets are not in anyModalOpenRef; don't open windows behind them.
+      if (modeRef.current === 'people' && hasOpenSurface()) return
       switch (e.key) {
         case 'd': case 'D': toggleTheme(); break
-        case 'e': case 'E': setEditMode(m => !m); break
+        case 'e': case 'E': if (modeRef.current === 'chores') setEditMode(m => !m); break
         case 'i': case 'I': setShowIntegration(true); break
         case 's': case 'S': setShowSyncSettings(true); break
         case 'a': case 'A': setShowBackup(true); break
         case 'l': case 'L': setShowActivityLog(true); break
         case 'j': case 'J': setJournalDate(null); setShowJournal(true); break
         case 'm': case 'M':
-          if (multiUserEnabled && meId && !editMode) setFilter(filterRef.current === 'mine' ? 'all' : 'mine')
+          if (modeRef.current === 'chores' && multiUserEnabled && meId && !editMode) setFilter(filterRef.current === 'mine' ? 'all' : 'mine')
           break
         case '?':           setShowShortcuts(true); break
       }
@@ -651,20 +684,20 @@ function AppInner() {
                 controls ran into the logo: below 375px in English, and on
                 every phone in languages with a long word for it ("Bearbeiten",
                 "Редагувати"). */}
-            <button
+            {choresMode && <button
               onClick={() => setEditMode(e => !e)}
               className={`p-2 rounded-lg transition-colors border ${editMode ? 'text-green-400 border-green-400/40 hover:text-green-300 hover:bg-green-400/10 hover:border-green-400/60' : 'text-slate-500 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
               aria-label={editMode ? t('app.doneEditing') : t('app.editCategoriesChores')}
             >
               {editMode ? <Check size={15} /> : <Pencil size={15} />}
-            </button>
+            </button>}
           </div>
 
           {/* ── Desktop: two-row layout ── */}
           <div className="hidden sm:flex flex-col items-end gap-1.5">
             {/* Row 1: filter (if multi-user) + soon + edit */}
             <div className="flex items-center gap-2">
-              {multiUserEnabled && meId && !editMode && (
+              {choresMode && multiUserEnabled && meId && !editMode && (
                 <button
                   onClick={() => setFilter(filter === 'mine' ? 'all' : 'mine')}
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
@@ -678,7 +711,7 @@ function AppInner() {
                   {filter === 'mine' ? t('app.mine') : t('app.all')}
                 </button>
               )}
-              {!editMode && (
+              {choresMode && !editMode && (
                   <button
                     onClick={() => setAttentionOnly(!attentionOnly)}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
@@ -694,13 +727,13 @@ function AppInner() {
                     {t('app.soon')}
                   </button>
               )}
-              <button
+              {choresMode && <button
                 onClick={() => setEditMode(e => !e)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${editMode ? 'text-green-400 border-green-400/40 hover:text-green-300 hover:bg-green-400/10 hover:border-green-400/60' : 'text-slate-500 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'}`}
                 aria-label={editMode ? t('app.doneEditing') : t('app.editCategoriesChores')}
               >
                 {editMode ? <><Check size={14} /> {t('app.done')}</> : <><Pencil size={14} /> {t('app.edit')}</>}
-              </button>
+              </button>}
             </div>
             {/* Row 2: sync (doubles as the status light), journal, help,
                 settings. Every control here is icon-only, so each carries a
@@ -731,9 +764,39 @@ function AppInner() {
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col overflow-hidden">
+      {peopleEnabled && (
+        <nav className="shrink-0 flex justify-center px-5 pt-3" aria-label={t('app.modeSwitch')}>
+          <div className="inline-flex p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900" role="tablist">
+            {(['chores', 'people'] as const).map(m => (
+              <button
+                key={m}
+                role="tab"
+                aria-selected={mode === m}
+                onClick={() => setMode(m)}
+                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
+                  mode === m
+                    ? 'bg-white dark:bg-slate-800 text-green-500 dark:text-green-400 shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+              >
+                {m === 'chores' ? t('app.modeChores') : t('app.modePeople')}
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
+
+      {/* The ribbon stays mounted in People mode so notification taps, widget
+          launches and shortcuts that target chores still find their listeners;
+          those same events bring the chores view back (see CHORE_EVENTS). */}
+      <main className={choresMode ? 'flex-1 flex flex-col overflow-hidden' : 'hidden'}>
         <Ribbon key={ribbonKey} editMode={editMode} onLogged={loadHeatmap} />
       </main>
+      {!choresMode && (
+        <main className="flex-1 flex flex-col overflow-hidden">
+          <PeopleHome />
+        </main>
+      )}
 
       {showWelcome && (
         <WelcomeModal

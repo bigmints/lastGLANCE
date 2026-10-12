@@ -19,7 +19,10 @@
     "done": "完成",
     "edit": "编辑",
     "settings": "设置",
-    "language": "语言"
+    "language": "语言",
+    "modeSwitch": "在家务和联系人之间切换",
+    "modeChores": "家务",
+    "modePeople": "联系人"
   },
   "activityLog": {
     "title": "活动记录",
@@ -658,5 +661,127 @@
     "integrations": "集成",
     "integrationsDesc": "将 lastGLANCE 与 dayGLANCE 及自动化应用连接。",
     "about": "关于"
+  },
+  "people": {
+    "close": "关闭",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "正在保存…",
+    "delete": "删除",
+    "channel": {
+      "in_person": "当面",
+      "call": "电话",
+      "video": "视频通话",
+      "text": "短信",
+      "email": "邮件",
+      "other": "其他"
+    },
+    "dateKind": {
+      "birthday": "生日",
+      "anniversary": "纪念日",
+      "custom": "其他日期"
+    },
+    "starterCircles": {
+      "family": "家人",
+      "friends": "朋友",
+      "work": "工作"
+    },
+    "home": {
+      "addPerson": "添加联系人",
+      "circles": "圈子",
+      "reachOut": "该联系了",
+      "comingUp": "即将到来",
+      "everyone": "所有人",
+      "noCircle": "未分组",
+      "emptyCircle": "这里还没有人。",
+      "addToCircle": "添加联系人到 {{circle}}",
+      "showArchived": "显示已归档（{{n}}）",
+      "hideArchived": "隐藏已归档"
+    },
+    "empty": {
+      "title": "与你在乎的人保持联系",
+      "body": "添加你想保持联系的人，记录你们上次交流的时间，lastGLANCE 会提醒你该问候谁，以及谁的生日快到了。",
+      "addFirst": "添加第一位联系人",
+      "starterCircles": "从“家人”“朋友”“工作”圈子开始"
+    },
+    "row": {
+      "noContactYet": "尚未记录联系",
+      "label": "{{name}}，上次联系 {{last}}",
+      "log": "记录",
+      "logAriaLabel": "记录与 {{name}} 的联系"
+    },
+    "detail": {
+      "edit": "编辑联系人",
+      "lastContact": "上次联系：{{last}}",
+      "archived": "已归档",
+      "everyNWeeks": "每 {{n}} 周",
+      "logContact": "记录联系",
+      "prefers": "常用方式：{{channel}}",
+      "dates": "日期",
+      "notes": "备注",
+      "timeline": "时间线",
+      "noInteractions": "还没有记录。",
+      "with": "同行：{{names}}",
+      "archive": "归档",
+      "unarchive": "取消归档",
+      "deleteConfirm": "删除 {{name}}？",
+      "deleteDetail": "其日期以及仅与此人相关的联系记录也会被删除。此操作无法撤销。"
+    },
+    "form": {
+      "addTitle": "添加联系人",
+      "editTitle": "编辑联系人",
+      "add": "添加",
+      "optional": "（可选）",
+      "name": "姓名",
+      "nickname": "昵称",
+      "circle": "圈子",
+      "noCircle": "不分组",
+      "cadence": "联系频率（每几周）",
+      "cadencePlaceholder": "例如 2",
+      "cadenceHint": "留空则只做记录，不提醒。",
+      "preferredChannel": "常用联系方式",
+      "noPreference": "无偏好",
+      "dates": "重要日期",
+      "addDate": "添加日期",
+      "dateKind": "日期类型",
+      "dateLabelPlaceholder": "这是什么日子？（例如命名日）",
+      "month": "月",
+      "day": "日",
+      "year": "年",
+      "yearPlaceholder": "年份？",
+      "removeDate": "移除日期",
+      "details": "备注",
+      "detailsPlaceholder": "孩子的名字、喜好、想问的事…",
+      "nameRequired": "请填写姓名",
+      "cadenceInvalid": "请输入大于 0 的周数",
+      "yearInvalid": "请输入 1 到 9999 之间的年份，或留空"
+    },
+    "log": {
+      "title": "记录联系",
+      "editTitle": "编辑联系",
+      "how": "方式",
+      "who": "对象",
+      "addPerson": "再添加一人…",
+      "removePerson": "移除 {{name}}",
+      "unknownPerson": "某人",
+      "when": "时间（默认现在）",
+      "note": "备注",
+      "notePlaceholder": "你们聊了什么？",
+      "logIt": "记录",
+      "needPerson": "请至少添加一人",
+      "deleteConfirm": "从时间线中删除这条联系记录？"
+    },
+    "circles": {
+      "title": "圈子",
+      "hint": "按你的方式给人分组。删除圈子不会删除其中的人。",
+      "rename": "重命名 {{name}}",
+      "moveUp": "上移 {{name}}",
+      "moveDown": "下移 {{name}}",
+      "delete": "删除 {{name}}",
+      "newPlaceholder": "新圈子",
+      "add": "添加",
+      "deleteConfirm": "删除 {{name}} 圈子？",
+      "deleteDetail": "其中的人会保留，变为未分组。"
+    }
   }
 }

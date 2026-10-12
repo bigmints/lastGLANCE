@@ -247,6 +247,26 @@ const OVERRIDES = {
   'settings.syncDesc': 'Mantenha suas tarefas e seu histórico sincronizados entre seus dispositivos.',
   'settings.integrationsDesc': 'Conecte o lastGLANCE ao dayGLANCE e a apps de automação.',
   'settings.about': 'Sobre',
+  // People mode. Brazilian phrasing beyond word swaps: "você", "conversar",
+  // "Apelido" (alcunha), "padrão", "desfazer", and the call channel is a
+  // "ligação" in Brazil (the general rule would make it a connection).
+  'people.channel.call': 'Ligação',
+  'people.home.reachOut': 'Entre em contato',
+  'people.home.emptyCircle': 'Ninguém aqui ainda.',
+  'people.empty.body':
+    'Adicione as pessoas com quem você quer manter contato, registre quando conversaram pela última vez e o lastGLANCE mostra quem está esperando um oi e quais aniversários estão chegando.',
+  'people.detail.noInteractions': 'Nada registrado ainda.',
+  'people.detail.deleteDetail':
+    'As datas e os contatos registrados só com essa pessoa também serão excluídos. Não é possível desfazer.',
+  'people.form.nickname': 'Apelido',
+  'people.form.cadencePlaceholder': 'ex.: 2',
+  'people.form.dateLabelPlaceholder': 'O que é? (ex.: Dia do santo)',
+  'people.form.detailsPlaceholder': 'Nomes dos filhos, gostos, coisas para perguntar…',
+  'people.form.cadenceInvalid': 'Digite um número de semanas maior que 0',
+  'people.log.when': 'Quando (padrão: agora)',
+  'people.log.notePlaceholder': 'Sobre o que vocês conversaram?',
+  'people.circles.hint': 'Agrupe as pessoas como quiser. Excluir um círculo mantém as pessoas dele.',
+  'people.circles.deleteDetail': 'As pessoas dele continuam, sem círculo.',
 }
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
