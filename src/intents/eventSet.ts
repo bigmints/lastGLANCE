@@ -262,7 +262,7 @@ export interface EventSetState { lastWriteAt: number; pendingWrite: { fingerprin
 export type EventSetOutcome =
   | { kind: 'skipped'; reason: 'unsupported' | 'downloading' | 'unparseable' | 'no-data' }
   | { kind: 'error'; reason: 'unavailable'; error: string }
-  | { kind: 'merged'; received: number; wrote: boolean; deferred: boolean; own: boolean; confirmed: string[]; dropped: number; salt: string | null }
+  | { kind: 'merged'; received: number; wrote: boolean; deferred: boolean; own: boolean; confirmed: string[]; dropped: number; salt: string | null; keyNeeded: boolean }
 
 /**
  * One cycle over the event-set file: read, merge (file ∪ this device's
@@ -298,14 +298,23 @@ export async function runEventSetCycle({ transport, io = {}, state }: { transpor
 
   // Receive: above the cursor, not ours, in id order; the cursor moves past
   // every envelope looked at, handled or not, as the directory loop does.
+  // An encrypted envelope this device has no key for is NOT skipped past: the
+  // cursor stops in front of it and the caller is told a key is needed, so the
+  // event is handled once the passphrase has been entered rather than lost
+  // (a receiver that enabled intents before the file named its salt holds a
+  // key for another salt until then).
   let received = 0
+  let keyNeeded = false
   if (typeof io.receive === 'function') {
     const cursor = getCursor(storage)
     for (const e of merged) {
       if (cursor && e.event_id <= cursor) continue
       if (e.emitted_by !== SELF) {
-        try { await io.receive(e, { salt }); received++ }
+        let r: unknown = null
+        try { r = await io.receive(e, { salt }); received++ }
         catch (err) { log.warn(`[${transport.id ?? 'direct-access'}] intent handling failed:`, (err as Error)?.message ?? err) }
+        const o = r as { handled?: boolean; skipped?: string } | null
+        if (o && o.handled === false && o.skipped === 'no_root_key') { keyNeeded = true; received--; break }
       }
       setCursor(storage, e.event_id)
     }
@@ -339,7 +348,7 @@ export async function runEventSetCycle({ transport, io = {}, state }: { transpor
     next.pendingWrite = null
   }
   const dropped = fileEvents.length - merged.filter((e) => fileIds.has(e.event_id)).length
-  return { state: next, outcome: { kind: 'merged', received, wrote, deferred, own: ownMissing, confirmed, dropped, salt } }
+  return { state: next, outcome: { kind: 'merged', received, wrote, deferred, own: ownMissing, confirmed, dropped, salt, keyNeeded } }
 }
 
 // One cycle at a time per process: the deliverer's sender cycle and the

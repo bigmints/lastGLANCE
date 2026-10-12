@@ -255,6 +255,28 @@ describe('runEventSetCycle', () => {
   })
 })
 
+describe('an envelope without the key', () => {
+  it('holds the cursor in front of it and reports keyNeeded; the next cycle with the key handles everything in order', async () => {
+    const storage = memStorage()
+    const a = foreign('a', 3000), sealed = foreign('sealed', 2000), b = foreign('b', 1000)
+    const folder: Folder = { text: fileWith(a, sealed, b), writes: 0 }
+    const handled: string[] = []
+    const receive = async (e: RawEnvelope) => {
+      if (e.event_id === sealed.event_id) return { handled: false, skipped: 'no_root_key' }
+      handled.push(e.event_id)
+      return { handled: true }
+    }
+    const r = await runEventSetCycle({ transport: fakeTransport(folder), io: { storage, now: () => T0, retentionMs: RETENTION, receive, log: quiet }, state: null })
+    expect(r.outcome).toMatchObject({ received: 1, keyNeeded: true })
+    expect(handled).toEqual([a.event_id])
+    expect(getCursor(storage)).toBe(a.event_id)
+    const r2 = await runEventSetCycle({ transport: fakeTransport(folder), io: { storage, now: () => T0, retentionMs: RETENTION, receive: async (e) => { handled.push(e.event_id); return { handled: true } }, log: quiet }, state: r.state })
+    expect(r2.outcome).toMatchObject({ received: 2, keyNeeded: false })
+    expect(handled).toEqual([a.event_id, sealed.event_id, b.event_id])
+    expect(getCursor(storage)).toBe(b.event_id)
+  })
+})
+
 describe('publishOwnEvent (the deliverer\'s half)', () => {
   it('records the envelope, writes, and reports true once the file reads back with it; false when the write fails', async () => {
     const storage = memStorage()
