@@ -293,7 +293,8 @@
       "label": "Intents via le dossier de synchronisation",
       "hint": "Les autres applications GLANCE sur le même dossier y déposent leurs intents dans un fichier partagé et lisent les vôtres. Chiffré dès que le fichier d'accès direct l'est.",
       "notConnected": "Connectez d'abord un dossier dans Synchronisation cloud. D'ici là, ce transport reste inactif.",
-      "reload": "Enregistré à la fermeture ; l'application se recharge pour commencer à interroger le dossier."
+      "reload": "Enregistré à la fermeture ; l'application se recharge pour commencer à interroger le dossier.",
+      "passphraseRequired": "Les intents en accès direct sont chiffrés avec votre phrase secrète de synchronisation. Saisissez-la pour les activer."
     }
   },
   "journal": {

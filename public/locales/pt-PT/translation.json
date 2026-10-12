@@ -293,7 +293,8 @@
       "label": "Intents através da pasta de sincronização",
       "hint": "Outras apps GLANCE na mesma pasta deixam aí os seus intents num ficheiro comum e leem os seus. Encriptado sempre que o ficheiro de acesso direto o for.",
       "notConnected": "Ligue primeiro uma pasta em Sincronização na nuvem. Até lá, este transporte permanece inativo.",
-      "reload": "Guardado ao fechar; a app reinicia para começar a consultar a pasta."
+      "reload": "Guardado ao fechar; a app reinicia para começar a consultar a pasta.",
+      "passphraseRequired": "Os intents de acesso direto são encriptados com a sua frase-passe de sincronização. Insira-a para os ativar."
     }
   },
   "journal": {

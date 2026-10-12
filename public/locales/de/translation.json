@@ -293,7 +293,8 @@
       "label": "Intents über den Sync-Ordner",
       "hint": "Andere GLANCE-Apps am selben Ordner legen Intents dort in einer gemeinsamen Datei ab und lesen deine. Verschlüsselt, wann immer die Direktzugriff-Datei es ist.",
       "notConnected": "Verbinde zuerst unter Cloud-Sync einen Ordner. Bis dahin bleibt dieser Transport inaktiv.",
-      "reload": "Wird beim Schließen gespeichert; die App lädt neu und beginnt, den Ordner abzufragen."
+      "reload": "Wird beim Schließen gespeichert; die App lädt neu und beginnt, den Ordner abzufragen.",
+      "passphraseRequired": "Direktzugriff-Intents werden mit deiner Sync-Passphrase verschlüsselt. Gib sie ein, um sie zu aktivieren."
     }
   },
   "journal": {

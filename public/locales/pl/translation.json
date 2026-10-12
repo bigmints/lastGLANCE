@@ -299,7 +299,8 @@
       "label": "Intencje przez folder synchronizacji",
       "hint": "Inne aplikacje GLANCE na tym samym folderze zostawiają tam swoje intencje w jednym wspólnym pliku i czytają Twoje. Szyfrowane zawsze, gdy zaszyfrowany jest plik dostępu bezpośredniego.",
       "notConnected": "Najpierw połącz folder w Synchronizacji w chmurze. Do tego czasu ten transport pozostaje nieaktywny.",
-      "reload": "Zapisywane przy zamknięciu; aplikacja uruchomi się ponownie, aby zacząć odpytywać folder."
+      "reload": "Zapisywane przy zamknięciu; aplikacja uruchomi się ponownie, aby zacząć odpytywać folder.",
+      "passphraseRequired": "Intencje przez dostęp bezpośredni są szyfrowane Twoim hasłem synchronizacji. Wpisz je, aby je włączyć."
     }
   },
   "journal": {

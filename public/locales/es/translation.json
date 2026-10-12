@@ -293,7 +293,8 @@
       "label": "Intents a través de la carpeta de sincronización",
       "hint": "Otras aplicaciones GLANCE en la misma carpeta dejan allí sus intents en un archivo compartido y leen los tuyos. Cifrado siempre que lo esté el archivo de Acceso directo.",
       "notConnected": "Conecta primero una carpeta en Sincronización en la nube. Hasta entonces este transporte permanece inactivo.",
-      "reload": "Se guarda al cerrar; la aplicación se recarga para empezar a consultar la carpeta."
+      "reload": "Se guarda al cerrar; la aplicación se recarga para empezar a consultar la carpeta.",
+      "passphraseRequired": "Los intents de Acceso directo se cifran con tu frase de contraseña de sincronización. Introdúcela para activarlos."
     }
   },
   "journal": {

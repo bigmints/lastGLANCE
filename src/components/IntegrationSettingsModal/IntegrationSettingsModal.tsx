@@ -11,7 +11,8 @@ import {
 } from '@/intents/config'
 import { getDbIntentsConfig, saveDbIntentsConfig } from '@/intents/dbConfig'
 import { getDirectAccessIntentsEnabledFlag, setDirectAccessIntentsEnabled } from '@/intents/directAccessIntentsConfig'
-import { directAccessTransport } from '@/sync/directAccess'
+import { directAccessTransport, directAccessEncryptsWrites } from '@/sync/directAccess'
+import { ensureDirectAccessIntentsKey, resolveDirectAccessIntentsKey } from '@/intents/directAccessIntentsKey'
 import { DirectAccessFileRow } from '@/components/SyncSettingsModal/DirectAccessFileRow'
 import { getVaultConfig } from '@/sync/vaultConfig'
 import { ActivityLogModal } from '@/components/ActivityLogModal/ActivityLogModal'
@@ -205,6 +206,21 @@ export function IntegrationSettingsModal({ onClose, onSaved }: Props) {
       // written object matches the exact shape getDbIntentsConfig() reads.
       const dbIntentsChanged = dbIntentsEnabled !== initialDbIntentsEnabled.current
       saveDbIntentsConfig({ ...getDbIntentsConfig(), enabled: dbIntentsEnabled })
+      // Direct Access intents with the encrypt switch on need the key for the
+      // folder's salt (intents/directAccessIntentsKey.ts): from the cache or
+      // the passphrase in memory, else from one prompt. Never enabled without.
+      if (daIntentsEnabled && daConnected && directAccessEncryptsWrites()) {
+        const r = await ensureDirectAccessIntentsKey({
+          resolve: (passphrase) => resolveDirectAccessIntentsKey({ transport: directAccessTransport, ...(passphrase !== undefined ? { passphrase } : {}) }),
+          promptForPassphrase: promptForVaultPassphrase,
+        })
+        if (r.status !== 'ready') {
+          setDaIntentsEnabled(false)
+          setSetupError(r.status === 'cancelled' ? t('integration.directAccessIntents.passphraseRequired') : t('integration.setupFailed'))
+          return
+        }
+        flushIntents().catch(() => { /* surfaced via deliverers/outbox */ })
+      }
       const daIntentsChanged = daIntentsEnabled !== initialDaIntentsEnabled.current
       setDirectAccessIntentsEnabled(daIntentsEnabled)
 

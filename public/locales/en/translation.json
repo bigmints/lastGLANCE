@@ -293,7 +293,8 @@
       "label": "Intents through the sync folder",
       "hint": "Other GLANCE apps on the same folder leave intents in one shared file there, and read yours. Encrypted whenever the Direct Access file is.",
       "notConnected": "Connect a folder under Cloud Sync first. Until then this transport stays inactive.",
-      "reload": "Saved on close; the app reloads to start polling the folder."
+      "reload": "Saved on close; the app reloads to start polling the folder.",
+      "passphraseRequired": "Direct Access intents are encrypted with your sync passphrase. Enter it to enable them."
     }
   },
   "journal": {

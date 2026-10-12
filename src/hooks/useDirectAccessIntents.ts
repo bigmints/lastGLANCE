@@ -6,6 +6,7 @@ import { addActivityEntry } from '@/intents/config'
 import { getDirectAccessIntentsEnabledFlag } from '@/intents/directAccessIntentsConfig'
 import { runEventSetCycle, receiveEnvelope, withEventsLock, type EventSetState } from '@/intents/eventSet'
 import { processNotifyEnvelope } from '@/intents/processNotifyEnvelope'
+import { keyForSalt } from '@/intents/directAccessIntentsKey'
 import { directAccessTransport, type DirectAccessTransport } from '@/sync/directAccess'
 import { getDeviceId } from '@/sync/deviceId'
 
@@ -44,7 +45,7 @@ export function useDirectAccessIntents(onNewCompletion?: () => void, transport: 
           transport,
           io: {
             deviceId: getDeviceId,
-            receive: (raw) => receiveEnvelope(raw, { handleEnvelope }),
+            receive: (raw, meta) => receiveEnvelope(raw, { handleEnvelope, salt: meta.salt, loadKeyForSalt: (salt) => keyForSalt(salt) }),
           },
           state,
         }))
