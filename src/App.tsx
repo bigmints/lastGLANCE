@@ -39,6 +39,10 @@ import { formatDate } from '@/utils/datetime'
 import { completionsLabel } from '@/utils/completionsLabel'
 import { createEngine, initSessionKey, setupEncryptionKey, runAutoBackups, ensureSyncFolder, CRYPTO_CONFIG, DB_CRYPTO_CONFIG, getSyncWebdavConfig } from '@/sync/engine'
 import { createDbEngine } from '@/sync/dbEngine'
+import { isPeopleEnabled } from '@/people/flag'
+import { createPeopleFileEngine } from '@/people/sync/fileEngine'
+import { createPeopleDbEngine } from '@/people/sync/dbEngine'
+import { registerPeopleDbEngine } from '@/people/sync/dirtyTracker'
 import { registerDbEngine } from '@/sync/dirtyTracker'
 import { isVaultEnabled } from '@/sync/vaultConfig'
 import { applyStatusBarTheme, initFullScreenInLandscape } from '@/native/statusBar'
@@ -202,6 +206,10 @@ function AppInner() {
   // GLANCEvault DB transport engine, null unless the vault config is enabled.
   // Runs alongside the file engine; does not affect the file sync path.
   const dbEngineRef = useRef<DbSyncEngine | null>(null)
+  // People mode's own sync roads (lastglance-people.json and the
+  // lastglance-people vault app). Null unless the People flag is on.
+  const peopleFileEngineRef = useRef<SyncEngine | null>(null)
+  const peopleDbEngineRef = useRef<DbSyncEngine | null>(null)
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
   const [syncError, setSyncError] = useState<string | null>(null)
   const [syncHalted, setSyncHalted] = useState(false)
@@ -237,6 +245,15 @@ function AppInner() {
         .then(res => setVaultSkipped(res?.skipped ?? 0))
         .catch(() => {/* surfaced via onError */})
     }
+  }, [])
+
+  // Runs both People sync roads, riding the same triggers as the chore
+  // engines. Errors are logged by the engines; People never block chore sync.
+  const runPeopleSync = useCallback(() => {
+    const file = peopleFileEngineRef.current
+    if (file) file.sync().catch(() => {/* logged by the engine */})
+    const vault = peopleDbEngineRef.current
+    if (vault) vault.dbSyncCycle().catch(() => {/* logged by the engine */})
   }, [])
 
   useEffect(() => {
@@ -335,18 +352,29 @@ function AppInner() {
     dbEngineRef.current = dbEngine
     registerDbEngine(dbEngine)
 
+    if (isPeopleEnabled()) {
+      peopleFileEngineRef.current = createPeopleFileEngine(import.meta.env.VITE_WEBDAV_PROXY_URL, engine)
+      const peopleDb = createPeopleDbEngine({
+        onError: (msg, code) => { if (msg) console.warn('[lastglance] people vault sync error:', code ?? '(no code)', msg) },
+        onUnsupported: () => console.warn('[lastglance] vault does not know lastglance-people yet; People sync on the file road only'),
+      })
+      peopleDbEngineRef.current = peopleDb
+      registerPeopleDbEngine(peopleDb)
+    }
+
     deduplicateUsers()
       .catch(() => {})
       .then(() => ensureSyncFolder(engine))
       .then(() => engine.sync())
+      .then(() => runPeopleSync())
       .catch(() => {/* errors surfaced via onError */})
     runDbSync()
 
-    return () => { registerDbEngine(null) }
+    return () => { registerDbEngine(null); registerPeopleDbEngine(null) }
     // Mount-once engine init; runSharedUserSync is a stable callback invoked
     // imperatively elsewhere and intentionally not a dependency here.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [runDbSync])
+  }, [runDbSync, runPeopleSync])
 
   // Shared user roster sync — fire-and-forget, non-fatal
   const sharedUserSyncRunning = useRef(false)
@@ -400,6 +428,7 @@ function AppInner() {
         const eng = engineRef.current
         ensureSyncFolder(eng).then(() => eng.sync()).catch(() => {/* errors surfaced via onError */})
         runDbSync()
+        runPeopleSync()
       }
     }
     document.addEventListener('visibilitychange', handleVisibility)
@@ -410,6 +439,7 @@ function AppInner() {
         ensureSyncFolder(eng).then(() => eng.sync()).catch(() => {/* errors surfaced via onError */})
       }
       runDbSync()
+      runPeopleSync()
       runSharedUserSync().catch(() => {/* non-fatal */})
     }, 5 * 60 * 1000)
 
@@ -417,7 +447,7 @@ function AppInner() {
       document.removeEventListener('visibilitychange', handleVisibility)
       clearInterval(interval)
     }
-  }, [runDbSync, runSharedUserSync])
+  }, [runDbSync, runPeopleSync, runSharedUserSync])
 
   const loadHeatmap = useCallback(async () => {
     const counts = await getAllCompletionCounts()
@@ -452,7 +482,13 @@ function AppInner() {
   // poll. Purely additive — every poll cadence above stays untouched as the
   // correctness backstop, and a no-op when the vault is disabled or the
   // transport can't stream (native shell, pre-/events server).
-  useVaultEventStream({ drainSync: runDbSync, drainIntents: drainDbIntents })
+  // The vault's event stream is per account, so one nudge drains the chore and
+  // People vault engines alike.
+  const drainVaultSync = useCallback(() => {
+    runDbSync()
+    peopleDbEngineRef.current?.dbSyncCycle().catch(() => {/* logged by the engine */})
+  }, [runDbSync])
+  useVaultEventStream({ drainSync: drainVaultSync, drainIntents: drainDbIntents })
   // Direct Access (docs/direct-access.md): the snapshot file in a folder a
   // third-party tool keeps in step. Its own poll and guard; the apply is the
   // same applyPayload the WebDAV tier runs, so the UI refresh events come
