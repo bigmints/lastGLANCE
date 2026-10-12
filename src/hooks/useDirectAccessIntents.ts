@@ -6,7 +6,9 @@ import { addActivityEntry } from '@/intents/config'
 import { getDirectAccessIntentsEnabledFlag } from '@/intents/directAccessIntentsConfig'
 import { runEventSetCycle, receiveEnvelope, withEventsLock, type EventSetState } from '@/intents/eventSet'
 import { processNotifyEnvelope } from '@/intents/processNotifyEnvelope'
-import { keyForSalt } from '@/intents/directAccessIntentsKey'
+import { keyForSalt, resolveDirectAccessIntentsKey } from '@/intents/directAccessIntentsKey'
+import { getSyncPassphrase } from '@glance-apps/sync'
+import { directAccessEncryptsWrites } from '@/sync/directAccess'
 import { directAccessTransport, type DirectAccessTransport } from '@/sync/directAccess'
 import { getDeviceId } from '@/sync/deviceId'
 
@@ -17,14 +19,23 @@ import { getDeviceId } from '@/sync/deviceId'
 // app's goes through the same processNotifyEnvelope the WebDAV and vault
 // pollers use. Inert unless the opt-in is on; the deliverer (the sending
 // half) shares the file lock with this loop.
-export function useDirectAccessIntents(onNewCompletion?: () => void, transport: DirectAccessTransport = directAccessTransport): void {
+export interface UseDirectAccessIntentsOptions {
+  transport?: DirectAccessTransport
+  /** A sealed envelope this device cannot open, or a sender with the encrypt switch on and no key: ask for the passphrase. */
+  onKeyNeeded?: () => void
+}
+
+export function useDirectAccessIntents(onNewCompletion?: () => void, { transport = directAccessTransport, onKeyNeeded }: UseDirectAccessIntentsOptions = {}): void {
   const onNewCompletionRef = useRef<(() => void) | undefined>(onNewCompletion)
   useEffect(() => { onNewCompletionRef.current = onNewCompletion }, [onNewCompletion])
+  const onKeyNeededRef = useRef(onKeyNeeded)
+  onKeyNeededRef.current = onKeyNeeded
 
   useEffect(() => {
     if (!getDirectAccessIntentsEnabledFlag() || !transport.isSupported()) return
     let destroyed = false
     let running = false
+    let keyChecked = false
     let state: EventSetState = { lastWriteAt: 0, pendingWrite: null }
 
     const handleEnvelope = (envelope: Envelope) => processNotifyEnvelope(envelope, {
@@ -51,6 +62,18 @@ export function useDirectAccessIntents(onNewCompletion?: () => void, transport: 
         }))
         state = r.state
         if (r.outcome.kind === 'error') console.warn('[intent/direct-access] unavailable:', r.outcome.error)
+        // A sealed envelope this device cannot open, or (once per session) a
+        // sender whose encrypt switch is on with no key and no passphrase in
+        // memory: ask for the passphrase, the same prompt the sync file uses.
+        let wantKey = r.outcome.kind === 'merged' && r.outcome.keyNeeded
+        if (!keyChecked && directAccessEncryptsWrites()) {
+          keyChecked = true
+          try {
+            const k = await resolveDirectAccessIntentsKey({ transport })
+            if (!k.key && !getSyncPassphrase()) wantKey = true
+          } catch { /* the deliverer reports its own hold */ }
+        }
+        if (wantKey) onKeyNeededRef.current?.()
       } catch (err) {
         console.warn('[intent/direct-access] cycle failed:', (err as Error)?.message ?? err)
       } finally {

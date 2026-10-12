@@ -445,7 +445,7 @@ function AppInner() {
   useDbIntentsPoller(loadHeatmap)
   // Direct Access intents transport (docs/direct-access.md, step 3): the
   // event-set file in the folder. A no-op unless its opt-in is on.
-  useDirectAccessIntents(loadHeatmap)
+  useDirectAccessIntents(loadHeatmap, { onKeyNeeded: () => setShowPassphrase(true) })
   // GLANCEvault SSE push: nudges from the vault trigger the SAME drains the
   // polls run (runDbSync for the sync tier, the intents poller's drain for the
   // intents tier), so remote changes land in seconds instead of at the next
