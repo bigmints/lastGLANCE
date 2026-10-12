@@ -33,6 +33,8 @@ import { buildAuthHeader, ensureFolder, putFile } from './webdav'
 import { directAccessTransport, directAccessEncryptsWrites, type DirectAccessTransport } from '@/sync/directAccess'
 import { isDirectAccessIntentsEnabled } from './directAccessIntentsConfig'
 import { publishOwnEvent, type EventSetTransport, type RawEnvelope } from './eventSet'
+import { resolveDirectAccessIntentsKey } from './directAccessIntentsKey'
+import { fetchSharedSaltB64 } from './setupIntentsEncryption'
 
 // Maps the raw outbox intent onto the codec's CREATE envelope args. Passing
 // eventId + emittedAt preserves the intent's stable identity across (re)builds,
@@ -197,19 +199,22 @@ export const webdavDeliverer: Deliverer = createWebdavDeliverer({
 })
 
 // ── Direct Access deliverer: the event-set file (docs/direct-access.md) ──────
-// Encrypted iff the Direct Access "encrypt the file" switch is on, with the
-// WebDAV intents root key (the folder's events are sealed the way WebDAV
-// files are); held (INTENTS_KEY_NOT_READY) while that key is not ready, never
-// sent plaintext. Held too while the opt-in is off or no folder is connected
-// or reachable: both may change. Delivered once the file has been read back
-// with the event in it; the device's ledger keeps the event until retention
-// so a copy of the file that loses it gets it back.
+// Encrypted iff the Direct Access "encrypt the file" switch is on, under the
+// root key for the salt the event set names (intents/directAccessIntentsKey.ts):
+// the file's salt, else the one this device brings, with the key derived from
+// the sync passphrase. Held (INTENTS_KEY_NOT_READY) while no passphrase is in
+// memory and no cached key matches, never sent plaintext. Held too while the
+// opt-in is off or no folder is connected or reachable: both may change.
+// Delivered once the file has been read back with the event in it; the
+// device's ledger keeps the event until retention so a copy of the file that
+// loses it gets it back.
 
 export interface DirectAccessDelivererDeps {
   transport: DirectAccessTransport | (EventSetTransport & { isAvailable: () => boolean })
   isEnabled: () => boolean
   encrypts: () => boolean
-  loadRootKey: () => Promise<CryptoKey | null>
+  /** The salt the file names (or this device brings) and the key for it; `key` null means hold. */
+  resolveKey: (transport: EventSetTransport) => Promise<{ salt: string; key: CryptoKey | null }>
   publish: (transport: EventSetTransport, envelope: RawEnvelope, io?: Parameters<typeof publishOwnEvent>[2]) => Promise<boolean>
   eventsPath?: () => string | null | undefined
 }
@@ -220,16 +225,19 @@ export function createDirectAccessDeliverer(deps: DirectAccessDelivererDeps): De
     if (!deps.transport.isAvailable()) return 'transient-fail'
 
     let envelope: IntentEnvelope
+    let salt: string | null = null
     if (deps.encrypts()) {
-      const rootKey = await deps.loadRootKey()
-      if (!rootKey) return { status: 'transient-fail', reason: INTENTS_KEY_NOT_READY }
-      envelope = await buildEncryptedEnvelope(createEnvelopeArgs(intent), (salt) => deriveEnvelopeKey(rootKey, salt))
+      const r = await deps.resolveKey(deps.transport)
+      if (!r.key) return { status: 'transient-fail', reason: INTENTS_KEY_NOT_READY }
+      salt = r.salt
+      const rootKey = r.key
+      envelope = await buildEncryptedEnvelope(createEnvelopeArgs(intent), (s) => deriveEnvelopeKey(rootKey, s))
     } else {
       envelope = buildEnvelope(createEnvelopeArgs(intent))
     }
 
     try {
-      const ok = await deps.publish(deps.transport, envelope as unknown as RawEnvelope, { eventsPath: deps.eventsPath?.() })
+      const ok = await deps.publish(deps.transport, envelope as unknown as RawEnvelope, { eventsPath: deps.eventsPath?.(), salt })
       return ok ? 'delivered' : 'transient-fail'
     } catch {
       return 'transient-fail'
@@ -241,6 +249,9 @@ export const directAccessDeliverer: Deliverer = createDirectAccessDeliverer({
   transport: directAccessTransport,
   isEnabled: () => isDirectAccessIntentsEnabled(directAccessTransport),
   encrypts: () => directAccessEncryptsWrites(),
-  loadRootKey: loadIntentsRootKey,
+  resolveKey: (transport) => {
+    const config = getIntentsConfig()
+    return resolveDirectAccessIntentsKey({ transport, webdavSalt: () => (isIntentsConfigured(config) ? fetchSharedSaltB64(config) : Promise.resolve(null)) })
+  },
   publish: publishOwnEvent,
 })

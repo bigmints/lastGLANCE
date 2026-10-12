@@ -78,9 +78,30 @@ describe('the event set', () => {
     expect(parseEventSetText('not json')).toEqual({ kind: 'unparseable' })
     expect(parseEventSetText('{"data":{}}')).toEqual({ kind: 'no-data' })
     const e = foreign('x')
-    expect(parseEventSetText(serializeEventSet([e], 'mac'))).toEqual({ kind: 'set', events: [e], writtenBy: 'mac' })
+    expect(parseEventSetText(serializeEventSet([e], 'mac'))).toEqual({ kind: 'set', events: [e], writtenBy: 'mac', salt: null })
+    expect(parseEventSetText(serializeEventSet([e], 'mac', 'c2FsdA=='))).toMatchObject({ kind: 'set', salt: 'c2FsdA==' })
     expect(relativeEventsPath(undefined)).toBe('GLANCE/events/glance-events.json')
     expect(relativeEventsPath('/Shared/intents/')).toBe('Shared/intents/glance-events.json')
+  })
+})
+
+describe('the salt in the header', () => {
+  it('is kept by every writer once the file names one, brought by a sender when it does not, and handed to receive', async () => {
+    const storage = memStorage()
+    const folder: Folder = { text: null, writes: 0 }
+    ledgerAppend(mine('own', 3000), storage)
+    const r1 = await runEventSetCycle({ transport: fakeTransport(folder), io: { storage, now: () => T0, retentionMs: RETENTION, salt: 'bWluZQ==', log: quiet }, state: null })
+    expect(r1.outcome).toMatchObject({ wrote: true, salt: 'bWluZQ==' })
+    expect(JSON.parse(folder.text!).salt).toBe('bWluZQ==')
+    // dayGLANCE adds an event; a second device with a salt of its own writes, and the file's salt stays.
+    folder.text = serializeEventSet([...(JSON.parse(folder.text!).events as RawEnvelope[]), foreign('from dayGLANCE', 2000)], 'dg', 'bWluZQ==')
+    const other = memStorage()
+    ledgerAppend(mine('own2', 1000), other)
+    const seen: Array<string | null> = []
+    const r2 = await runEventSetCycle({ transport: fakeTransport(folder), io: { storage: other, now: () => T0, retentionMs: RETENTION, salt: 'b3RoZXI=', receive: async (_e, meta) => { seen.push(meta.salt) }, log: quiet }, state: null })
+    expect(r2.outcome).toMatchObject({ wrote: true, salt: 'bWluZQ==' })
+    expect(JSON.parse(folder.text!).salt).toBe('bWluZQ==')
+    expect(seen).toEqual(['bWluZQ=='])
   })
 })
 
@@ -127,6 +148,18 @@ describe('receiveEnvelope', () => {
     expect(r.handled).toBe(false)
     expect(handled).toHaveLength(1)
     expect(log).toHaveBeenCalledTimes(2)
+  })
+
+  it('an encrypted envelope under a salt the file names: the key for that salt first, the WebDAV key only as the fallback', async () => {
+    const right = await deriveIntentsRootKey('right', new Uint8Array(16).fill(7))
+    const sealed = await buildEncryptedEnvelope(
+      { action: ACTIONS.NOTIFY, payload: payload('Sealed'), emittedBy: SOURCE_APPS.DAYGLANCE, emittedAt: new Date(T0) },
+      (salt) => deriveEnvelopeKey(right, salt),
+    ) as unknown as RawEnvelope
+    const handleEnvelope = async () => {}
+    expect(await receiveEnvelope(sealed, { handleEnvelope, salt: 'c2FsdA==', loadKeyForSalt: async (s) => (s === 'c2FsdA==' ? right : null), loadKey: async () => null, addActivityEntry: log })).toEqual({ handled: true })
+    expect(await receiveEnvelope(sealed, { handleEnvelope, salt: 'c2FsdA==', loadKeyForSalt: async () => null, loadKey: async () => right, addActivityEntry: log })).toEqual({ handled: true })
+    expect(await receiveEnvelope(sealed, { handleEnvelope, salt: 'c2FsdA==', loadKeyForSalt: async () => null, loadKey: async () => null, addActivityEntry: log })).toEqual({ handled: false, skipped: 'no_root_key' })
   })
 
   it('a malformed envelope is logged and skipped, never thrown', async () => {

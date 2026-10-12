@@ -50,9 +50,16 @@ in the order that document gives, so the same folder carries all three apps:
    union keyed by `event_id` that drops expired envelopes, a sender ledger
    that re-adds this device's own events to a copy that lost them, a cursor
    per transport, and drops written only under the relay rule. The deliverer
-   (`directAccessDeliverer`) seals envelopes with the WebDAV intents root key
-   whenever the Direct Access encrypt switch is on and holds while that key is
-   not ready; the poll (`hooks/useDirectAccessIntents.ts`) hands each foreign
+   (`directAccessDeliverer`) seals envelopes, whenever the Direct Access
+   encrypt switch is on, under the root key for the salt the event set names:
+   the salt travels in the file header, since a folder-only device can never
+   reach the WebDAV salt file and an iPhone holds a bookmark to the event set
+   alone; a sender that finds none brings the one it seeded before, else the
+   WebDAV salt when it also runs WebDAV intents, else a fresh one, and the key
+   is derived from the sync passphrase and cached with its salt
+   (`src/intents/directAccessIntentsKey.ts`). The deliverer holds while no
+   passphrase is in memory and no cached key matches, and the opt-in asks for
+   the passphrase once in that case; the poll (`hooks/useDirectAccessIntents.ts`) hands each foreign
    envelope to the same `processNotifyEnvelope` the other transports use. Its
    own opt-in in the Integration dialog; on iOS the roster and the event set
    are bookmarked files of their own, offered in the Cloud Sync dialog.

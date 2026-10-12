@@ -6,7 +6,7 @@
 // transport is built on the one primitive every platform has, a single file,
 // and is the same on Android and iPhone:
 //
-//   GLANCE/events/glance-events.json = { version: 1, writtenBy?, events: [envelope, …] }
+//   GLANCE/events/glance-events.json = { version: 1, writtenBy?, salt?, events: [envelope, …] }
 //
 // holding every live envelope, plaintext or encrypted exactly as the WebDAV
 // transport builds them. The file is a SET keyed by event_id:
@@ -23,6 +23,9 @@
 //   • A receiver reads, never writes for what it read: it handles the
 //     envelopes above its cursor that it did not emit, and advances the
 //     cursor, exactly as the directory loop does over a listing.
+//   • The salt the encrypted envelopes' root key is derived from travels in
+//     the header (intents/directAccessIntentsKey.ts): once a file names one,
+//     every writer keeps it, and a receiver derives its key from it.
 //   • Garbage collection is the merge: expired envelopes fall out of the
 //     union, and the device that drops them writes only under the relay rule
 //     (the package's relayDecision, staggered by writer rank), so an idle
@@ -100,13 +103,13 @@ export function mergeEventSets(a: unknown[] | null | undefined, b: unknown[] | n
 
 /** What a write would change: the ids, in order. */
 export const eventSetKey = (events: RawEnvelope[]): string => events.map((e) => e.event_id).join('\n')
-export const serializeEventSet = (events: RawEnvelope[], writtenBy: string | null = null): string =>
-  JSON.stringify(writtenBy ? { version: 1, writtenBy, events } : { version: 1, events })
+export const serializeEventSet = (events: RawEnvelope[], writtenBy: string | null = null, salt: string | null = null): string =>
+  JSON.stringify({ version: 1, ...(writtenBy ? { writtenBy } : {}), ...(salt ? { salt } : {}), events })
 
 export type EventSetRead =
   | { kind: 'absent' | 'downloading' | 'unparseable' | 'no-data' }
   | { kind: 'error'; error: string }
-  | { kind: 'set'; events: RawEnvelope[]; writtenBy: string | null }
+  | { kind: 'set'; events: RawEnvelope[]; writtenBy: string | null; salt: string | null }
 
 /** The file's text as the cycle reads it: the snapshot classification plus 'set' with the envelopes, or 'no-data' for JSON that is not a set. */
 export function parseEventSetText(text: string | null | undefined): EventSetRead {
@@ -115,7 +118,12 @@ export function parseEventSetText(text: string | null | undefined): EventSetRead
   if (read.kind !== 'snapshot') return { kind: read.kind as 'absent' | 'downloading' | 'unparseable' }
   const events = read.remote?.events
   if (!Array.isArray(events)) return { kind: 'no-data' }
-  return { kind: 'set', events: events as RawEnvelope[], writtenBy: typeof read.remote?.writtenBy === 'string' ? read.remote.writtenBy : null }
+  return {
+    kind: 'set',
+    events: events as RawEnvelope[],
+    writtenBy: typeof read.remote?.writtenBy === 'string' ? read.remote.writtenBy : null,
+    salt: typeof read.remote?.salt === 'string' && read.remote.salt ? read.remote.salt : null,
+  }
 }
 
 // ─── the ledger and the cursor ───────────────────────────────────────────────
@@ -168,7 +176,10 @@ export const setCursor = (storage: StorageLike | null, id: string): void => { tr
 export interface ReceiveDeps {
   /** Handles a parsed envelope (processNotifyEnvelope with the app's deps). */
   handleEnvelope: (envelope: Envelope) => Promise<void>
-  /** Loads the WebDAV intents root key, which encrypted events in the folder are sealed with. */
+  /** The salt the event set names; an encrypted envelope is opened with the key for it (loadKeyForSalt). */
+  salt?: string | null
+  loadKeyForSalt?: (saltB64: string) => Promise<CryptoKey | null>
+  /** The WebDAV intents root key: the fallback for a file sealed before the salt travelled. */
   loadKey?: () => Promise<CryptoKey | null>
   addActivityEntry?: typeof defaultAddActivityEntry
 }
@@ -182,7 +193,9 @@ export type ReceiveOutcome = { handled: true } | { handled: false; skipped: stri
  * a bad envelope: the cycle advances the cursor past it either way.
  */
 export async function receiveEnvelope(raw: RawEnvelope, deps: ReceiveDeps): Promise<ReceiveOutcome> {
-  const loadKey = deps.loadKey ?? loadIntentsRootKey
+  const loadLegacyKey = deps.loadKey ?? loadIntentsRootKey
+  const loadKey = async (): Promise<CryptoKey | null> =>
+    (deps.salt && deps.loadKeyForSalt ? await deps.loadKeyForSalt(deps.salt) : null) ?? await loadLegacyKey()
   const log = deps.addActivityEntry ?? defaultAddActivityEntry
   if (raw?.emitted_by === SELF) return { handled: false, skipped: 'own' }
 
@@ -233,7 +246,9 @@ export interface EventSetIo {
   /** The WebDAV-style events directory ('/GLANCE/events/'). */
   eventsPath?: string | null
   /** Absent: a sender-only cycle (the deliverer), no cursor moves. */
-  receive?: (raw: RawEnvelope) => Promise<unknown>
+  receive?: (raw: RawEnvelope, meta: { salt: string | null }) => Promise<unknown>
+  /** The salt a sender brings when the file names none (directAccessIntentsKey.ts); the file's own always wins. */
+  salt?: string | null
   /** Stamped as `writtenBy`; ranks this device's relay. */
   deviceId?: string | (() => string)
   /** Where the writers seen are kept (default: the snapshot cycle's key for this transport, so the fleet is ranked once). */
@@ -247,7 +262,7 @@ export interface EventSetState { lastWriteAt: number; pendingWrite: { fingerprin
 export type EventSetOutcome =
   | { kind: 'skipped'; reason: 'unsupported' | 'downloading' | 'unparseable' | 'no-data' }
   | { kind: 'error'; reason: 'unavailable'; error: string }
-  | { kind: 'merged'; received: number; wrote: boolean; deferred: boolean; own: boolean; confirmed: string[]; dropped: number }
+  | { kind: 'merged'; received: number; wrote: boolean; deferred: boolean; own: boolean; confirmed: string[]; dropped: number; salt: string | null }
 
 /**
  * One cycle over the event-set file: read, merge (file ∪ this device's
@@ -269,6 +284,7 @@ export async function runEventSetCycle({ transport, io = {}, state }: { transpor
   if (read.kind === 'error') return { state: next, outcome: { kind: 'error', reason: 'unavailable', error: read.error } }
   if (read.kind !== 'set' && read.kind !== 'absent') return { state: next, outcome: { kind: 'skipped', reason: read.kind } }
   const fileEvents: RawEnvelope[] = read.kind === 'set' ? read.events : []
+  const salt = (read.kind === 'set' && read.salt) || io.salt || null
   const deviceId = ((): string | null => {
     try { const v = typeof io.deviceId === 'function' ? io.deviceId() : io.deviceId; return typeof v === 'string' && v ? v : null }
     catch { return null }
@@ -288,7 +304,7 @@ export async function runEventSetCycle({ transport, io = {}, state }: { transpor
     for (const e of merged) {
       if (cursor && e.event_id <= cursor) continue
       if (e.emitted_by !== SELF) {
-        try { await io.receive(e); received++ }
+        try { await io.receive(e, { salt }); received++ }
         catch (err) { log.warn(`[${transport.id ?? 'direct-access'}] intent handling failed:`, (err as Error)?.message ?? err) }
       }
       setCursor(storage, e.event_id)
@@ -304,7 +320,7 @@ export async function runEventSetCycle({ transport, io = {}, state }: { transpor
   const throttledWrite = async (): Promise<boolean> => {
     if (now() - next.lastWriteAt < (transport.writeThrottleMs ?? 0)) return false
     next.lastWriteAt = now()
-    const ok = await transport.events.write(relPath, serializeEventSet(merged, deviceId))
+    const ok = await transport.events.write(relPath, serializeEventSet(merged, deviceId, salt))
     if (!ok) log.error(`[${transport.id ?? 'direct-access'}] event set write failed`)
     return ok
   }
@@ -323,7 +339,7 @@ export async function runEventSetCycle({ transport, io = {}, state }: { transpor
     next.pendingWrite = null
   }
   const dropped = fileEvents.length - merged.filter((e) => fileIds.has(e.event_id)).length
-  return { state: next, outcome: { kind: 'merged', received, wrote, deferred, own: ownMissing, confirmed, dropped } }
+  return { state: next, outcome: { kind: 'merged', received, wrote, deferred, own: ownMissing, confirmed, dropped, salt } }
 }
 
 // One cycle at a time per process: the deliverer's sender cycle and the
