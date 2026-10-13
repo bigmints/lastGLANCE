@@ -668,7 +668,11 @@
     "showReciprocity": "Mostrar quién contactó",
     "showReciprocityHint": "Flechas, motivos en Ponte en contacto y el balance de cada persona. Quién contactó se sigue guardando aunque se oculte.",
     "show": "Mostrar",
-    "hide": "Ocultar"
+    "hide": "Ocultar",
+    "phoneContacts": "Contactos del teléfono",
+    "phoneContactsHint": "Importa personas de tus contactos y vincúlalas para llamar, enviar mensajes y correos. Solo lectura; los números y direcciones nunca se guardan ni sincronizan.",
+    "on": "Sí",
+    "off": "No"
   },
   "people": {
     "close": "Cerrar",
@@ -817,6 +821,48 @@
       "d3": "3 días",
       "d7": "1 semana",
       "d14": "2 semanas"
+    },
+    "contacts": {
+      "importTitle": "Importar de contactos",
+      "linkTitle": "Vincular a {{name}} con un contacto",
+      "importButton": "Importar de contactos",
+      "linkButton": "Vincular con contacto",
+      "disclosure1": "lastGLANCE lee nombres, fotos, cumpleaños y otras fechas, números de teléfono y correos de tus contactos, para que añadas personas sin volver a escribirlas y las llames, les escribas o les envíes un correo desde aquí.",
+      "disclosure2": "Nada sale de tu teléfono salvo lo que importes. Solo se guardan los nombres y fechas que elijas, y se sincronizan cifrados como el resto de tus datos. Los números, direcciones y fotos se leen al usarlos y nunca se guardan.",
+      "disclosure3": "lastGLANCE nunca modifica tus contactos.",
+      "continue": "Continuar",
+      "denied": "El acceso a contactos está desactivado. Para usarlo, permite Contactos para lastGLANCE en los ajustes del teléfono.",
+      "loading": "Leyendo contactos…",
+      "error": "No se pudieron leer tus contactos.",
+      "search": "Buscar contactos",
+      "none": "No se encontraron contactos",
+      "alreadyAdded": "Ya está en Personas",
+      "link": "Vincular",
+      "importN_one": "Importar {{count}}",
+      "importN_other": "Importar {{count}}",
+      "linkedTo": "Vinculado a {{name}} en Contactos",
+      "unlink": "Desvincular",
+      "action": {
+        "call": "Llamar",
+        "text": "Mensaje",
+        "email": "Correo"
+      },
+      "logPrompt": {
+        "call": "¿Registrar una llamada con {{name}}?",
+        "text": "¿Registrar un mensaje con {{name}}?",
+        "email": "¿Registrar un correo a {{name}}?"
+      },
+      "logIt": "Registrar",
+      "cardTitle": "Contactos",
+      "matches_one": "{{count}} persona coincide con un contacto de este teléfono.",
+      "matches_other": "{{count}} personas coinciden con contactos de este teléfono.",
+      "andMore_one": "y {{count}} más",
+      "andMore_other": "y {{count}} más",
+      "linkThem": "Vincular",
+      "notNow": "Ahora no",
+      "birthdayChanged": "En Contactos, el cumpleaños de {{name}} es el {{date}}.",
+      "update": "Actualizar",
+      "keep": "Mantener el mío"
     }
   }
 }

@@ -10,12 +10,14 @@ import {
 } from '@/people/queries'
 import { daysToWeeks, dueDate, isSnoozed, nextOccurrence } from '@/people/home'
 import { hasEnoughForBalance, RECIPROCITY_WINDOW_DAYS } from '@/people/reciprocity'
-import { useShowReciprocity } from '@/people/useShowReciprocity'
+import { useShowReciprocity } from '@/people/settings'
 import { normalizeDirection } from '@/people/types'
-import type { Interaction, PersonCircle, PersonDate, PersonWithLastInteraction } from '@/people/types'
+import type { ContactLink, Interaction, PersonCircle, PersonDate, PersonWithLastInteraction } from '@/people/types'
 import dayjs from 'dayjs'
 import { CHANNEL_ICONS, CHANNEL_LABEL_KEYS, DIRECTION_ICONS, DIRECTION_LABEL_KEYS } from './channels'
 import { ConfirmDelete } from './ConfirmDelete'
+import { ContactActions } from './ContactActions'
+import { ContactsModal } from './ContactsModal'
 import { PersonFormModal } from './PersonFormModal'
 import { QuickLogSheet } from './QuickLogSheet'
 import { dateKindLabel, daysUntilLabel } from './labels'
@@ -26,10 +28,13 @@ interface Props {
   // tagging when logging.
   people: PersonWithLastInteraction[]
   circles: PersonCircle[]
+  // Phone contacts are on and available on this device.
+  contactsAvailable?: boolean
+  links?: ContactLink[]
   onClose: () => void
 }
 
-export function PersonDetailModal({ person, people, circles, onClose }: Props) {
+export function PersonDetailModal({ person, people, circles, contactsAvailable = false, links = [], onClose }: Props) {
   const { t } = useTranslation()
   const [interactions, setInteractions] = useState<Interaction[]>([])
   const [dates, setDates] = useState<PersonDate[]>([])
@@ -37,6 +42,9 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
   const [logging, setLogging] = useState(false)
   const [editInteraction, setEditInteraction] = useState<Interaction | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [linking, setLinking] = useState(false)
+  const [photo, setPhoto] = useState<string | null>(null)
+  const link = links.find(l => l.person_sync_id === person.sync_id) ?? null
   const showReciprocity = useShowReciprocity()
   useEscapeKey(onClose)
 
@@ -76,7 +84,8 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
     >
       <div className="w-full sm:max-w-lg max-h-[90svh] flex flex-col bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700/50">
         <div className="shrink-0 flex items-start justify-between gap-3 px-6 pt-6 pb-3">
-          <div className="min-w-0">
+          {photo && <img src={photo} alt="" className="shrink-0 w-12 h-12 rounded-full object-cover" />}
+          <div className="min-w-0 flex-1">
             <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 truncate">
               {person.name}
               {person.nickname && <span className="ml-2 text-sm font-normal text-slate-400 dark:text-slate-500">{person.nickname}</span>}
@@ -122,6 +131,10 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
           >
             <Plus size={15} /> {t('people.detail.logContact')}
           </button>
+
+          {contactsAvailable && (
+            <ContactActions person={person} link={link} onLink={() => setLinking(true)} onPhoto={setPhoto} />
+          )}
 
           {PreferredIcon && (
             <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
@@ -240,6 +253,9 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
       )}
       {editInteraction && (
         <QuickLogSheet people={people} interaction={editInteraction} onClose={() => setEditInteraction(null)} />
+      )}
+      {linking && (
+        <ContactsModal mode="link" person={person} personDates={dates} links={links} circles={circles} onClose={() => setLinking(false)} />
       )}
       {confirmDelete && (
         <ConfirmDelete

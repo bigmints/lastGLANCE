@@ -668,7 +668,11 @@
     "showReciprocity": "显示谁主动联系",
     "showReciprocityHint": "箭头、“该联系了”中的原因以及每个人的联系比例。隐藏后仍会记录谁主动联系。",
     "show": "显示",
-    "hide": "隐藏"
+    "hide": "隐藏",
+    "phoneContacts": "手机通讯录",
+    "phoneContactsHint": "从通讯录导入联系人，并关联后直接拨打电话、发短信和邮件。只读；号码和地址从不保存或同步。",
+    "on": "开",
+    "off": "关"
   },
   "people": {
     "close": "关闭",
@@ -817,6 +821,48 @@
       "d3": "3 天",
       "d7": "1 周",
       "d14": "2 周"
+    },
+    "contacts": {
+      "importTitle": "从通讯录导入",
+      "linkTitle": "将 {{name}} 关联到通讯录联系人",
+      "importButton": "从通讯录导入",
+      "linkButton": "关联通讯录联系人",
+      "disclosure1": "lastGLANCE 会读取通讯录中的姓名、照片、生日和其他日期、电话号码及邮箱地址，方便你无需重新输入即可添加联系人，并直接从这里拨打电话、发短信或发邮件。",
+      "disclosure2": "除非你导入，否则任何内容都不会离开你的手机。只会保存你选择的姓名和日期，并像其他数据一样加密同步。号码、地址和照片只在使用时读取，从不保存。",
+      "disclosure3": "lastGLANCE 从不修改你的通讯录。",
+      "continue": "继续",
+      "denied": "通讯录访问已关闭。如需使用，请在手机设置中允许 lastGLANCE 访问通讯录。",
+      "loading": "正在读取通讯录…",
+      "error": "无法读取通讯录。",
+      "search": "搜索通讯录",
+      "none": "未找到联系人",
+      "alreadyAdded": "已在“联系人”中",
+      "link": "关联",
+      "importN_one": "导入 {{count}} 位",
+      "importN_other": "导入 {{count}} 位",
+      "linkedTo": "已关联通讯录中的 {{name}}",
+      "unlink": "取消关联",
+      "action": {
+        "call": "电话",
+        "text": "短信",
+        "email": "邮件"
+      },
+      "logPrompt": {
+        "call": "记录与 {{name}} 的通话？",
+        "text": "记录给 {{name}} 的短信？",
+        "email": "记录给 {{name}} 的邮件？"
+      },
+      "logIt": "记录",
+      "cardTitle": "通讯录",
+      "matches_one": "这里有 {{count}} 人与本机通讯录中的联系人匹配。",
+      "matches_other": "这里有 {{count}} 人与本机通讯录中的联系人匹配。",
+      "andMore_one": "等 {{count}} 人",
+      "andMore_other": "等 {{count}} 人",
+      "linkThem": "全部关联",
+      "notNow": "稍后再说",
+      "birthdayChanged": "通讯录中 {{name}} 的生日是 {{date}}。",
+      "update": "更新",
+      "keep": "保留我的"
     }
   }
 }

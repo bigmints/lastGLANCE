@@ -668,7 +668,11 @@
     "showReciprocity": "Mostra chi ha cercato chi",
     "showReciprocityHint": "Frecce, motivi in Fatti sentire e il bilancio di ogni persona. Chi ha cercato chi viene comunque registrato.",
     "show": "Mostra",
-    "hide": "Nascondi"
+    "hide": "Nascondi",
+    "phoneContacts": "Contatti del telefono",
+    "phoneContactsHint": "Importa persone dai contatti e collegale per chiamare, scrivere e inviare email. Sola lettura; numeri e indirizzi non vengono mai salvati né sincronizzati.",
+    "on": "Sì",
+    "off": "No"
   },
   "people": {
     "close": "Chiudi",
@@ -817,6 +821,48 @@
       "d3": "3 giorni",
       "d7": "1 settimana",
       "d14": "2 settimane"
+    },
+    "contacts": {
+      "importTitle": "Importa dai contatti",
+      "linkTitle": "Collega {{name}} a un contatto",
+      "importButton": "Importa dai contatti",
+      "linkButton": "Collega a un contatto",
+      "disclosure1": "lastGLANCE legge nomi, foto, compleanni e altre date, numeri di telefono e indirizzi email dai tuoi contatti, così puoi aggiungere persone senza riscriverle e chiamarle, scrivere o inviare email da qui.",
+      "disclosure2": "Nulla lascia il telefono a meno che tu non lo importi. Vengono salvati solo i nomi e le date che scegli, sincronizzati cifrati come il resto dei dati. Numeri, indirizzi e foto vengono letti quando li usi e mai salvati.",
+      "disclosure3": "lastGLANCE non modifica mai i tuoi contatti.",
+      "continue": "Continua",
+      "denied": "L'accesso ai contatti è disattivato. Per usarlo, consenti Contatti per lastGLANCE nelle impostazioni del telefono.",
+      "loading": "Lettura dei contatti…",
+      "error": "Impossibile leggere i contatti.",
+      "search": "Cerca nei contatti",
+      "none": "Nessun contatto trovato",
+      "alreadyAdded": "Già in Persone",
+      "link": "Collega",
+      "importN_one": "Importa {{count}}",
+      "importN_other": "Importa {{count}}",
+      "linkedTo": "Collegato a {{name}} in Contatti",
+      "unlink": "Scollega",
+      "action": {
+        "call": "Chiama",
+        "text": "Messaggio",
+        "email": "Email"
+      },
+      "logPrompt": {
+        "call": "Registrare una chiamata con {{name}}?",
+        "text": "Registrare un messaggio con {{name}}?",
+        "email": "Registrare un'email a {{name}}?"
+      },
+      "logIt": "Registra",
+      "cardTitle": "Contatti",
+      "matches_one": "{{count}} persona qui corrisponde a un contatto di questo telefono.",
+      "matches_other": "{{count}} persone qui corrispondono a contatti di questo telefono.",
+      "andMore_one": "e {{count}} altra",
+      "andMore_other": "e altre {{count}}",
+      "linkThem": "Collegale",
+      "notNow": "Non ora",
+      "birthdayChanged": "In Contatti il compleanno di {{name}} è il {{date}}.",
+      "update": "Aggiorna",
+      "keep": "Tieni il mio"
     }
   }
 }

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Plus, Trash2, X } from 'lucide-react'
+import { BookUser, Plus, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import { getActiveLocale } from '@/utils/datetime'
@@ -20,6 +20,8 @@ interface Props {
   initialCircleId?: string | null
   onClose: () => void
   onSaved?: (person: Person) => void
+  // Offered on a new person when phone contacts are on.
+  onImport?: () => void
 }
 
 interface DraftDate {
@@ -48,7 +50,7 @@ function parseYear(year: string): number | null | 'invalid' {
   return Number.isInteger(n) && n >= 1 && n <= 9999 ? n : 'invalid'
 }
 
-export function PersonFormModal({ person, dates = [], circles, initialCircleId = null, onClose, onSaved }: Props) {
+export function PersonFormModal({ person, dates = [], circles, initialCircleId = null, onClose, onSaved, onImport }: Props) {
   const { t } = useTranslation()
   const isEdit = Boolean(person)
   const [name, setName] = useState(person?.name ?? '')
@@ -156,6 +158,14 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
         </div>
 
         <div className="flex-1 min-h-0 overflow-y-auto px-6 py-1 space-y-3">
+          {!isEdit && onImport && (
+            <button
+              onClick={onImport}
+              className="w-full flex items-center justify-center gap-2 py-2 rounded-xl text-sm text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors"
+            >
+              <BookUser size={15} /> {t('people.contacts.importButton')}
+            </button>
+          )}
           <div>
             <label className={label}>{t('people.form.name')}</label>
             <input

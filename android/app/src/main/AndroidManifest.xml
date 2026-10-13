@@ -160,4 +160,9 @@
     <!-- Exact alarms for Doze-proof overdue reminders (Android 12+). The plugin
          already declares POST_NOTIFICATIONS and RECEIVE_BOOT_COMPLETED. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <!-- People: read-only address book access for importing and linking people
+         (ContactsPlugin). Requested only when the user taps Import or Link,
+         after the in-app disclosure, and only when the People contacts setting
+         is on. Needs a matching Play Data safety entry. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 </manifest>

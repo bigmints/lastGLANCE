@@ -668,7 +668,11 @@
     "showReciprocity": "Mostrar quem entrou em contacto",
     "showReciprocityHint": "Setas, motivos em Dê notícias e o balanço de cada pessoa. Quem entrou em contacto continua a ser registado mesmo oculto.",
     "show": "Mostrar",
-    "hide": "Ocultar"
+    "hide": "Ocultar",
+    "phoneContacts": "Contactos do telefone",
+    "phoneContactsHint": "Importe pessoas dos seus contactos e associe-as para ligar, enviar mensagens e e-mails. Só leitura; números e endereços nunca são guardados nem sincronizados.",
+    "on": "Sim",
+    "off": "Não"
   },
   "people": {
     "close": "Fechar",
@@ -817,6 +821,48 @@
       "d3": "3 dias",
       "d7": "1 semana",
       "d14": "2 semanas"
+    },
+    "contacts": {
+      "importTitle": "Importar dos contactos",
+      "linkTitle": "Associar {{name}} a um contacto",
+      "importButton": "Importar dos contactos",
+      "linkButton": "Associar a um contacto",
+      "disclosure1": "O lastGLANCE lê nomes, fotografias, aniversários e outras datas, números de telefone e endereços de e-mail dos seus contactos, para poder adicionar pessoas sem as escrever de novo e ligar-lhes, enviar mensagens ou e-mails a partir daqui.",
+      "disclosure2": "Nada sai do telefone a menos que o importe. Só são guardados os nomes e as datas que escolher, sincronizados de forma cifrada como os restantes dados. Números, endereços e fotografias são lidos quando os usa e nunca são guardados.",
+      "disclosure3": "O lastGLANCE nunca altera os seus contactos.",
+      "continue": "Continuar",
+      "denied": "O acesso aos contactos está desativado. Para o usar, permita Contactos para o lastGLANCE nas definições do telefone.",
+      "loading": "A ler os contactos…",
+      "error": "Não foi possível ler os contactos.",
+      "search": "Procurar contactos",
+      "none": "Nenhum contacto encontrado",
+      "alreadyAdded": "Já está em Pessoas",
+      "link": "Associar",
+      "importN_one": "Importar {{count}}",
+      "importN_other": "Importar {{count}}",
+      "linkedTo": "Associado a {{name}} nos Contactos",
+      "unlink": "Desassociar",
+      "action": {
+        "call": "Ligar",
+        "text": "Mensagem",
+        "email": "E-mail"
+      },
+      "logPrompt": {
+        "call": "Registar uma chamada com {{name}}?",
+        "text": "Registar uma mensagem com {{name}}?",
+        "email": "Registar um e-mail para {{name}}?"
+      },
+      "logIt": "Registar",
+      "cardTitle": "Contactos",
+      "matches_one": "{{count}} pessoa corresponde a um contacto deste telefone.",
+      "matches_other": "{{count}} pessoas correspondem a contactos deste telefone.",
+      "andMore_one": "e mais {{count}}",
+      "andMore_other": "e mais {{count}}",
+      "linkThem": "Associar",
+      "notNow": "Agora não",
+      "birthdayChanged": "Nos Contactos, o aniversário de {{name}} é a {{date}}.",
+      "update": "Atualizar",
+      "keep": "Manter o meu"
     }
   }
 }

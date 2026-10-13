@@ -668,7 +668,11 @@
     "showReciprocity": "Afficher qui a pris contact",
     "showReciprocityHint": "Flèches, raisons dans « À recontacter » et bilan sur chaque personne. Qui a pris contact reste enregistré même masqué.",
     "show": "Afficher",
-    "hide": "Masquer"
+    "hide": "Masquer",
+    "phoneContacts": "Contacts du téléphone",
+    "phoneContactsHint": "Importez des proches depuis vos contacts et liez-les pour appeler, écrire ou envoyer un e-mail. Lecture seule ; les numéros et adresses ne sont jamais enregistrés ni synchronisés.",
+    "on": "Oui",
+    "off": "Non"
   },
   "people": {
     "close": "Fermer",
@@ -817,6 +821,48 @@
       "d3": "3 jours",
       "d7": "1 semaine",
       "d14": "2 semaines"
+    },
+    "contacts": {
+      "importTitle": "Importer des contacts",
+      "linkTitle": "Lier {{name}} à un contact",
+      "importButton": "Importer des contacts",
+      "linkButton": "Lier à un contact",
+      "disclosure1": "lastGLANCE lit les noms, photos, anniversaires et autres dates, numéros de téléphone et adresses e-mail de vos contacts, pour ajouter des proches sans les ressaisir et les appeler, leur écrire ou leur envoyer un e-mail d'ici.",
+      "disclosure2": "Rien ne quitte votre téléphone sauf ce que vous importez. Seuls les noms et dates choisis sont enregistrés, et ils sont synchronisés chiffrés comme le reste de vos données. Numéros, adresses et photos sont lus à l'usage et jamais enregistrés.",
+      "disclosure3": "lastGLANCE ne modifie jamais vos contacts.",
+      "continue": "Continuer",
+      "denied": "L'accès aux contacts est désactivé. Pour l'utiliser, autorisez Contacts pour lastGLANCE dans les réglages du téléphone.",
+      "loading": "Lecture des contacts…",
+      "error": "Impossible de lire vos contacts.",
+      "search": "Rechercher des contacts",
+      "none": "Aucun contact trouvé",
+      "alreadyAdded": "Déjà dans Proches",
+      "link": "Lier",
+      "importN_one": "Importer {{count}}",
+      "importN_other": "Importer {{count}}",
+      "linkedTo": "Lié à {{name}} dans Contacts",
+      "unlink": "Délier",
+      "action": {
+        "call": "Appeler",
+        "text": "SMS",
+        "email": "E-mail"
+      },
+      "logPrompt": {
+        "call": "Noter un appel avec {{name}} ?",
+        "text": "Noter un message avec {{name}} ?",
+        "email": "Noter un e-mail à {{name}} ?"
+      },
+      "logIt": "Noter",
+      "cardTitle": "Contacts",
+      "matches_one": "{{count}} personne ici correspond à un contact de ce téléphone.",
+      "matches_other": "{{count}} personnes ici correspondent à des contacts de ce téléphone.",
+      "andMore_one": "et {{count}} autre",
+      "andMore_other": "et {{count}} autres",
+      "linkThem": "Les lier",
+      "notNow": "Pas maintenant",
+      "birthdayChanged": "Dans Contacts, l'anniversaire de {{name}} est le {{date}}.",
+      "update": "Mettre à jour",
+      "keep": "Garder le mien"
     }
   }
 }

@@ -668,7 +668,11 @@
     "showReciprocity": "Show who reached out",
     "showReciprocityHint": "Arrows, Reach out reasons and the balance on a person. Who reached out is still recorded when hidden.",
     "show": "Show",
-    "hide": "Hide"
+    "hide": "Hide",
+    "phoneContacts": "Phone contacts",
+    "phoneContactsHint": "Import people from your contacts and link them for Call, Text and Email. Read only; numbers and addresses are never stored or synced.",
+    "on": "On",
+    "off": "Off"
   },
   "people": {
     "close": "Close",
@@ -817,6 +821,48 @@
       "d3": "3 days",
       "d7": "1 week",
       "d14": "2 weeks"
+    },
+    "contacts": {
+      "importTitle": "Import from contacts",
+      "linkTitle": "Link {{name}} to a contact",
+      "importButton": "Import from contacts",
+      "linkButton": "Link to contact",
+      "disclosure1": "lastGLANCE reads names, photos, birthdays and other dates, phone numbers and email addresses from your contacts, so you can add people without retyping them and call, text or email them from here.",
+      "disclosure2": "Nothing leaves your phone unless you import it. Only the names and dates you pick are saved, and they sync encrypted like the rest of your data. Numbers, addresses and photos are read when you use them and never stored.",
+      "disclosure3": "lastGLANCE never changes your contacts.",
+      "continue": "Continue",
+      "denied": "Contacts access is off. To use it, allow Contacts for lastGLANCE in your phone's settings.",
+      "loading": "Reading contacts…",
+      "error": "Couldn't read your contacts.",
+      "search": "Search contacts",
+      "none": "No contacts found",
+      "alreadyAdded": "Already in People",
+      "link": "Link",
+      "importN_one": "Import {{count}}",
+      "importN_other": "Import {{count}}",
+      "linkedTo": "Linked to {{name}} in Contacts",
+      "unlink": "Unlink",
+      "action": {
+        "call": "Call",
+        "text": "Text",
+        "email": "Email"
+      },
+      "logPrompt": {
+        "call": "Log a call with {{name}}?",
+        "text": "Log a text with {{name}}?",
+        "email": "Log an email to {{name}}?"
+      },
+      "logIt": "Log it",
+      "cardTitle": "Contacts",
+      "matches_one": "{{count}} person here matches a contact on this phone.",
+      "matches_other": "{{count}} people here match contacts on this phone.",
+      "andMore_one": "and {{count}} more",
+      "andMore_other": "and {{count}} more",
+      "linkThem": "Link them",
+      "notNow": "Not now",
+      "birthdayChanged": "Contacts has {{name}}'s birthday as {{date}}.",
+      "update": "Update",
+      "keep": "Keep mine"
     }
   }
 }
