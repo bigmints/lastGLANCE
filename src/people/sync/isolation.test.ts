@@ -45,7 +45,7 @@ const { setVaultConfig } = await import('@/sync/vaultConfig')
 const { createPeopleDbEngine, isUnknownAppError, PEOPLE_VAULT_APP } = await import('./dbEngine')
 const { createPeopleFileEngine, PEOPLE_SYNC_FILENAME } = await import('./fileEngine')
 const { mergePayloads } = await import('@/sync/engine')
-const { PEOPLE_VAULT_SYNC_KEY } = await import('../flag')
+const { PEOPLE_VAULT_SYNC_KEY } = await import('../vaultSync')
 
 beforeEach(() => {
   localStorage.clear()

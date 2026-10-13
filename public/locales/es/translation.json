@@ -207,9 +207,6 @@
     "allowPersistentStorage": "Permitir almacenamiento persistente",
     "storageInfo": "Almacenamiento: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
-    "peopleOn": "«Personas» activado",
-    "peopleOff": "«Personas» desactivado",
-    "peopleRestarting": "Reiniciando para aplicar…",
     "shortcuts": "atajos"
   },
   "iconPicker": {

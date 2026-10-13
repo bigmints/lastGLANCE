@@ -43,7 +43,6 @@ import { formatDate } from '@/utils/datetime'
 import { completionsLabel } from '@/utils/completionsLabel'
 import { createEngine, initSessionKey, setupEncryptionKey, runAutoBackups, ensureSyncFolder, CRYPTO_CONFIG, DB_CRYPTO_CONFIG, getSyncWebdavConfig } from '@/sync/engine'
 import { createDbEngine } from '@/sync/dbEngine'
-import { isPeopleEnabled } from '@/people/flag'
 import { PeopleHome, PEOPLE_ADD_EVENT, PEOPLE_CIRCLES_EVENT } from '@/components/People/PeopleHome'
 import { hasOpenSurface } from '@/utils/dismissStack'
 import { peekPendingOpenChore } from '@/native/pendingOpenChore'
@@ -177,13 +176,11 @@ function AppInner() {
   // gated stays false and the hard gate below never renders).
   const billing = useSubscription()
   const [editMode, setEditMode] = useState(false)
-  // Chores | People. The switch exists only while the People flag is on; with
-  // it off the app is chores-only, whatever was last remembered.
-  const [peopleEnabled] = useState(isPeopleEnabled)
+  // Chores | People.
   // A notification tap that launched the app is about a chore, so it opens on
   // chores whatever mode was last used.
   const [mode, setModeState] = useState<AppMode>(() =>
-    peopleEnabled && localStorage.getItem(MODE_KEY) === 'people' && !peekPendingOpenChore() ? 'people' : 'chores')
+    localStorage.getItem(MODE_KEY) === 'people' && !peekPendingOpenChore() ? 'people' : 'chores')
   const setMode = (next: AppMode) => {
     setModeState(next)
     setEditMode(false)
@@ -194,11 +191,10 @@ function AppInner() {
   const choresMode = mode === 'chores'
 
   useEffect(() => {
-    if (!peopleEnabled) return
     const toChores = () => { if (modeRef.current !== 'chores') setModeState('chores') }
     for (const name of CHORE_EVENTS) window.addEventListener(name, toChores)
     return () => { for (const name of CHORE_EVENTS) window.removeEventListener(name, toChores) }
-  }, [peopleEnabled])
+  }, [])
   const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem('lg-welcome-dismissed'))
   const [welcomeClearing, setWelcomeClearing] = useState(false)
   const [showBackup, setShowBackup] = useState(false)
@@ -246,7 +242,7 @@ function AppInner() {
   // Runs alongside the file engine; does not affect the file sync path.
   const dbEngineRef = useRef<DbSyncEngine | null>(null)
   // People mode's own sync roads (lastglance-people.json and the
-  // lastglance-people vault app). Null unless the People flag is on.
+  // lastglance-people vault app). Null until sync starts.
   const peopleFileEngineRef = useRef<SyncEngine | null>(null)
   const peopleDbEngineRef = useRef<DbSyncEngine | null>(null)
   const [syncStatus, setSyncStatus] = useState<SyncStatus>('idle')
@@ -391,15 +387,13 @@ function AppInner() {
     dbEngineRef.current = dbEngine
     registerDbEngine(dbEngine)
 
-    if (isPeopleEnabled()) {
-      peopleFileEngineRef.current = createPeopleFileEngine(import.meta.env.VITE_WEBDAV_PROXY_URL, engine)
-      const peopleDb = createPeopleDbEngine({
-        onError: (msg, code) => { if (msg) console.warn('[lastglance] people vault sync error:', code ?? '(no code)', msg) },
-        onUnsupported: () => console.warn('[lastglance] vault does not know lastglance-people yet; People sync on the file road only'),
-      })
-      peopleDbEngineRef.current = peopleDb
-      registerPeopleDbEngine(peopleDb)
-    }
+    peopleFileEngineRef.current = createPeopleFileEngine(import.meta.env.VITE_WEBDAV_PROXY_URL, engine)
+    const peopleDb = createPeopleDbEngine({
+      onError: (msg, code) => { if (msg) console.warn('[lastglance] people vault sync error:', code ?? '(no code)', msg) },
+      onUnsupported: () => console.warn('[lastglance] vault does not know lastglance-people yet; People sync on the file road only'),
+    })
+    peopleDbEngineRef.current = peopleDb
+    registerPeopleDbEngine(peopleDb)
 
     deduplicateUsers()
       .catch(() => {})
@@ -678,27 +672,25 @@ function AppInner() {
             <p className="text-xs text-slate-400 dark:text-slate-600 mt-1 tracking-wide">{t('app.tagline')}</p>
             {/* Under the wordmark rather than in a row of its own, so the
                 switch costs no vertical space below the header. */}
-            {peopleEnabled && (
-              <nav className="mt-2.5" aria-label={t('app.modeSwitch')}>
-                <div className="inline-flex p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900" role="tablist">
-                  {(['chores', 'people'] as const).map(m => (
-                    <button
-                      key={m}
-                      role="tab"
-                      aria-selected={mode === m}
-                      onClick={() => setMode(m)}
-                      className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
-                        mode === m
-                          ? 'bg-white dark:bg-slate-800 text-green-500 dark:text-green-400 shadow-sm'
-                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                      }`}
-                    >
-                      {m === 'chores' ? t('app.modeChores') : t('app.modePeople')}
-                    </button>
-                  ))}
-                </div>
-              </nav>
-            )}
+            <nav className="mt-2.5" aria-label={t('app.modeSwitch')}>
+              <div className="inline-flex p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900" role="tablist">
+                {(['chores', 'people'] as const).map(m => (
+                  <button
+                    key={m}
+                    role="tab"
+                    aria-selected={mode === m}
+                    onClick={() => setMode(m)}
+                    className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                      mode === m
+                        ? 'bg-white dark:bg-slate-800 text-green-500 dark:text-green-400 shadow-sm'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    {m === 'chores' ? t('app.modeChores') : t('app.modePeople')}
+                  </button>
+                ))}
+              </div>
+            </nav>
           </div>
 
           {heatmapWeeks.length > 0 && (
