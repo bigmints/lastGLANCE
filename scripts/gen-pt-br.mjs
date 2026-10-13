@@ -231,6 +231,10 @@ const RULES = [
 // Whole-string replacements for the handful of sentences a word-level rule
 // cannot rebuild — passive reordering and the addressee pronoun.
 const OVERRIDES = {
+  // Brazilian quotes and gerund for the hidden People switch.
+  'help.peopleOn': '"Pessoas" ativado',
+  'help.peopleOff': '"Pessoas" desativado',
+  'help.peopleRestarting': 'Reiniciando para aplicar…',
   // "É guardada primeiro uma cópia…" — the fronted feminine passive has no
   // masculine word-for-word counterpart once the noun is "backup".
   'backup.snapshotNote':

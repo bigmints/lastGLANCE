@@ -203,6 +203,9 @@
     "allowPersistentStorage": "Consenti archiviazione persistente",
     "storageInfo": "Spazio: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "«Persone» attivato",
+    "peopleOff": "«Persone» disattivato",
+    "peopleRestarting": "Riavvio per applicare…",
     "shortcuts": "scorciatoie"
   },
   "iconPicker": {

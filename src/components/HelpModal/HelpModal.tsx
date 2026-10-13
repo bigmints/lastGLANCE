@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X, HelpCircle, ExternalLink } from 'lucide-react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import { isNativePlatform } from '@/sync/nativeHttp'
 import { useTranslation } from 'react-i18next'
 import { formatDateTime } from '@/utils/datetime'
+import { useToast } from '@/components/Toast/Toast'
+import { isPeopleEnabled, registerTap, setPeopleEnabled, UNLOCK_TAPS } from '@/people/flag'
 
 interface Props {
   onClose: () => void
@@ -66,6 +68,20 @@ export function HelpContent({ onOpenShortcuts }: { onOpenShortcuts: () => void }
   const { t } = useTranslation()
   const [storage, setStorage] = useState<{ used: number; quota: number } | null>(null)
   const [persisted, setPersisted] = useState<boolean | null>(null)
+  const { showToast } = useToast()
+  const taps = useRef({ count: 0, at: 0 })
+
+  // Seven quick taps on the version toggle People mode. The app reads the
+  // flag once at startup, so it reloads to apply it.
+  function onVersionTap() {
+    taps.current = registerTap(taps.current, Date.now())
+    if (taps.current.count < UNLOCK_TAPS) return
+    taps.current = { count: 0, at: 0 }
+    const on = !isPeopleEnabled()
+    setPeopleEnabled(on)
+    showToast({ title: t(on ? 'help.peopleOn' : 'help.peopleOff'), body: t('help.peopleRestarting'), type: 'success' })
+    setTimeout(() => window.location.reload(), 1200)
+  }
 
   useEffect(() => {
     navigator.storage?.estimate().then(est => {
@@ -141,7 +157,7 @@ export function HelpContent({ onOpenShortcuts }: { onOpenShortcuts: () => void }
               {t('help.storageInfo', { used: fmtBytes(storage.used), quota: fmtBytes(storage.quota) })}
             </p>
           )}
-          <p className="text-xs text-slate-400 dark:text-slate-500">
+          <p className="text-xs text-slate-400 dark:text-slate-500 select-none" onClick={onVersionTap}>
             {t('help.versionInfo', { version: __APP_VERSION__, date: buildDate })}
           </p>
         </div>

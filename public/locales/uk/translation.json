@@ -207,6 +207,9 @@
     "allowPersistentStorage": "Дозволити доступ до постійного сховища",
     "storageInfo": "Сховище: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "«Люди» увімкнено",
+    "peopleOff": "«Люди» вимкнено",
+    "peopleRestarting": "Перезапуск для застосування…",
     "shortcuts": "комбінації клавіш"
   },
   "iconPicker": {

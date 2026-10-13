@@ -203,6 +203,9 @@
     "allowPersistentStorage": "Autoriser le stockage persistant",
     "storageInfo": "Stockage : {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "« Proches » activé",
+    "peopleOff": "« Proches » désactivé",
+    "peopleRestarting": "Redémarrage pour appliquer…",
     "shortcuts": "raccourcis"
   },
   "iconPicker": {

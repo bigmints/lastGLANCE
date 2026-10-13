@@ -203,6 +203,9 @@
     "allowPersistentStorage": "Dauerhaften Speicher erlauben",
     "storageInfo": "Speicher: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "„Menschen“ aktiviert",
+    "peopleOff": "„Menschen“ deaktiviert",
+    "peopleRestarting": "Neustart zum Übernehmen…",
     "shortcuts": "Tastenkürzel"
   },
   "iconPicker": {

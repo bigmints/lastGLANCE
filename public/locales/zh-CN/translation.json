@@ -203,6 +203,9 @@
     "allowPersistentStorage": "允许持久化存储",
     "storageInfo": "存储：{{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "已开启“联系人”",
+    "peopleOff": "已关闭“联系人”",
+    "peopleRestarting": "正在重启以生效…",
     "shortcuts": "快捷键"
   },
   "iconPicker": {
