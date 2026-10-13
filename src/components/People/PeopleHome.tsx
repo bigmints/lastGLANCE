@@ -1,15 +1,19 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Plus, UserPlus, Users } from 'lucide-react'
+import { BookUser, Plus, UserPlus, Users } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useUsersContext } from '@/multiuser/UsersContext'
 import { createCircle } from '@/people/queries'
 import { groupByCircle, reachOutList, upcomingDates, visibleToMe } from '@/people/home'
 import type { ReachOutItem, UpcomingDate } from '@/people/home'
 import { usePeopleData } from '@/people/usePeopleData'
-import { useShowReciprocity } from '@/people/useShowReciprocity'
+import { usePeopleContacts } from '@/people/useContacts'
+import { useShowReciprocity } from '@/people/settings'
 import type { InteractionDirection, PersonWithLastInteraction } from '@/people/types'
 import { formatMonthShort } from '@/utils/datetime'
 import { CircleManagerModal } from './CircleManagerModal'
+import { ContactsModal } from './ContactsModal'
+import { ContactsNotices } from './ContactsNotices'
+import { ReturnToLogPrompt } from './ReturnToLog'
 import { PersonDetailModal } from './PersonDetailModal'
 import { PersonFormModal } from './PersonFormModal'
 import { PersonRow } from './PersonRow'
@@ -96,6 +100,8 @@ export function PeopleHome() {
   const { multiUserEnabled, meId } = useUsersContext()
   const { people: all, circles, dates, loading } = usePeopleData()
   const showReciprocity = useShowReciprocity()
+  const contacts = usePeopleContacts()
+  const [importing, setImporting] = useState<{ circleId: string | null } | null>(null)
   const [openId, setOpenId] = useState<string | null>(null)
   const [logFor, setLogFor] = useState<{ ids: string[]; direction: InteractionDirection | null } | null>(null)
   const [adding, setAdding] = useState<{ circleId: string | null } | null>(null)
@@ -219,6 +225,14 @@ export function PeopleHome() {
           >
             <UserPlus size={15} /> {t('people.empty.addFirst')}
           </button>
+          {contacts.available && (
+            <button
+              onClick={() => setImporting({ circleId: null })}
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700/60 transition-colors"
+            >
+              <BookUser size={15} /> {t('people.contacts.importButton')}
+            </button>
+          )}
           {circles.length === 0 && (
             <button
               onClick={addStarterCircles}
@@ -235,6 +249,7 @@ export function PeopleHome() {
         // runs the full height and meets the header's bottom border.
         <div className="grow shrink-0 p-4 min-[1060px]:p-0 flex flex-col min-[1060px]:flex-row gap-5 min-[1060px]:gap-0">
           <div className="w-full min-[1060px]:w-[429px] shrink-0 grid grid-cols-1 sm:grid-cols-2 min-[1060px]:grid-cols-1 items-start content-start gap-5 min-[1060px]:p-6 min-[1060px]:border-r border-slate-200 dark:border-slate-800/80">
+            <ContactsNotices contacts={contacts} people={active} />
             <Card title={t('people.home.reachOut')}>
               {reachOut.length
                 ? <div className="space-y-2">{reachOut.map(item => row(item.person, true, reasonText(item)))}</div>
@@ -264,7 +279,14 @@ export function PeopleHome() {
       )}
 
       {open && (
-        <PersonDetailModal person={open} people={mine} circles={circles} onClose={() => setOpenId(null)} />
+        <PersonDetailModal
+          person={open}
+          people={mine}
+          circles={circles}
+          contactsAvailable={contacts.available}
+          links={contacts.links}
+          onClose={() => setOpenId(null)}
+        />
       )}
       {logFor && (
         <QuickLogSheet
@@ -278,9 +300,20 @@ export function PeopleHome() {
         <PersonFormModal
           circles={circles}
           initialCircleId={adding.circleId}
+          onImport={contacts.available ? () => { setImporting({ circleId: adding.circleId }); setAdding(null) } : undefined}
           onClose={() => setAdding(null)}
         />
       )}
+      {importing && (
+        <ContactsModal
+          mode="import"
+          initialCircleId={importing.circleId}
+          links={contacts.links}
+          circles={circles}
+          onClose={() => setImporting(null)}
+        />
+      )}
+      {contacts.available && <ReturnToLogPrompt />}
       {managingCircles && (
         <CircleManagerModal circles={circles} onClose={() => setManagingCircles(false)} />
       )}

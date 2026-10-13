@@ -6,7 +6,7 @@ import { cadenceRatio } from '@/people/home'
 import { formatElapsed, getCadenceColor } from '@/utils/cadence'
 import { logInteraction, updatePerson } from '@/people/queries'
 import { SNOOZE_DAYS, snoozeUntil } from '@/people/home'
-import { useShowReciprocity } from '@/people/useShowReciprocity'
+import { useShowReciprocity } from '@/people/settings'
 import { CHANNEL_ICONS, DIRECTION_ICONS } from './channels'
 
 interface Props {

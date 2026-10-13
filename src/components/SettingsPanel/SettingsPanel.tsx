@@ -9,7 +9,8 @@ import type { SyncEngine } from '@glance-apps/sync'
 import type { UseBillingResult } from '@glance-apps/billing/react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import { isPeopleEnabled } from '@/people/flag'
-import { setReciprocityShown, useShowReciprocity } from '@/people/useShowReciprocity'
+import { setContactsEnabled, setReciprocityShown, useContactsEnabled, useShowReciprocity } from '@/people/settings'
+import { contactsSupported } from '@/native/contacts'
 import { LanguagePicker } from '@/components/LanguagePicker/LanguagePicker'
 import { UsersPanel } from '@/components/UsersPanel/UsersPanel'
 import { BackupPanel } from '@/components/BackupModal/BackupModal'
@@ -66,6 +67,7 @@ export function SettingsPanel(props: Props) {
 
   const [peopleEnabled] = useState(isPeopleEnabled)
   const showReciprocity = useShowReciprocity()
+  const contactsEnabled = useContactsEnabled()
 
   const toggle = (id: SectionId) => setOpen(o => (o === id ? null : id))
 
@@ -155,6 +157,20 @@ export function SettingsPanel(props: Props) {
                 />
                 <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.showReciprocityHint')}</p>
               </Field>
+              {contactsSupported() && (
+                <Field label={t('settings.phoneContacts')}>
+                  <Segmented<'on' | 'off'>
+                    label={t('settings.phoneContacts')}
+                    value={contactsEnabled ? 'on' : 'off'}
+                    onChange={v => setContactsEnabled(v === 'on')}
+                    options={[
+                      { value: 'on', label: t('settings.on') },
+                      { value: 'off', label: t('settings.off') },
+                    ]}
+                  />
+                  <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.phoneContactsHint')}</p>
+                </Field>
+              )}
             </Section>
           )}
 

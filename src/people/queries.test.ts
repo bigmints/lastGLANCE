@@ -4,8 +4,8 @@ import dayjs from 'dayjs'
 import { db } from '@/db/client'
 import {
   addPersonDate, createCircle, createPerson, deleteCircle, deleteInteraction, deletePerson,
-  getDatesForPerson, getInteractionsForPerson, getPeople, getPerson, logInteraction,
-  updateInteraction, updatePerson,
+  getContactLinks, getDatesForPerson, getInteractionsForPerson, getPeople, getPerson, logInteraction,
+  removeContactLink, setContactLink, updateInteraction, updatePerson,
 } from './queries'
 
 // markPeopleDirty is a no-op without a registered People vault engine, and
@@ -153,5 +153,17 @@ describe('circles', () => {
     await deleteCircle(family.sync_id)
     expect((await getPerson(a.sync_id))!.circle_sync_id).toBeNull()
     expect(await db.peopleTombstones.get(family.sync_id)).toBeDefined()
+  })
+})
+
+describe('contact links', () => {
+  it('sets, moves and removes a device-local link', async () => {
+    const a = await createPerson({ name: 'Ana' })
+    await setContactLink(a.sync_id, 'look/1')
+    await setContactLink(a.sync_id, 'look/2')
+    expect((await getContactLinks()).map(l => [l.person_sync_id, l.device_contact_key])).toEqual([[a.sync_id, 'look/2']])
+    await removeContactLink(a.sync_id)
+    expect(await getContactLinks()).toEqual([])
+    expect(await getPerson(a.sync_id)).toBeDefined()
   })
 })

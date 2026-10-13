@@ -668,7 +668,11 @@
     "showReciprocity": "Zeigen, wer sich gemeldet hat",
     "showReciprocityHint": "Pfeile, Gründe unter „Melde dich mal“ und die Bilanz bei einer Person. Wer sich gemeldet hat, wird weiterhin gespeichert.",
     "show": "Zeigen",
-    "hide": "Ausblenden"
+    "hide": "Ausblenden",
+    "phoneContacts": "Telefonkontakte",
+    "phoneContactsHint": "Menschen aus deinen Kontakten importieren und für Anruf, SMS und E-Mail verknüpfen. Nur lesend; Nummern und Adressen werden nie gespeichert oder synchronisiert.",
+    "on": "An",
+    "off": "Aus"
   },
   "people": {
     "close": "Schließen",
@@ -817,6 +821,48 @@
       "d3": "3 Tage",
       "d7": "1 Woche",
       "d14": "2 Wochen"
+    },
+    "contacts": {
+      "importTitle": "Aus Kontakten importieren",
+      "linkTitle": "{{name}} mit einem Kontakt verknüpfen",
+      "importButton": "Aus Kontakten importieren",
+      "linkButton": "Mit Kontakt verknüpfen",
+      "disclosure1": "lastGLANCE liest Namen, Fotos, Geburtstage und andere Daten, Telefonnummern und E-Mail-Adressen aus deinen Kontakten, damit du Menschen nicht abtippen musst und sie von hier aus anrufen, ihnen schreiben oder mailen kannst.",
+      "disclosure2": "Nichts verlässt dein Telefon, außer du importierst es. Gespeichert werden nur die Namen und Daten, die du auswählst, und sie werden wie deine übrigen Daten verschlüsselt synchronisiert. Nummern, Adressen und Fotos werden bei Bedarf gelesen und nie gespeichert.",
+      "disclosure3": "lastGLANCE ändert deine Kontakte nie.",
+      "continue": "Weiter",
+      "denied": "Der Zugriff auf Kontakte ist aus. Erlaube Kontakte für lastGLANCE in den Einstellungen deines Telefons, um ihn zu nutzen.",
+      "loading": "Kontakte werden gelesen…",
+      "error": "Deine Kontakte konnten nicht gelesen werden.",
+      "search": "Kontakte suchen",
+      "none": "Keine Kontakte gefunden",
+      "alreadyAdded": "Schon bei Menschen",
+      "link": "Verknüpfen",
+      "importN_one": "{{count}} importieren",
+      "importN_other": "{{count}} importieren",
+      "linkedTo": "Verknüpft mit {{name}} in Kontakte",
+      "unlink": "Lösen",
+      "action": {
+        "call": "Anrufen",
+        "text": "SMS",
+        "email": "E-Mail"
+      },
+      "logPrompt": {
+        "call": "Anruf mit {{name}} erfassen?",
+        "text": "Nachricht an {{name}} erfassen?",
+        "email": "E-Mail an {{name}} erfassen?"
+      },
+      "logIt": "Erfassen",
+      "cardTitle": "Kontakte",
+      "matches_one": "{{count}} Person hier passt zu einem Kontakt auf diesem Telefon.",
+      "matches_other": "{{count}} Personen hier passen zu Kontakten auf diesem Telefon.",
+      "andMore_one": "und {{count}} weitere",
+      "andMore_other": "und {{count}} weitere",
+      "linkThem": "Verknüpfen",
+      "notNow": "Nicht jetzt",
+      "birthdayChanged": "In Kontakte ist der Geburtstag von {{name}} am {{date}}.",
+      "update": "Übernehmen",
+      "keep": "Meinen behalten"
     }
   }
 }

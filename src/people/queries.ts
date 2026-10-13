@@ -10,7 +10,7 @@ import { markPeopleDirty } from './sync/dirtyTracker'
 import { normalizeDirection } from './types'
 import { reciprocitySignals } from './reciprocity'
 import type {
-  Interaction, InteractionChannel, InteractionDirection, InteractionSource, Person, PersonCircle,
+  ContactLink, Interaction, InteractionChannel, InteractionDirection, InteractionSource, Person, PersonCircle,
   PersonDate, PersonDateKind, PersonWithLastInteraction,
 } from './types'
 
@@ -362,4 +362,22 @@ export async function getCircles(): Promise<PersonCircle[]> {
 
 export async function getAllPersonDates(): Promise<PersonDate[]> {
   return db.personDates.toArray()
+}
+
+// ── Contact links (device-local) ─────────────────────────────────────────────
+// Which phone contact a person is linked to on this device. Contact keys
+// differ on every device, so links never sync and nothing here marks dirty.
+
+export async function getContactLinks(): Promise<ContactLink[]> {
+  return db.contactLinks.toArray()
+}
+
+export async function setContactLink(personSyncId: string, deviceContactKey: string): Promise<void> {
+  await db.contactLinks.put({ person_sync_id: personSyncId, device_contact_key: deviceContactKey, last_synced_at: now() })
+  notifyChanged()
+}
+
+export async function removeContactLink(personSyncId: string): Promise<void> {
+  await db.contactLinks.delete(personSyncId)
+  notifyChanged()
 }
