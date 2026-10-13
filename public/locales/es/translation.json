@@ -696,7 +696,9 @@
       "emptyCircle": "Todavía no hay nadie.",
       "addToCircle": "Añadir una persona a {{circle}}",
       "showArchived": "Mostrar archivados ({{n}})",
-      "hideArchived": "Ocultar archivados"
+      "hideArchived": "Ocultar archivados",
+      "reachOutEmpty": "Ahora mismo no le toca a nadie.",
+      "comingUpEmpty": "No hay fechas en los próximos 30 días."
     },
     "empty": {
       "title": "Mantente cerca de tu gente",

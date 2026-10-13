@@ -696,7 +696,9 @@
       "emptyCircle": "这里还没有人。",
       "addToCircle": "添加联系人到 {{circle}}",
       "showArchived": "显示已归档（{{n}}）",
-      "hideArchived": "隐藏已归档"
+      "hideArchived": "隐藏已归档",
+      "reachOutEmpty": "目前没有需要联系的人。",
+      "comingUpEmpty": "未来 30 天内没有日期。"
     },
     "empty": {
       "title": "与你在乎的人保持联系",

@@ -696,7 +696,9 @@
       "emptyCircle": "Noch niemand hier.",
       "addToCircle": "Person zu {{circle}} hinzufügen",
       "showArchived": "Archivierte anzeigen ({{n}})",
-      "hideArchived": "Archivierte ausblenden"
+      "hideArchived": "Archivierte ausblenden",
+      "reachOutEmpty": "Gerade ist niemand dran.",
+      "comingUpEmpty": "Keine Daten in den nächsten 30 Tagen."
     },
     "empty": {
       "title": "Bleib mit deinen Menschen in Kontakt",

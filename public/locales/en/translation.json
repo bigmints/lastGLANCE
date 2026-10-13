@@ -696,7 +696,9 @@
       "emptyCircle": "Nobody here yet.",
       "addToCircle": "Add a person to {{circle}}",
       "showArchived": "Show archived ({{n}})",
-      "hideArchived": "Hide archived"
+      "hideArchived": "Hide archived",
+      "reachOutEmpty": "Nobody is due right now.",
+      "comingUpEmpty": "No dates in the next 30 days."
     },
     "empty": {
       "title": "Keep up with your people",

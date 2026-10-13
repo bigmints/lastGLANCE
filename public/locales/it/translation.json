@@ -696,7 +696,9 @@
       "emptyCircle": "Ancora nessuno.",
       "addToCircle": "Aggiungi una persona a {{circle}}",
       "showArchived": "Mostra archiviati ({{n}})",
-      "hideArchived": "Nascondi archiviati"
+      "hideArchived": "Nascondi archiviati",
+      "reachOutEmpty": "Al momento non tocca a nessuno.",
+      "comingUpEmpty": "Nessuna data nei prossimi 30 giorni."
     },
     "empty": {
       "title": "Resta vicino alle tue persone",

@@ -726,7 +726,9 @@
       "emptyCircle": "Nikogo tu jeszcze nie ma.",
       "addToCircle": "Dodaj osobę do kręgu {{circle}}",
       "showArchived": "Pokaż zarchiwizowane ({{n}})",
-      "hideArchived": "Ukryj zarchiwizowane"
+      "hideArchived": "Ukryj zarchiwizowane",
+      "reachOutEmpty": "Na razie do nikogo nie trzeba się odzywać.",
+      "comingUpEmpty": "Brak dat w ciągu najbliższych 30 dni."
     },
     "empty": {
       "title": "Bądź blisko swoich ludzi",

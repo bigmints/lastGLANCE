@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { Pencil, Check, Cloud, CloudOff, RefreshCw, HelpCircle, Settings, UserCircle, Clock, NotebookText } from 'lucide-react'
+import { Pencil, Check, Cloud, CloudOff, RefreshCw, HelpCircle, Settings, UserCircle, Clock, NotebookText, Settings2, UserPlus } from 'lucide-react'
 import { Ribbon } from '@/components/Ribbon/Ribbon'
 import { BackupModal } from '@/components/BackupModal/BackupModal'
 import { WelcomeModal } from '@/components/WelcomeModal/WelcomeModal'
@@ -40,7 +40,7 @@ import { completionsLabel } from '@/utils/completionsLabel'
 import { createEngine, initSessionKey, setupEncryptionKey, runAutoBackups, ensureSyncFolder, CRYPTO_CONFIG, DB_CRYPTO_CONFIG, getSyncWebdavConfig } from '@/sync/engine'
 import { createDbEngine } from '@/sync/dbEngine'
 import { isPeopleEnabled } from '@/people/flag'
-import { PeopleHome } from '@/components/People/PeopleHome'
+import { PeopleHome, PEOPLE_ADD_EVENT, PEOPLE_CIRCLES_EVENT } from '@/components/People/PeopleHome'
 import { hasOpenSurface } from '@/utils/dismissStack'
 import { peekPendingOpenChore } from '@/native/pendingOpenChore'
 import { createPeopleFileEngine } from '@/people/sync/fileEngine'
@@ -643,6 +643,29 @@ function AppInner() {
               last<span className="italic text-green-400">GLANCE</span>
             </h1>
             <p className="text-xs text-slate-400 dark:text-slate-600 mt-1 tracking-wide">{t('app.tagline')}</p>
+            {/* Under the wordmark rather than in a row of its own, so the
+                switch costs no vertical space below the header. */}
+            {peopleEnabled && (
+              <nav className="mt-2.5" aria-label={t('app.modeSwitch')}>
+                <div className="inline-flex p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900" role="tablist">
+                  {(['chores', 'people'] as const).map(m => (
+                    <button
+                      key={m}
+                      role="tab"
+                      aria-selected={mode === m}
+                      onClick={() => setMode(m)}
+                      className={`px-3 py-1 rounded-md text-xs font-medium transition-colors ${
+                        mode === m
+                          ? 'bg-white dark:bg-slate-800 text-green-500 dark:text-green-400 shadow-sm'
+                          : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                      }`}
+                    >
+                      {m === 'chores' ? t('app.modeChores') : t('app.modePeople')}
+                    </button>
+                  ))}
+                </div>
+              </nav>
+            )}
           </div>
 
           {heatmapWeeks.length > 0 && (
@@ -691,6 +714,22 @@ function AppInner() {
             >
               {editMode ? <Check size={15} /> : <Pencil size={15} />}
             </button>}
+            {!choresMode && <>
+              <button
+                onClick={() => window.dispatchEvent(new Event(PEOPLE_CIRCLES_EVENT))}
+                className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors"
+                aria-label={t('people.home.circles')}
+              >
+                <Settings2 size={15} />
+              </button>
+              <button
+                onClick={() => window.dispatchEvent(new Event(PEOPLE_ADD_EVENT))}
+                className="p-2 rounded-lg transition-colors border text-green-400 border-green-400/40 hover:text-green-300 hover:bg-green-400/10 hover:border-green-400/60"
+                aria-label={t('people.home.addPerson')}
+              >
+                <UserPlus size={15} />
+              </button>
+            </>}
           </div>
 
           {/* ── Desktop: two-row layout ── */}
@@ -734,6 +773,20 @@ function AppInner() {
               >
                 {editMode ? <><Check size={14} /> {t('app.done')}</> : <><Pencil size={14} /> {t('app.edit')}</>}
               </button>}
+              {!choresMode && <>
+                <button
+                  onClick={() => window.dispatchEvent(new Event(PEOPLE_CIRCLES_EVENT))}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors border text-slate-500 dark:text-slate-500 border-slate-200 dark:border-slate-700 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800"
+                >
+                  <Settings2 size={14} /> {t('people.home.circles')}
+                </button>
+                <button
+                  onClick={() => window.dispatchEvent(new Event(PEOPLE_ADD_EVENT))}
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors border text-green-400 border-green-400/40 hover:text-green-300 hover:bg-green-400/10 hover:border-green-400/60"
+                >
+                  <UserPlus size={14} /> {t('people.home.addPerson')}
+                </button>
+              </>}
             </div>
             {/* Row 2: sync (doubles as the status light), journal, help,
                 settings. Every control here is icon-only, so each carries a
@@ -763,28 +816,6 @@ function AppInner() {
 
         </div>
       </header>
-
-      {peopleEnabled && (
-        <nav className="shrink-0 flex justify-center px-5 pt-3" aria-label={t('app.modeSwitch')}>
-          <div className="inline-flex p-0.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-900" role="tablist">
-            {(['chores', 'people'] as const).map(m => (
-              <button
-                key={m}
-                role="tab"
-                aria-selected={mode === m}
-                onClick={() => setMode(m)}
-                className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
-                  mode === m
-                    ? 'bg-white dark:bg-slate-800 text-green-500 dark:text-green-400 shadow-sm'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                }`}
-              >
-                {m === 'chores' ? t('app.modeChores') : t('app.modePeople')}
-              </button>
-            ))}
-          </div>
-        </nav>
-      )}
 
       {/* The ribbon stays mounted in People mode so notification taps, widget
           launches and shortcuts that target chores still find their listeners;

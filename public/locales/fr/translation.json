@@ -696,7 +696,9 @@
       "emptyCircle": "Personne pour l’instant.",
       "addToCircle": "Ajouter une personne à {{circle}}",
       "showArchived": "Afficher les archivés ({{n}})",
-      "hideArchived": "Masquer les archivés"
+      "hideArchived": "Masquer les archivés",
+      "reachOutEmpty": "Personne à recontacter pour l’instant.",
+      "comingUpEmpty": "Aucune date dans les 30 prochains jours."
     },
     "empty": {
       "title": "Restez proche de vos proches",
