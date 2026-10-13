@@ -663,7 +663,12 @@
     "household": "Foyer",
     "integrations": "Intégrations",
     "integrationsDesc": "Connectez lastGLANCE à dayGLANCE et aux applications d'automatisation.",
-    "about": "À propos"
+    "about": "À propos",
+    "people": "Proches",
+    "showReciprocity": "Afficher qui a pris contact",
+    "showReciprocityHint": "Flèches, raisons dans « À recontacter » et bilan sur chaque personne. Qui a pris contact reste enregistré même masqué.",
+    "show": "Afficher",
+    "hide": "Masquer"
   },
   "people": {
     "close": "Fermer",
@@ -732,7 +737,12 @@
       "archive": "Archiver",
       "unarchive": "Désarchiver",
       "deleteConfirm": "Supprimer {{name}} ?",
-      "deleteDetail": "Ses dates et les contacts notés uniquement avec cette personne sont aussi supprimés. Action irréversible."
+      "deleteDetail": "Ses dates et les contacts notés uniquement avec cette personne sont aussi supprimés. Action irréversible.",
+      "catchUpBy": "Prendre des nouvelles avant le {{date}}",
+      "snoozedUntil": "Masqué jusqu'au {{date}}",
+      "unsnooze": "Afficher à nouveau",
+      "balance": "Vous {{you}}, l'autre {{them}} · {{days}} derniers jours",
+      "balanceTooFew": "Pas encore assez de contacts notés pour savoir qui en prend le plus"
     },
     "form": {
       "addTitle": "Ajouter une personne",
@@ -795,6 +805,18 @@
       "outbound": "J’ai fait le premier pas",
       "inbound": "L’autre a fait le premier pas",
       "mutual": "Ensemble"
+    },
+    "reason": {
+      "unreturned": "{{name}} vous a contacté ; vous n'avez pas encore répondu",
+      "streak_one": "Vous avez pris contact {{count}} fois de suite",
+      "streak_other": "Vous avez pris contact {{count}} fois de suite"
+    },
+    "snooze": {
+      "notNow": "Pas maintenant",
+      "ariaLabel": "Masquer {{name}} de « À recontacter » pour un temps",
+      "d3": "3 jours",
+      "d7": "1 semaine",
+      "d14": "2 semaines"
     }
   }
 }

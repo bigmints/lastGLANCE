@@ -663,7 +663,12 @@
     "household": "Casa",
     "integrations": "Integrações",
     "integrationsDesc": "Conecte o lastGLANCE ao dayGLANCE e a apps de automação.",
-    "about": "Sobre"
+    "about": "Sobre",
+    "people": "Pessoas",
+    "showReciprocity": "Mostrar quem entrou em contato",
+    "showReciprocityHint": "Setas, motivos em Entre em contato e o balanço de cada pessoa. Quem entrou em contato continua sendo registrado mesmo oculto.",
+    "show": "Mostrar",
+    "hide": "Ocultar"
   },
   "people": {
     "close": "Fechar",
@@ -732,7 +737,12 @@
       "archive": "Arquivar",
       "unarchive": "Desarquivar",
       "deleteConfirm": "Excluir {{name}}?",
-      "deleteDetail": "As datas e os contatos registrados só com essa pessoa também serão excluídos. Não é possível desfazer."
+      "deleteDetail": "As datas e os contatos registrados só com essa pessoa também serão excluídos. Não é possível desfazer.",
+      "catchUpBy": "Contatar até {{date}}",
+      "snoozedUntil": "Oculto até {{date}}",
+      "unsnooze": "Mostrar novamente",
+      "balance": "Você {{you}}, a outra pessoa {{them}} · últimos {{days}} dias",
+      "balanceTooFew": "Ainda não há registros suficientes para saber quem entra mais em contato"
     },
     "form": {
       "addTitle": "Adicionar pessoa",
@@ -795,6 +805,18 @@
       "outbound": "Eu entrei em contato",
       "inbound": "A outra pessoa entrou em contato",
       "mutual": "Juntos"
+    },
+    "reason": {
+      "unreturned": "{{name}} entrou em contato; você ainda não respondeu",
+      "streak_one": "Você entrou em contato {{count}} vez seguida",
+      "streak_other": "Você entrou em contato {{count}} vezes seguidas"
+    },
+    "snooze": {
+      "notNow": "Agora não",
+      "ariaLabel": "Ocultar {{name}} de Entre em contato por um tempo",
+      "d3": "3 dias",
+      "d7": "1 semana",
+      "d14": "2 semanas"
     }
   }
 }

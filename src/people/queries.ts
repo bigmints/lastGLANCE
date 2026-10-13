@@ -8,6 +8,7 @@ import { db } from '@/db/client'
 import { getMeUserSyncId, getMultiUserEnabled } from '@/multiuser/settings'
 import { markPeopleDirty } from './sync/dirtyTracker'
 import { normalizeDirection } from './types'
+import { reciprocitySignals } from './reciprocity'
 import type {
   Interaction, InteractionChannel, InteractionDirection, InteractionSource, Person, PersonCircle,
   PersonDate, PersonDateKind, PersonWithLastInteraction,
@@ -131,10 +132,14 @@ export async function getPeople(
 ): Promise<PersonWithLastInteraction[]> {
   const [people, interactions] = await Promise.all([db.people.toArray(), db.interactions.toArray()])
   const last = new Map<string, Interaction>()
+  const byPerson = new Map<string, Interaction[]>()
   for (const i of interactions) {
     for (const pid of i.person_sync_ids) {
       const prev = last.get(pid)
       if (!prev || i.occurred_at > prev.occurred_at) last.set(pid, i)
+      const list = byPerson.get(pid)
+      if (list) list.push(i)
+      else byPerson.set(pid, [i])
     }
   }
   const nowTs = dayjs()
@@ -150,6 +155,7 @@ export async function getPeople(
         last_channel: li ? li.channel : null,
         last_direction: li ? normalizeDirection(li.direction) : null,
         elapsed_days: Math.max(0, Math.round(elapsed * 10) / 10),
+        reciprocity: reciprocitySignals(byPerson.get(p.sync_id) ?? [], nowTs),
       }
     })
 }

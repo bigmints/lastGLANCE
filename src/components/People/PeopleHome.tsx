@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next'
 import { useUsersContext } from '@/multiuser/UsersContext'
 import { createCircle } from '@/people/queries'
 import { groupByCircle, reachOutList, upcomingDates, visibleToMe } from '@/people/home'
-import type { UpcomingDate } from '@/people/home'
+import type { ReachOutItem, UpcomingDate } from '@/people/home'
 import { usePeopleData } from '@/people/usePeopleData'
+import { useShowReciprocity } from '@/people/useShowReciprocity'
 import type { InteractionDirection, PersonWithLastInteraction } from '@/people/types'
 import { formatMonthShort } from '@/utils/datetime'
 import { CircleManagerModal } from './CircleManagerModal'
@@ -94,6 +95,7 @@ export function PeopleHome() {
   const { t } = useTranslation()
   const { multiUserEnabled, meId } = useUsersContext()
   const { people: all, circles, dates, loading } = usePeopleData()
+  const showReciprocity = useShowReciprocity()
   const [openId, setOpenId] = useState<string | null>(null)
   const [logFor, setLogFor] = useState<{ ids: string[]; direction: InteractionDirection | null } | null>(null)
   const [adding, setAdding] = useState<{ circleId: string | null } | null>(null)
@@ -118,7 +120,10 @@ export function PeopleHome() {
   const mine = useMemo(() => visibleToMe(all, multiUserEnabled, meId), [all, multiUserEnabled, meId])
   const active = useMemo(() => mine.filter(p => !p.archived), [mine])
   const archived = useMemo(() => mine.filter(p => p.archived), [mine])
-  const reachOut = useMemo(() => reachOutList(active), [active])
+  const reachOut = useMemo(
+    () => reachOutList(active, dates, undefined, { showReciprocity }),
+    [active, dates, showReciprocity],
+  )
   const comingUp = useMemo(() => upcomingDates(dates, active).slice(0, COMING_UP_TILES), [dates, active])
   const groups = useMemo(() => groupByCircle(active, circles), [active, circles])
   const open = mine.find(p => p.sync_id === openId) ?? null
@@ -126,14 +131,22 @@ export function PeopleHome() {
   const openPerson = (p: PersonWithLastInteraction) => setOpenId(p.sync_id)
   // Logging from a Reach out card presets "I reached out": that list is
   // where you go to do the reaching.
-  const row = (p: PersonWithLastInteraction, fromReachOut = false) => (
+  const row = (p: PersonWithLastInteraction, fromReachOut = false, reason: string | null = null) => (
     <PersonRow
       key={p.sync_id}
       person={p}
       onOpen={openPerson}
       onQuickLog={() => setLogFor({ ids: [p.sync_id], direction: fromReachOut ? 'outbound' : null })}
+      reason={reason}
+      snoozable={fromReachOut}
     />
   )
+  const reasonText = ({ person, reason }: ReachOutItem): string | null => {
+    if (!reason) return null
+    if (reason.kind === 'date') return `${dateKindLabel(t, reason.upcoming.date)} · ${daysUntilLabel(t, reason.upcoming.daysUntil)}`
+    if (reason.kind === 'unreturned') return t('people.reason.unreturned', { name: person.nickname || person.name })
+    return t('people.reason.streak', { count: reason.count })
+  }
 
   async function addStarterCircles() {
     for (const key of STARTER_CIRCLES) await createCircle(t(`people.starterCircles.${key}`))
@@ -221,10 +234,10 @@ export function PeopleHome() {
         // column, the circles in a masonry grid beside it. The column's divider
         // runs the full height and meets the header's bottom border.
         <div className="grow shrink-0 p-4 min-[1060px]:p-0 flex flex-col min-[1060px]:flex-row gap-5 min-[1060px]:gap-0">
-          <div className="w-full min-[1060px]:w-[429px] shrink-0 grid sm:grid-cols-2 min-[1060px]:grid-cols-1 items-start content-start gap-5 min-[1060px]:p-6 min-[1060px]:border-r border-slate-200 dark:border-slate-800/80">
+          <div className="w-full min-[1060px]:w-[429px] shrink-0 grid grid-cols-1 sm:grid-cols-2 min-[1060px]:grid-cols-1 items-start content-start gap-5 min-[1060px]:p-6 min-[1060px]:border-r border-slate-200 dark:border-slate-800/80">
             <Card title={t('people.home.reachOut')}>
               {reachOut.length
-                ? <div className="space-y-2">{reachOut.map(p => row(p, true))}</div>
+                ? <div className="space-y-2">{reachOut.map(item => row(item.person, true, reasonText(item)))}</div>
                 : <p className="text-sm text-slate-400 dark:text-slate-500">{t('people.home.reachOutEmpty')}</p>}
             </Card>
             <Card title={t('people.home.comingUp')}>

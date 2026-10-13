@@ -4,7 +4,8 @@
 
 import dayjs, { type Dayjs } from 'dayjs'
 import { ATTENTION_RATIO, getFillRatio } from '@/utils/cadence'
-import type { PersonCircle, PersonDate, PersonWithLastInteraction } from './types'
+import { STREAK_MIN } from './reciprocity'
+import type { InteractionChannel, PersonCircle, PersonDate, PersonWithLastInteraction } from './types'
 
 export const REACH_OUT_LIMIT = 5
 export const COMING_UP_DAYS = 30
@@ -30,21 +31,100 @@ export function cadenceRatio(person: PersonWithLastInteraction): number | null {
   return getFillRatio(person.elapsed_days, person.target_cadence_days)
 }
 
-// People whose cadence has aged into the attention zone, most overdue first.
-// A first cut of the suggestions spec: date boosts and tie-breaks arrive with
-// the suggestions work.
+// A date this close puts someone on Reach out whatever their cadence says.
+export const DATE_BOOST_DAYS = 7
+// Owing someone a reply is actionable sooner than drift, so an unreturned
+// inbound enters the list at half its cadence instead of ATTENTION_RATIO.
+export const UNRETURNED_RATIO = 0.5
+
+// One line on the card saying why someone is there. At most one per card:
+// a date first, then an unreturned inbound, then a run of reach-outs.
+export type ReachOutReason =
+  | { kind: 'date'; upcoming: UpcomingDate }
+  | { kind: 'unreturned' }
+  | { kind: 'streak'; count: number }
+
+export interface ReachOutItem {
+  person: PersonWithLastInteraction
+  reason: ReachOutReason | null
+}
+
+// The Reach out list (docs: the People spec, Suggestions). Archived and
+// snoozed people are left out. A date in the next week brings someone in
+// regardless of cadence and goes first, soonest date first. Everyone else
+// needs a cadence and enters once its ratio passes ATTENTION_RATIO (or
+// UNRETURNED_RATIO when they got in touch last), most overdue first; ties go
+// to whoever is furthest past their cadence in days, then to an unreturned
+// inbound, then to who was contacted longest ago. Recency for someone never
+// logged counts from when they were added, so a bulk import does not flood the
+// list. Reciprocity shapes entry and order even with its display turned off;
+// `showReciprocity` only decides whether its reasons are shown.
 export function reachOutList(
   people: PersonWithLastInteraction[],
+  dates: PersonDate[],
   now: Dayjs = dayjs(),
-  limit = REACH_OUT_LIMIT,
-): PersonWithLastInteraction[] {
-  return people
-    .filter(p => !p.archived && !isSnoozed(p, now))
-    .map(p => ({ p, ratio: cadenceRatio(p) }))
-    .filter((x): x is { p: PersonWithLastInteraction; ratio: number } => x.ratio !== null && x.ratio >= ATTENTION_RATIO)
-    .sort((a, b) => b.ratio - a.ratio || a.p.name.localeCompare(b.p.name))
-    .slice(0, limit)
-    .map(x => x.p)
+  { limit = REACH_OUT_LIMIT, showReciprocity = true }: { limit?: number; showReciprocity?: boolean } = {},
+): ReachOutItem[] {
+  const candidates = people.filter(p => !p.archived && !isSnoozed(p, now))
+  const boosts = new Map<string, UpcomingDate>()
+  for (const u of upcomingDates(dates, candidates, now, DATE_BOOST_DAYS)) {
+    if (!boosts.has(u.person.sync_id)) boosts.set(u.person.sync_id, u)
+  }
+
+  const boosted: ReachOutItem[] = []
+  const scored: { item: ReachOutItem; ratio: number; overdueDays: number }[] = []
+  for (const p of candidates) {
+    const upcoming = boosts.get(p.sync_id)
+    const r = p.reciprocity
+    const reciprocityReason: ReachOutReason | null = !showReciprocity ? null
+      : r.unreturned ? { kind: 'unreturned' }
+      : r.streak >= STREAK_MIN ? { kind: 'streak', count: r.streak }
+      : null
+    if (upcoming) {
+      boosted.push({ person: p, reason: { kind: 'date', upcoming } })
+      continue
+    }
+    const ratio = cadenceRatio(p)
+    if (ratio === null || ratio < (r.unreturned ? UNRETURNED_RATIO : ATTENTION_RATIO)) continue
+    scored.push({
+      item: { person: p, reason: reciprocityReason },
+      ratio,
+      overdueDays: p.elapsed_days - (p.target_cadence_days ?? 0),
+    })
+  }
+
+  boosted.sort((a, b) => {
+    const ua = (a.reason as { upcoming: UpcomingDate }).upcoming
+    const ub = (b.reason as { upcoming: UpcomingDate }).upcoming
+    return ua.daysUntil - ub.daysUntil || a.person.name.localeCompare(b.person.name)
+  })
+  scored.sort((a, b) =>
+    b.ratio - a.ratio
+    || b.overdueDays - a.overdueDays
+    || Number(b.item.person.reciprocity.unreturned) - Number(a.item.person.reciprocity.unreturned)
+    || b.item.person.elapsed_days - a.item.person.elapsed_days
+    || a.item.person.name.localeCompare(b.item.person.name))
+
+  return [...boosted, ...scored.map(s => s.item)].slice(0, limit)
+}
+
+// The channel a card suggests: the person's preferred one, else whatever was
+// used last.
+export function suggestedChannel(p: PersonWithLastInteraction): InteractionChannel | null {
+  return p.preferred_channel ?? p.last_channel
+}
+
+// When the next catch-up is due: last contact (or when they were added) plus
+// the cadence. Null without a cadence.
+export function dueDate(p: PersonWithLastInteraction): Dayjs | null {
+  if (!p.target_cadence_days) return null
+  return dayjs(p.last_interaction_at ?? p.created_at).add(p.target_cadence_days, 'day')
+}
+
+export const SNOOZE_DAYS = [3, 7, 14] as const
+
+export function snoozeUntil(days: number, now: Dayjs = dayjs()): string {
+  return now.add(days, 'day').toISOString()
 }
 
 function isLeap(year: number): boolean {

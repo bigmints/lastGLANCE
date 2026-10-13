@@ -1,3 +1,5 @@
+import type { ReciprocitySignals } from './reciprocity'
+
 // People mode data model (docs: the People spec). Every synced row carries a
 // sync_id and updated_at, like chores. Rows reference each other by sync_id
 // only, never by Dexie's local auto-increment id, so remote rows can land in
@@ -103,4 +105,6 @@ export interface PersonWithLastInteraction extends Person {
   // Days since the last interaction, or since the person was added when there
   // is none yet, so a bulk import does not read as everyone overdue.
   elapsed_days: number
+  // Who has been reaching out, over the reciprocity window.
+  reciprocity: ReciprocitySignals
 }

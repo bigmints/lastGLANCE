@@ -663,7 +663,12 @@
     "household": "Haushalt",
     "integrations": "Integrationen",
     "integrationsDesc": "Verbinde lastGLANCE mit dayGLANCE und mit Automatisierungs-Apps.",
-    "about": "Über"
+    "about": "Über",
+    "people": "Menschen",
+    "showReciprocity": "Zeigen, wer sich gemeldet hat",
+    "showReciprocityHint": "Pfeile, Gründe unter „Melde dich mal“ und die Bilanz bei einer Person. Wer sich gemeldet hat, wird weiterhin gespeichert.",
+    "show": "Zeigen",
+    "hide": "Ausblenden"
   },
   "people": {
     "close": "Schließen",
@@ -732,7 +737,12 @@
       "archive": "Archivieren",
       "unarchive": "Wiederherstellen",
       "deleteConfirm": "{{name}} löschen?",
-      "deleteDetail": "Die Daten und die nur mit dieser Person erfassten Kontakte werden ebenfalls gelöscht. Das lässt sich nicht rückgängig machen."
+      "deleteDetail": "Die Daten und die nur mit dieser Person erfassten Kontakte werden ebenfalls gelöscht. Das lässt sich nicht rückgängig machen.",
+      "catchUpBy": "Melden bis {{date}}",
+      "snoozedUntil": "Ausgeblendet bis {{date}}",
+      "unsnooze": "Wieder zeigen",
+      "balance": "Du {{you}}, die andere Seite {{them}} · letzte {{days}} Tage",
+      "balanceTooFew": "Noch zu wenig erfasst, um zu sehen, wer sich öfter meldet"
     },
     "form": {
       "addTitle": "Person hinzufügen",
@@ -795,6 +805,18 @@
       "outbound": "Ich habe mich gemeldet",
       "inbound": "Sie haben sich gemeldet",
       "mutual": "Gemeinsam"
+    },
+    "reason": {
+      "unreturned": "{{name}} hat sich gemeldet; du hast noch nicht geantwortet",
+      "streak_one": "Du hast dich {{count}}-mal in Folge gemeldet",
+      "streak_other": "Du hast dich {{count}}-mal in Folge gemeldet"
+    },
+    "snooze": {
+      "notNow": "Nicht jetzt",
+      "ariaLabel": "{{name}} eine Weile aus „Melde dich mal“ ausblenden",
+      "d3": "3 Tage",
+      "d7": "1 Woche",
+      "d14": "2 Wochen"
     }
   }
 }

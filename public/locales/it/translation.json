@@ -663,7 +663,12 @@
     "household": "Casa",
     "integrations": "Integrazioni",
     "integrationsDesc": "Collega lastGLANCE a dayGLANCE e alle app di automazione.",
-    "about": "Informazioni"
+    "about": "Informazioni",
+    "people": "Persone",
+    "showReciprocity": "Mostra chi ha cercato chi",
+    "showReciprocityHint": "Frecce, motivi in Fatti sentire e il bilancio di ogni persona. Chi ha cercato chi viene comunque registrato.",
+    "show": "Mostra",
+    "hide": "Nascondi"
   },
   "people": {
     "close": "Chiudi",
@@ -732,7 +737,12 @@
       "archive": "Archivia",
       "unarchive": "Ripristina",
       "deleteConfirm": "Eliminare {{name}}?",
-      "deleteDetail": "Vengono eliminate anche le sue date e i contatti registrati solo con questa persona. L’operazione non si può annullare."
+      "deleteDetail": "Vengono eliminate anche le sue date e i contatti registrati solo con questa persona. L’operazione non si può annullare.",
+      "catchUpBy": "Da sentire entro il {{date}}",
+      "snoozedUntil": "Nascosto fino al {{date}}",
+      "unsnooze": "Mostra di nuovo",
+      "balance": "Tu {{you}}, l'altra persona {{them}} · ultimi {{days}} giorni",
+      "balanceTooFew": "Non ci sono ancora abbastanza registrazioni per capire chi cerca di più"
     },
     "form": {
       "addTitle": "Aggiungi persona",
@@ -795,6 +805,18 @@
       "outbound": "Mi sono fatto sentire io",
       "inbound": "Si è fatto sentire lui/lei",
       "mutual": "Insieme"
+    },
+    "reason": {
+      "unreturned": "{{name}} ti ha cercato; non hai ancora risposto",
+      "streak_one": "Hai cercato tu {{count}} volta di fila",
+      "streak_other": "Hai cercato tu {{count}} volte di fila"
+    },
+    "snooze": {
+      "notNow": "Non ora",
+      "ariaLabel": "Nascondi {{name}} da Fatti sentire per un po'",
+      "d3": "3 giorni",
+      "d7": "1 settimana",
+      "d14": "2 settimane"
     }
   }
 }

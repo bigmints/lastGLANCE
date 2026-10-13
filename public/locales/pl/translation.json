@@ -693,7 +693,12 @@
     "household": "Domownicy",
     "integrations": "Integracje",
     "integrationsDesc": "Połącz lastGLANCE z dayGLANCE i z aplikacjami do automatyzacji.",
-    "about": "Informacje"
+    "about": "Informacje",
+    "people": "Ludzie",
+    "showReciprocity": "Pokazuj, kto się odezwał",
+    "showReciprocityHint": "Strzałki, powody w sekcji Odezwij się i bilans przy osobie. Kto się odezwał, jest zapisywane także po ukryciu.",
+    "show": "Pokaż",
+    "hide": "Ukryj"
   },
   "people": {
     "close": "Zamknij",
@@ -762,7 +767,12 @@
       "archive": "Archiwizuj",
       "unarchive": "Przywróć",
       "deleteConfirm": "Usunąć: {{name}}?",
-      "deleteDetail": "Usunięte zostaną też daty tej osoby i kontakty zapisane tylko z nią. Tego nie można cofnąć."
+      "deleteDetail": "Usunięte zostaną też daty tej osoby i kontakty zapisane tylko z nią. Tego nie można cofnąć.",
+      "catchUpBy": "Odezwij się do {{date}}",
+      "snoozedUntil": "Ukryte do {{date}}",
+      "unsnooze": "Pokaż ponownie",
+      "balance": "Ty {{you}}, druga strona {{them}} · ostatnie {{days}} dni",
+      "balanceTooFew": "Za mało wpisów, by ocenić, kto odzywa się częściej"
     },
     "form": {
       "addTitle": "Dodaj osobę",
@@ -825,6 +835,20 @@
       "outbound": "Ja się odezwałem",
       "inbound": "Ta osoba się odezwała",
       "mutual": "Wspólnie"
+    },
+    "reason": {
+      "unreturned": "{{name}} czeka na Twoją odpowiedź",
+      "streak_one": "Odzywasz się {{count}} raz z rzędu",
+      "streak_few": "Odzywasz się {{count}} razy z rzędu",
+      "streak_many": "Odzywasz się {{count}} razy z rzędu",
+      "streak_other": "Odzywasz się {{count}} razy z rzędu"
+    },
+    "snooze": {
+      "notNow": "Nie teraz",
+      "ariaLabel": "Ukryj {{name}} na jakiś czas w sekcji Odezwij się",
+      "d3": "3 dni",
+      "d7": "1 tydzień",
+      "d14": "2 tygodnie"
     }
   }
 }
