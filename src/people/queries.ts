@@ -381,3 +381,11 @@ export async function removeContactLink(personSyncId: string): Promise<void> {
   await db.contactLinks.delete(personSyncId)
   notifyChanged()
 }
+
+// ── Journal ──────────────────────────────────────────────────────────────────
+
+// Every interaction, newest first, for the People Journal and heatmap.
+export async function getAllInteractions(): Promise<Interaction[]> {
+  const rows = await db.interactions.toArray()
+  return rows.sort((a, b) => b.occurred_at.localeCompare(a.occurred_at))
+}

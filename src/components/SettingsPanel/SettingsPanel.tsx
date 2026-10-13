@@ -11,6 +11,7 @@ import { useEscapeKey } from '@/hooks/useEscapeKey'
 import { isPeopleEnabled } from '@/people/flag'
 import { setContactsEnabled, setReciprocityShown, useContactsEnabled, useShowReciprocity } from '@/people/settings'
 import { contactsSupported } from '@/native/contacts'
+import { ContactsModal } from '@/components/People/ContactsModal'
 import { LanguagePicker } from '@/components/LanguagePicker/LanguagePicker'
 import { UsersPanel } from '@/components/UsersPanel/UsersPanel'
 import { BackupPanel } from '@/components/BackupModal/BackupModal'
@@ -68,6 +69,9 @@ export function SettingsPanel(props: Props) {
   const [peopleEnabled] = useState(isPeopleEnabled)
   const showReciprocity = useShowReciprocity()
   const contactsEnabled = useContactsEnabled()
+  // Turning Phone contacts on asks for permission right away, after the
+  // in-app disclosure; the switch only turns on once it is granted.
+  const [askingContacts, setAskingContacts] = useState(false)
 
   const toggle = (id: SectionId) => setOpen(o => (o === id ? null : id))
 
@@ -162,7 +166,7 @@ export function SettingsPanel(props: Props) {
                   <Segmented<'on' | 'off'>
                     label={t('settings.phoneContacts')}
                     value={contactsEnabled ? 'on' : 'off'}
-                    onChange={v => setContactsEnabled(v === 'on')}
+                    onChange={v => { if (v === 'off') setContactsEnabled(false); else setAskingContacts(true) }}
                     options={[
                       { value: 'on', label: t('settings.on') },
                       { value: 'off', label: t('settings.off') },
@@ -218,6 +222,15 @@ export function SettingsPanel(props: Props) {
           </Section>
         </div>
       </div>
+      {askingContacts && (
+        <ContactsModal
+          mode="permission"
+          links={[]}
+          circles={[]}
+          onGranted={() => setContactsEnabled(true)}
+          onClose={() => setAskingContacts(false)}
+        />
+      )}
     </div>,
     document.body,
   )

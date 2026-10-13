@@ -5,6 +5,7 @@
     "dayglanceIntegration": "Integrazione dayGLANCE",
     "journal": "Diario",
     "journalTooltip": "Rivedi tutto ciò che è stato completato",
+    "journalTooltipPeople": "Rivedi con chi sei stato in contatto",
     "backupRestore": "Backup e ripristino",
     "helpFeedback": "Aiuto e feedback",
     "toggleTheme": "Cambia tema",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} completamento",
     "completions_other": "{{count}} completamenti",
-    "noCompletions": "Nessun completamento"
+    "noCompletions": "Nessun completamento",
+    "interactions_one": "{{count}} contatto",
+    "interactions_other": "{{count}} contatti",
+    "noInteractions": "Nessun contatto"
   },
   "help": {
     "title": "Aiuto e feedback",
@@ -339,7 +343,15 @@
     "csvCategory": "Categoria",
     "csvUser": "Utente",
     "csvSource": "Origine",
-    "csvNote": "Nota"
+    "csvNote": "Nota",
+    "filterPeoplePlaceholder": "Filtra per persona o nota…",
+    "allChannels": "Tutti i tipi",
+    "statInteractions": "Contatti",
+    "statPeople": "Persone",
+    "emptyPeople": "Nulla registrato in questo periodo.",
+    "csvPeople": "Persone",
+    "csvHow": "Come",
+    "csvDirection": "Direzione"
   },
   "logModal": {
     "lastDone": "Ultima volta: {{elapsed}}",
@@ -828,7 +840,7 @@
       "importButton": "Importa dai contatti",
       "linkButton": "Collega a un contatto",
       "disclosure1": "lastGLANCE legge nomi, foto, compleanni e altre date, numeri di telefono e indirizzi email dai tuoi contatti, così puoi aggiungere persone senza riscriverle e chiamarle, scrivere o inviare email da qui.",
-      "disclosure2": "Nulla lascia il telefono a meno che tu non lo importi. Vengono salvati solo i nomi e le date che scegli, sincronizzati cifrati come il resto dei dati. Numeri, indirizzi e foto vengono letti quando li usi e mai salvati.",
+      "disclosure2": "In lastGLANCE vengono salvati solo i nomi e le date che scegli. Lasciano il telefono solo se usi la sincronizzazione, cifrati come il resto dei dati. Numeri e indirizzi vengono letti quando tocchi Chiama, Messaggio o Email, e la foto di un contatto quando apri quella persona. Niente di tutto questo viene salvato.",
       "disclosure3": "lastGLANCE non modifica mai i tuoi contatti.",
       "continue": "Continua",
       "denied": "L'accesso ai contatti è disattivato. Per usarlo, consenti Contatti per lastGLANCE nelle impostazioni del telefono.",

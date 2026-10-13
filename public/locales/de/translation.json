@@ -5,6 +5,7 @@
     "dayglanceIntegration": "dayGLANCE-Integration",
     "journal": "Journal",
     "journalTooltip": "Alle Erledigungen ansehen",
+    "journalTooltipPeople": "Alle Kontakte mit Menschen ansehen",
     "backupRestore": "Sicherung & Wiederherstellung",
     "helpFeedback": "Hilfe & Feedback",
     "toggleTheme": "Design wechseln",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} Erledigung",
     "completions_other": "{{count}} Erledigungen",
-    "noCompletions": "Keine Erledigungen"
+    "noCompletions": "Keine Erledigungen",
+    "interactions_one": "{{count}} Kontakt",
+    "interactions_other": "{{count}} Kontakte",
+    "noInteractions": "Keine Kontakte"
   },
   "help": {
     "title": "Hilfe & Feedback",
@@ -339,7 +343,15 @@
     "csvCategory": "Kategorie",
     "csvUser": "Benutzer",
     "csvSource": "Quelle",
-    "csvNote": "Notiz"
+    "csvNote": "Notiz",
+    "filterPeoplePlaceholder": "Nach Person oder Notiz filtern…",
+    "allChannels": "Alle Arten",
+    "statInteractions": "Kontakte",
+    "statPeople": "Personen",
+    "emptyPeople": "In diesem Zeitraum wurde nichts erfasst.",
+    "csvPeople": "Personen",
+    "csvHow": "Art",
+    "csvDirection": "Richtung"
   },
   "logModal": {
     "lastDone": "Zuletzt erledigt: {{elapsed}}",
@@ -828,7 +840,7 @@
       "importButton": "Aus Kontakten importieren",
       "linkButton": "Mit Kontakt verknüpfen",
       "disclosure1": "lastGLANCE liest Namen, Fotos, Geburtstage und andere Daten, Telefonnummern und E-Mail-Adressen aus deinen Kontakten, damit du Menschen nicht abtippen musst und sie von hier aus anrufen, ihnen schreiben oder mailen kannst.",
-      "disclosure2": "Nichts verlässt dein Telefon, außer du importierst es. Gespeichert werden nur die Namen und Daten, die du auswählst, und sie werden wie deine übrigen Daten verschlüsselt synchronisiert. Nummern, Adressen und Fotos werden bei Bedarf gelesen und nie gespeichert.",
+      "disclosure2": "In lastGLANCE werden nur die Namen und Daten gespeichert, die du auswählst. Sie verlassen dein Telefon nur, wenn du die Synchronisierung nutzt, und dann verschlüsselt wie deine übrigen Daten. Nummern und Adressen werden gelesen, wenn du auf Anrufen, SMS oder E-Mail tippst, das Foto eines Kontakts, wenn du die Person öffnest. Nichts davon wird gespeichert.",
       "disclosure3": "lastGLANCE ändert deine Kontakte nie.",
       "continue": "Weiter",
       "denied": "Der Zugriff auf Kontakte ist aus. Erlaube Kontakte für lastGLANCE in den Einstellungen deines Telefons, um ihn zu nutzen.",

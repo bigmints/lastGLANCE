@@ -5,6 +5,7 @@
     "dayglanceIntegration": "Integração dayGLANCE",
     "journal": "Diário",
     "journalTooltip": "Reveja tudo o que foi concluído",
+    "journalTooltipPeople": "Reveja com quem esteve em contacto",
     "backupRestore": "Cópia de segurança e restauro",
     "helpFeedback": "Ajuda e feedback",
     "toggleTheme": "Alternar tema",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} conclusão",
     "completions_other": "{{count}} conclusões",
-    "noCompletions": "Nenhuma conclusão"
+    "noCompletions": "Nenhuma conclusão",
+    "interactions_one": "{{count}} contacto",
+    "interactions_other": "{{count}} contactos",
+    "noInteractions": "Nenhum contacto"
   },
   "help": {
     "title": "Ajuda e feedback",
@@ -339,7 +343,15 @@
     "csvCategory": "Categoria",
     "csvUser": "Utilizador",
     "csvSource": "Origem",
-    "csvNote": "Nota"
+    "csvNote": "Nota",
+    "filterPeoplePlaceholder": "Filtrar por pessoa ou nota…",
+    "allChannels": "Todos os tipos",
+    "statInteractions": "Contactos",
+    "statPeople": "Pessoas",
+    "emptyPeople": "Nada registado neste período.",
+    "csvPeople": "Pessoas",
+    "csvHow": "Como",
+    "csvDirection": "Direção"
   },
   "logModal": {
     "lastDone": "Última vez: {{elapsed}}",
@@ -828,7 +840,7 @@
       "importButton": "Importar dos contactos",
       "linkButton": "Associar a um contacto",
       "disclosure1": "O lastGLANCE lê nomes, fotografias, aniversários e outras datas, números de telefone e endereços de e-mail dos seus contactos, para poder adicionar pessoas sem as escrever de novo e ligar-lhes, enviar mensagens ou e-mails a partir daqui.",
-      "disclosure2": "Nada sai do telefone a menos que o importe. Só são guardados os nomes e as datas que escolher, sincronizados de forma cifrada como os restantes dados. Números, endereços e fotografias são lidos quando os usa e nunca são guardados.",
+      "disclosure2": "No lastGLANCE só são guardados os nomes e as datas que escolher. Só saem do telefone se usar a sincronização, cifrados como os restantes dados. Os números e endereços são lidos quando toca em Ligar, Mensagem ou E-mail, e a fotografia de um contacto quando abre essa pessoa. Nada disto é guardado.",
       "disclosure3": "O lastGLANCE nunca altera os seus contactos.",
       "continue": "Continuar",
       "denied": "O acesso aos contactos está desativado. Para o usar, permita Contactos para o lastGLANCE nas definições do telefone.",

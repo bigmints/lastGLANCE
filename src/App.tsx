@@ -11,6 +11,10 @@ import { HelpModal } from '@/components/HelpModal/HelpModal'
 import { ShortcutsModal } from '@/components/ShortcutsModal/ShortcutsModal'
 import { ActivityLogModal } from '@/components/ActivityLogModal/ActivityLogModal'
 import { JournalModal } from '@/components/JournalModal/JournalModal'
+import { PeopleJournalModal } from '@/components/JournalModal/PeopleJournalModal'
+import { getAllInteractions, getPeople, PEOPLE_CHANGED_EVENT } from '@/people/queries'
+import { interactionCountsByDay, visibleInteractions } from '@/people/journal'
+import { visibleToMe } from '@/people/home'
 import { TooltipHost } from '@/components/Tooltip/Tooltip'
 import { ToastProvider, useToast } from '@/components/Toast/Toast'
 import { PaywallModal } from '@/components/PaywallModal/PaywallModal'
@@ -109,8 +113,12 @@ function getWaveColor(wi: number, di: number, day: HeatDay, wavePos: number): st
   return heatCellColor(day)
 }
 
-function HeaderHeatmap({ weeks, onSelectDay }: { weeks: HeatDay[][]; onSelectDay: (date: string) => void }) {
-  const { t } = useTranslation()
+function HeaderHeatmap({ weeks, onSelectDay, label }: {
+  weeks: HeatDay[][]
+  onSelectDay: (date: string) => void
+  // Describes a cell's count: completions, or interactions in People mode.
+  label: (count: number) => string
+}) {
   const [wavePos, setWavePos] = useState(-WAVE_WIDTH)
 
   useEffect(() => {
@@ -139,8 +147,8 @@ function HeaderHeatmap({ weeks, onSelectDay }: { weeks: HeatDay[][]; onSelectDay
               disabled={day.isFuture}
               onClick={() => onSelectDay(day.date)}
               data-tooltip={day.isFuture ? undefined : formatDate(day.date)}
-              data-tooltip-detail={day.isFuture ? undefined : completionsLabel(t, day.count)}
-              aria-label={`${formatDate(day.date)}, ${completionsLabel(t, day.count)}`}
+              data-tooltip-detail={day.isFuture ? undefined : label(day.count)}
+              aria-label={`${formatDate(day.date)}, ${label(day.count)}`}
               className="w-[9px] h-[9px] rounded-[2px] transition-transform hover:scale-150 disabled:cursor-default disabled:hover:scale-100"
               style={{ backgroundColor: getWaveColor(wi, di, day, wavePos) }}
             />
@@ -480,20 +488,32 @@ function AppInner() {
     }
   }, [runDbSync, runPeopleSync, runSharedUserSync])
 
+  // In People mode the heatmap counts logged interactions instead of chore
+  // completions. Read through refs so the loaders stay stable for the many
+  // hooks that hold them.
+  const visibilityRef = useRef({ multiUserEnabled, meId })
+  visibilityRef.current = { multiUserEnabled, meId }
+  const heatmapCounts = useCallback(async () => {
+    if (modeRef.current !== 'people') return getAllCompletionCounts()
+    const [people, interactions] = await Promise.all([getPeople({ includeArchived: true }), getAllInteractions()])
+    const { multiUserEnabled: multi, meId: me } = visibilityRef.current
+    return interactionCountsByDay(visibleInteractions(interactions, visibleToMe(people, multi, me)))
+  }, [])
+
   const loadHeatmap = useCallback(async () => {
-    const counts = await getAllCompletionCounts()
+    const counts = await heatmapCounts()
     setHeatmapWeeks(buildHeaderHeatmap(counts))
     setWaveKey(k => k + 1)
-  }, [])
+  }, [heatmapCounts])
 
   // Same reload, without bumping waveKey. The wave is a flourish for a *user*
   // action landing (a chore logged, a backup imported); the rollover refresh is
   // ambient bookkeeping, and replaying a 1.5s animation every time the tab
   // regains focus would read as the app churning for no reason.
   const refreshHeatmapQuietly = useCallback(async () => {
-    const counts = await getAllCompletionCounts()
+    const counts = await heatmapCounts()
     setHeatmapWeeks(buildHeaderHeatmap(counts))
-  }, [])
+  }, [heatmapCounts])
 
   // The heatmap bakes the current date into every cell (which column is today,
   // which days are still in the future), so it goes stale the same way the
@@ -542,7 +562,16 @@ function AppInner() {
   // delivered/retried and never lost across restarts.
   useOutboxFlush()
 
-  useEffect(() => { loadHeatmap() }, [loadHeatmap])
+  // Switching modes swaps what the heatmap counts, and replays the wave.
+  useEffect(() => { loadHeatmap() }, [loadHeatmap, mode])
+
+  // People edits (a log, a delete, a synced change) only move the heatmap in
+  // People mode; in chores mode they leave it alone.
+  useEffect(() => {
+    const onPeopleChanged = () => { if (modeRef.current === 'people') void refreshHeatmapQuietly() }
+    window.addEventListener(PEOPLE_CHANGED_EVENT, onPeopleChanged)
+    return () => window.removeEventListener(PEOPLE_CHANGED_EVENT, onPeopleChanged)
+  }, [refreshHeatmapQuietly])
 
   useEffect(() => {
     window.addEventListener('lg:chore-logged', loadHeatmap)
@@ -601,6 +630,10 @@ function AppInner() {
     return () => window.removeEventListener('keydown', onKey)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  const heatLabel = (count: number) => (choresMode
+    ? completionsLabel(t, count)
+    : count === 0 ? t('heatmap.noInteractions') : t('heatmap.interactions', { count }))
 
   const openJournal = useCallback((date: string | null) => {
     setJournalDate(date)
@@ -672,11 +705,11 @@ function AppInner() {
             <>
               {/* 26 weeks on landscape mobile / small screens */}
               <div className="hidden min-[828px]:block min-[1140px]:hidden pb-0.5 opacity-80">
-                <HeaderHeatmap key={waveKey} weeks={heatmapWeeks.slice(-26)} onSelectDay={openJournal} />
+                <HeaderHeatmap key={waveKey} weeks={heatmapWeeks.slice(-26)} onSelectDay={openJournal} label={heatLabel} />
               </div>
               {/* 52 weeks on large screens */}
               <div className="hidden min-[1140px]:block pb-0.5 opacity-80">
-                <HeaderHeatmap key={waveKey} weeks={heatmapWeeks} onSelectDay={openJournal} />
+                <HeaderHeatmap key={waveKey} weeks={heatmapWeeks} onSelectDay={openJournal} label={heatLabel} />
               </div>
             </>
           )}
@@ -803,7 +836,7 @@ function AppInner() {
               >
                 {syncIcon}
               </button>
-              <button onClick={() => openJournal(null)} className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors" aria-label={t('app.journal')} data-tooltip={t('app.journalTooltip')}><NotebookText size={15} /></button>
+              <button onClick={() => openJournal(null)} className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors" aria-label={t('app.journal')} data-tooltip={t(choresMode ? 'app.journalTooltip' : 'app.journalTooltipPeople')}><NotebookText size={15} /></button>
               <button onClick={() => setShowHelp(true)} className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors" aria-label={t('app.helpFeedback')} data-tooltip={t('app.helpFeedback')}><HelpCircle size={15} /></button>
               <button
                 onClick={() => setShowSettings(true)}
@@ -894,7 +927,15 @@ function AppInner() {
         <ActivityLogModal onClose={() => setShowActivityLog(false)} />
       )}
 
-      {showJournal && (
+      {showJournal && !choresMode && (
+        <PeopleJournalModal
+          key={journalDate ?? 'default'}
+          initialDate={journalDate ?? undefined}
+          onClose={() => setShowJournal(false)}
+        />
+      )}
+
+      {showJournal && choresMode && (
         <JournalModal
           // Remount when the requested day changes, so tapping a second heatmap
           // cell while the Journal is open re-seeds its range instead of being

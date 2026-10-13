@@ -5,6 +5,7 @@
     "dayglanceIntegration": "dayGLANCE 集成",
     "journal": "日志",
     "journalTooltip": "查看所有已完成记录",
+    "journalTooltipPeople": "查看与谁保持了联系",
     "backupRestore": "备份与恢复",
     "helpFeedback": "帮助与反馈",
     "toggleTheme": "切换主题",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} 条完成记录",
     "completions_other": "{{count}} 条完成记录",
-    "noCompletions": "无完成记录"
+    "noCompletions": "无完成记录",
+    "interactions_one": "{{count}} 次联系",
+    "interactions_other": "{{count}} 次联系",
+    "noInteractions": "无联系记录"
   },
   "help": {
     "title": "帮助与反馈",
@@ -339,7 +343,15 @@
     "csvCategory": "分类",
     "csvUser": "用户",
     "csvSource": "来源",
-    "csvNote": "备注"
+    "csvNote": "备注",
+    "filterPeoplePlaceholder": "按联系人或备注筛选…",
+    "allChannels": "所有方式",
+    "statInteractions": "联系",
+    "statPeople": "人数",
+    "emptyPeople": "此时间范围内没有记录。",
+    "csvPeople": "联系人",
+    "csvHow": "方式",
+    "csvDirection": "方向"
   },
   "logModal": {
     "lastDone": "上次完成：{{elapsed}}",
@@ -828,7 +840,7 @@
       "importButton": "从通讯录导入",
       "linkButton": "关联通讯录联系人",
       "disclosure1": "lastGLANCE 会读取通讯录中的姓名、照片、生日和其他日期、电话号码及邮箱地址，方便你无需重新输入即可添加联系人，并直接从这里拨打电话、发短信或发邮件。",
-      "disclosure2": "除非你导入，否则任何内容都不会离开你的手机。只会保存你选择的姓名和日期，并像其他数据一样加密同步。号码、地址和照片只在使用时读取，从不保存。",
+      "disclosure2": "lastGLANCE 只保存你选择的姓名和日期。只有在你使用同步时，它们才会离开你的手机，并像其他数据一样加密。号码和地址在你点按“电话”“短信”或“邮件”时读取，联系人照片在你打开此人时读取。这些都不会保存。",
       "disclosure3": "lastGLANCE 从不修改你的通讯录。",
       "continue": "继续",
       "denied": "通讯录访问已关闭。如需使用，请在手机设置中允许 lastGLANCE 访问通讯录。",

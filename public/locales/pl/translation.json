@@ -5,6 +5,7 @@
     "dayglanceIntegration": "Integracja z dayGLANCE",
     "journal": "Dziennik",
     "journalTooltip": "Przejrzyj wszystko, co zostało zrobione",
+    "journalTooltipPeople": "Przejrzyj kontakty z ludźmi",
     "backupRestore": "Kopia zapasowa i przywracanie",
     "helpFeedback": "Pomoc i opinie",
     "toggleTheme": "Przełącz motyw",
@@ -193,7 +194,12 @@
     "completions_few": "{{count}} wykonania",
     "completions_many": "{{count}} wykonań",
     "completions_other": "{{count}} wykonania",
-    "noCompletions": "Brak wykonań"
+    "noCompletions": "Brak wykonań",
+    "interactions_one": "{{count}} kontakt",
+    "interactions_few": "{{count}} kontakty",
+    "interactions_many": "{{count}} kontaktów",
+    "interactions_other": "{{count}} kontaktu",
+    "noInteractions": "Brak kontaktów"
   },
   "help": {
     "title": "Pomoc i opinie",
@@ -349,7 +355,15 @@
     "csvCategory": "Kategoria",
     "csvUser": "Użytkownik",
     "csvSource": "Źródło",
-    "csvNote": "Notatka"
+    "csvNote": "Notatka",
+    "filterPeoplePlaceholder": "Filtruj według osoby lub notatki…",
+    "allChannels": "Wszystkie rodzaje",
+    "statInteractions": "Kontakty",
+    "statPeople": "Osoby",
+    "emptyPeople": "W tym zakresie nic nie zapisano.",
+    "csvPeople": "Osoby",
+    "csvHow": "Sposób",
+    "csvDirection": "Kierunek"
   },
   "logModal": {
     "lastDone": "Ostatnio: {{elapsed}}",
@@ -860,7 +874,7 @@
       "importButton": "Importuj z kontaktów",
       "linkButton": "Połącz z kontaktem",
       "disclosure1": "lastGLANCE odczytuje z kontaktów imiona i nazwiska, zdjęcia, urodziny i inne daty, numery telefonów oraz adresy e-mail, żeby można było dodawać osoby bez przepisywania oraz dzwonić, pisać i wysyłać e-maile prosto stąd.",
-      "disclosure2": "Nic nie opuszcza telefonu, chyba że to zaimportujesz. Zapisywane są tylko wybrane imiona i daty, synchronizowane w postaci zaszyfrowanej jak reszta danych. Numery, adresy i zdjęcia są odczytywane przy użyciu i nigdy nie są zapisywane.",
+      "disclosure2": "W lastGLANCE zapisywane są tylko wybrane imiona i daty. Opuszczają telefon tylko przy włączonej synchronizacji, zaszyfrowane jak reszta danych. Numery i adresy są odczytywane po dotknięciu Zadzwoń, SMS lub E-mail, a zdjęcie kontaktu po otwarciu tej osoby. Nic z tego nie jest zapisywane.",
       "disclosure3": "lastGLANCE nigdy nie zmienia Twoich kontaktów.",
       "continue": "Dalej",
       "denied": "Dostęp do kontaktów jest wyłączony. Aby z niego korzystać, zezwól lastGLANCE na Kontakty w ustawieniach telefonu.",

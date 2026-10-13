@@ -5,6 +5,7 @@
     "dayglanceIntegration": "Intégration dayGLANCE",
     "journal": "Historique",
     "journalTooltip": "Revoir tout ce qui a été fait",
+    "journalTooltipPeople": "Revoir avec qui vous avez été en contact",
     "backupRestore": "Sauvegarde & Restauration",
     "helpFeedback": "Aide & Retours",
     "toggleTheme": "Basculer le thème",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} réalisation",
     "completions_other": "{{count}} réalisations",
-    "noCompletions": "Aucune réalisation"
+    "noCompletions": "Aucune réalisation",
+    "interactions_one": "{{count}} contact",
+    "interactions_other": "{{count}} contacts",
+    "noInteractions": "Aucun contact"
   },
   "help": {
     "title": "Aide & Retours",
@@ -339,7 +343,15 @@
     "csvCategory": "Catégorie",
     "csvUser": "Utilisateur",
     "csvSource": "Source",
-    "csvNote": "Note"
+    "csvNote": "Note",
+    "filterPeoplePlaceholder": "Filtrer par personne ou note…",
+    "allChannels": "Tous les types",
+    "statInteractions": "Contacts",
+    "statPeople": "Personnes",
+    "emptyPeople": "Rien d’enregistré sur cette période.",
+    "csvPeople": "Personnes",
+    "csvHow": "Comment",
+    "csvDirection": "Sens"
   },
   "logModal": {
     "lastDone": "Dernière fois : {{elapsed}}",
@@ -828,7 +840,7 @@
       "importButton": "Importer des contacts",
       "linkButton": "Lier à un contact",
       "disclosure1": "lastGLANCE lit les noms, photos, anniversaires et autres dates, numéros de téléphone et adresses e-mail de vos contacts, pour ajouter des proches sans les ressaisir et les appeler, leur écrire ou leur envoyer un e-mail d'ici.",
-      "disclosure2": "Rien ne quitte votre téléphone sauf ce que vous importez. Seuls les noms et dates choisis sont enregistrés, et ils sont synchronisés chiffrés comme le reste de vos données. Numéros, adresses et photos sont lus à l'usage et jamais enregistrés.",
+      "disclosure2": "Seuls les noms et dates que vous choisissez sont enregistrés dans lastGLANCE. Ils ne quittent votre téléphone que si vous utilisez la synchronisation, chiffrés comme le reste de vos données. Les numéros et adresses sont lus quand vous touchez Appeler, SMS ou E-mail, et la photo d'un contact quand vous ouvrez sa fiche. Rien de tout cela n'est enregistré.",
       "disclosure3": "lastGLANCE ne modifie jamais vos contacts.",
       "continue": "Continuer",
       "denied": "L'accès aux contacts est désactivé. Pour l'utiliser, autorisez Contacts pour lastGLANCE dans les réglages du téléphone.",
