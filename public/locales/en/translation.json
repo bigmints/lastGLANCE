@@ -840,7 +840,7 @@
       "importButton": "Import from contacts",
       "linkButton": "Link to contact",
       "disclosure1": "lastGLANCE reads names, photos, birthdays and other dates, phone numbers and email addresses from your contacts, so you can add people without retyping them and call, text or email them from here.",
-      "disclosure2": "Nothing leaves your phone unless you import it. Only the names and dates you pick are saved, and they sync encrypted like the rest of your data. Numbers, addresses and photos are read when you use them and never stored.",
+      "disclosure2": "Only the names and dates you pick are saved in lastGLANCE. They leave your phone only if you use sync, encrypted like the rest of your data. Numbers, addresses and photos are read when you use them and never stored.",
       "disclosure3": "lastGLANCE never changes your contacts.",
       "continue": "Continue",
       "denied": "Contacts access is off. To use it, allow Contacts for lastGLANCE in your phone's settings.",
