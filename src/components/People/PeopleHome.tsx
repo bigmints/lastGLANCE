@@ -188,7 +188,7 @@ export function PeopleHome() {
   const empty = active.length === 0 && archived.length === 0
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div className="flex-1 overflow-y-auto flex flex-col">
       {empty ? (
         <div className="flex flex-col items-center text-center gap-3 py-16 px-4">
           <Users size={36} className="text-green-400/70" />
@@ -212,9 +212,10 @@ export function PeopleHome() {
       ) : (
         // Phone: one column, Reach out and Coming up first. Tablet: those two
         // side by side above the circles. Desktop: those two in a fixed side
-        // column, the circles in a masonry grid beside it.
-        <div className="p-4 min-[1060px]:p-6 flex flex-col min-[1060px]:flex-row min-[1060px]:items-start gap-5">
-          <div className="w-full min-[1060px]:w-[380px] shrink-0 grid sm:grid-cols-2 min-[1060px]:grid-cols-1 items-start gap-5">
+        // column, the circles in a masonry grid beside it. The column's divider
+        // runs the full height and meets the header's bottom border.
+        <div className="grow shrink-0 p-4 min-[1060px]:p-0 flex flex-col min-[1060px]:flex-row gap-5 min-[1060px]:gap-0">
+          <div className="w-full min-[1060px]:w-[429px] shrink-0 grid sm:grid-cols-2 min-[1060px]:grid-cols-1 items-start content-start gap-5 min-[1060px]:p-6 min-[1060px]:border-r border-slate-200 dark:border-slate-800/80">
             <Card title={t('people.home.reachOut')}>
               {reachOut.length
                 ? <div className="space-y-2">{reachOut.map(row)}</div>
@@ -231,12 +232,14 @@ export function PeopleHome() {
             </Card>
           </div>
 
-          <div ref={setGridEl} className="flex-1 min-w-0 flex items-start" style={{ gap: GAP }}>
-            {columns.map((col, i) => (
-              <div key={i} className="flex-1 min-w-0 flex flex-col" style={{ gap: GAP }}>
-                {col.map(c => <div key={c.key}>{c.node()}</div>)}
-              </div>
-            ))}
+          <div className="flex-1 min-w-0 min-[1060px]:p-6">
+            <div ref={setGridEl} className="flex items-start" style={{ gap: GAP }}>
+              {columns.map((col, i) => (
+                <div key={i} className="flex-1 min-w-0 flex flex-col" style={{ gap: GAP }}>
+                  {col.map(c => <div key={c.key}>{c.node()}</div>)}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
