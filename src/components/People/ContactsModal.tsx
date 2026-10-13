@@ -19,6 +19,8 @@ type Props = {
 } & (
   | { mode: 'import'; initialCircleId?: string | null }
   | { mode: 'link'; person: PersonWithLastInteraction; personDates: PersonDate[] }
+  // Just the disclosure and the system prompt, from the Settings switch.
+  | { mode: 'permission'; onGranted: () => void }
 )
 
 type Step = 'checking' | 'disclosure' | 'denied' | 'loading' | 'list' | 'error'
@@ -43,6 +45,7 @@ export function ContactsModal(props: Props) {
   useEscapeKey(onClose)
 
   async function load() {
+    if (props.mode === 'permission') { props.onGranted(); onClose(); return }
     setStep('loading')
     try {
       setContacts(await listDeviceContacts())
@@ -60,6 +63,8 @@ export function ContactsModal(props: Props) {
       else setStep('disclosure')
     })
     return () => { live = false }
+  // Checks once, when the window opens.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function allow() {
@@ -117,7 +122,9 @@ export function ContactsModal(props: Props) {
     }
   }
 
-  const title = props.mode === 'link' ? t('people.contacts.linkTitle', { name: props.person.name }) : t('people.contacts.importTitle')
+  const title = props.mode === 'link' ? t('people.contacts.linkTitle', { name: props.person.name })
+    : props.mode === 'permission' ? t('settings.phoneContacts')
+    : t('people.contacts.importTitle')
   const btn = 'flex-1 py-2.5 rounded-xl text-sm font-medium transition-colors'
   const secondary = `${btn} text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600`
   const primary = `${btn} text-green-400 border border-green-400/40 hover:bg-green-400/10 disabled:opacity-40 disabled:hover:bg-transparent`
