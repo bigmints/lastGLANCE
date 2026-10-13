@@ -256,6 +256,13 @@ const OVERRIDES = {
   // "ligação" in Brazil (the general rule would make it a connection).
   'people.channel.call': 'Ligação',
   'people.home.reachOut': 'Entre em contato',
+  'people.reason.unreturned': '{{name}} entrou em contato; você ainda não respondeu',
+  'people.reason.streak_one': 'Você entrou em contato {{count}} vez seguida',
+  'people.reason.streak_other': 'Você entrou em contato {{count}} vezes seguidas',
+  'people.snooze.ariaLabel': 'Ocultar {{name}} de Entre em contato por um tempo',
+  'people.detail.balance': 'Você {{you}}, a outra pessoa {{them}} · últimos {{days}} dias',
+  'people.detail.balanceTooFew': 'Ainda não há registros suficientes para saber quem entra mais em contato',
+  'settings.showReciprocityHint': 'Setas, motivos em Entre em contato e o balanço de cada pessoa. Quem entrou em contato continua sendo registrado mesmo oculto.',
   'people.home.emptyCircle': 'Ninguém aqui ainda.',
   'people.home.reachOutEmpty': 'No momento, ninguém está esperando notícias.',
   'people.home.comingUpEmpty': 'Nenhuma data nos próximos 30 dias.',

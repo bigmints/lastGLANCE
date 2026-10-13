@@ -663,7 +663,12 @@
     "household": "Hogar",
     "integrations": "Integraciones",
     "integrationsDesc": "Conecta lastGLANCE con dayGLANCE y con apps de automatización.",
-    "about": "Acerca de"
+    "about": "Acerca de",
+    "people": "Personas",
+    "showReciprocity": "Mostrar quién contactó",
+    "showReciprocityHint": "Flechas, motivos en Ponte en contacto y el balance de cada persona. Quién contactó se sigue guardando aunque se oculte.",
+    "show": "Mostrar",
+    "hide": "Ocultar"
   },
   "people": {
     "close": "Cerrar",
@@ -732,7 +737,12 @@
       "archive": "Archivar",
       "unarchive": "Desarchivar",
       "deleteConfirm": "¿Eliminar a {{name}}?",
-      "deleteDetail": "También se eliminan sus fechas y los contactos registrados solo con esta persona. No se puede deshacer."
+      "deleteDetail": "También se eliminan sus fechas y los contactos registrados solo con esta persona. No se puede deshacer.",
+      "catchUpBy": "Contactar antes del {{date}}",
+      "snoozedUntil": "Oculto hasta el {{date}}",
+      "unsnooze": "Mostrar de nuevo",
+      "balance": "Tú {{you}}, la otra persona {{them}} · últimos {{days}} días",
+      "balanceTooFew": "Aún no hay suficientes registros para saber quién contacta más"
     },
     "form": {
       "addTitle": "Añadir persona",
@@ -795,6 +805,18 @@
       "outbound": "Contacté yo",
       "inbound": "Contactó la otra persona",
       "mutual": "Juntos"
+    },
+    "reason": {
+      "unreturned": "{{name}} te contactó; aún no has respondido",
+      "streak_one": "Has contactado {{count}} vez seguida",
+      "streak_other": "Has contactado {{count}} veces seguidas"
+    },
+    "snooze": {
+      "notNow": "Ahora no",
+      "ariaLabel": "Ocultar a {{name}} de Ponte en contacto durante un tiempo",
+      "d3": "3 días",
+      "d7": "1 semana",
+      "d14": "2 semanas"
     }
   }
 }

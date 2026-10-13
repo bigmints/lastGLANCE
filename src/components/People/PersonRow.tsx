@@ -1,22 +1,30 @@
 import { useRef, useState } from 'react'
-import { Check, PhoneIncoming, Plus } from 'lucide-react'
+import { AlarmClockOff, Check, PhoneIncoming, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PersonWithLastInteraction } from '@/people/types'
 import { cadenceRatio } from '@/people/home'
 import { formatElapsed, getCadenceColor } from '@/utils/cadence'
-import { logInteraction } from '@/people/queries'
+import { logInteraction, updatePerson } from '@/people/queries'
+import { SNOOZE_DAYS, snoozeUntil } from '@/people/home'
+import { useShowReciprocity } from '@/people/useShowReciprocity'
 import { CHANNEL_ICONS, DIRECTION_ICONS } from './channels'
 
 interface Props {
   person: PersonWithLastInteraction
   onOpen: (person: PersonWithLastInteraction) => void
   onQuickLog: (person: PersonWithLastInteraction) => void
+  // Why the person is on Reach out, shown under the recency line.
+  reason?: string | null
+  // Reach out rows offer "Not now", which hides the person for a few days.
+  snoozable?: boolean
 }
 
 const LONG_PRESS_MS = 500
 
-export function PersonRow({ person, onOpen, onQuickLog }: Props) {
+export function PersonRow({ person, onOpen, onQuickLog, reason = null, snoozable = false }: Props) {
   const { t } = useTranslation()
+  const showReciprocity = useShowReciprocity()
+  const [snoozing, setSnoozing] = useState(false)
   const ratio = cadenceRatio(person)
   const color = ratio !== null ? getCadenceColor(ratio) : '#64748b'
   const width = ratio !== null ? `${Math.min(ratio * 100, 100)}%` : '0%'
@@ -25,7 +33,7 @@ export function PersonRow({ person, onOpen, onQuickLog }: Props) {
     : t('people.row.noContactYet')
   const ChannelIcon = person.last_channel ? CHANNEL_ICONS[person.last_channel] : null
   // The arrow rides the channel icon; mutual and unrecorded show none.
-  const DirectionIcon = person.last_direction && person.last_direction !== 'mutual'
+  const DirectionIcon = showReciprocity && person.last_direction && person.last_direction !== 'mutual'
     ? DIRECTION_ICONS[person.last_direction] : null
   const [inbound, setInbound] = useState<'idle' | 'done'>('idle')
 
@@ -95,7 +103,24 @@ export function PersonRow({ person, onOpen, onQuickLog }: Props) {
             {DirectionIcon && <DirectionIcon size={10} className="shrink-0 -ml-0.5" aria-label={t(`people.direction.${person.last_direction}`)} />}
             <span className="truncate">{last}</span>
           </p>
+          {reason && <p className="text-xs text-amber-600 dark:text-amber-400/90 mt-0.5 line-clamp-2">{reason}</p>}
         </div>
+        {snoozable && (
+          <button
+            onClick={e => { e.stopPropagation(); setSnoozing(v => !v) }}
+            onPointerDown={e => e.stopPropagation()}
+            className={`shrink-0 p-1.5 rounded-lg border transition-colors ${
+              snoozing
+                ? 'bg-slate-200 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-800 dark:text-slate-100'
+                : 'bg-slate-100 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600/40 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700'
+            }`}
+            aria-label={t('people.snooze.ariaLabel', { name: person.name })}
+            aria-expanded={snoozing}
+            data-tooltip={t('people.snooze.notNow')}
+          >
+            <AlarmClockOff size={13} />
+          </button>
+        )}
         <button
           onClick={logInbound}
           onPointerDown={e => e.stopPropagation()}
@@ -114,11 +139,32 @@ export function PersonRow({ person, onOpen, onQuickLog }: Props) {
           onPointerDown={e => e.stopPropagation()}
           className="shrink-0 flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border bg-slate-100 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600/40 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
           aria-label={t('people.row.logAriaLabel', { name: person.name })}
+          data-tooltip={snoozable ? t('people.row.log') : undefined}
         >
           <Plus size={12} strokeWidth={2.5} />
-          <span>{t('people.row.log')}</span>
+          {/* Reach out rows carry one more button and a reason line, so the
+              Log button there is the icon alone. */}
+          {!snoozable && <span>{t('people.row.log')}</span>}
         </button>
       </div>
+      {snoozing && (
+        <div
+          className="relative flex items-center flex-wrap gap-1.5 pl-5 pr-4 pb-3 -mt-1"
+          onClick={e => e.stopPropagation()}
+          onPointerDown={e => e.stopPropagation()}
+        >
+          <span className="text-xs text-slate-400 dark:text-slate-500 mr-1">{t('people.snooze.notNow')}</span>
+          {SNOOZE_DAYS.map(days => (
+            <button
+              key={days}
+              onClick={async () => { setSnoozing(false); await updatePerson(person.sync_id, { snoozed_until: snoozeUntil(days) }) }}
+              className="px-2.5 py-1 rounded-lg text-xs font-medium border bg-slate-100 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600/40 text-slate-600 dark:text-slate-300 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            >
+              {t(`people.snooze.d${days}`)}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

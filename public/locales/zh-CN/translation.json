@@ -663,7 +663,12 @@
     "household": "家庭",
     "integrations": "集成",
     "integrationsDesc": "将 lastGLANCE 与 dayGLANCE 及自动化应用连接。",
-    "about": "关于"
+    "about": "关于",
+    "people": "联系人",
+    "showReciprocity": "显示谁主动联系",
+    "showReciprocityHint": "箭头、“该联系了”中的原因以及每个人的联系比例。隐藏后仍会记录谁主动联系。",
+    "show": "显示",
+    "hide": "隐藏"
   },
   "people": {
     "close": "关闭",
@@ -732,7 +737,12 @@
       "archive": "归档",
       "unarchive": "取消归档",
       "deleteConfirm": "删除 {{name}}？",
-      "deleteDetail": "其日期以及仅与此人相关的联系记录也会被删除。此操作无法撤销。"
+      "deleteDetail": "其日期以及仅与此人相关的联系记录也会被删除。此操作无法撤销。",
+      "catchUpBy": "请在 {{date}} 前联系",
+      "snoozedUntil": "隐藏至 {{date}}",
+      "unsnooze": "重新显示",
+      "balance": "你 {{you}} 次，对方 {{them}} 次 · 最近 {{days}} 天",
+      "balanceTooFew": "记录还不够，暂时看不出谁更常主动联系"
     },
     "form": {
       "addTitle": "添加联系人",
@@ -795,6 +805,18 @@
       "outbound": "我主动联系",
       "inbound": "对方主动联系",
       "mutual": "共同约定"
+    },
+    "reason": {
+      "unreturned": "{{name}} 联系过你，你还没回复",
+      "streak_one": "你已连续主动联系 {{count}} 次",
+      "streak_other": "你已连续主动联系 {{count}} 次"
+    },
+    "snooze": {
+      "notNow": "稍后再说",
+      "ariaLabel": "暂时在“该联系了”中隐藏 {{name}}",
+      "d3": "3 天",
+      "d7": "1 周",
+      "d14": "2 周"
     }
   }
 }

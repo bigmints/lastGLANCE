@@ -3,12 +3,14 @@ import { createPortal } from 'react-dom'
 import { Archive, ArchiveRestore, Pencil, Plus, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
-import { formatDateTime } from '@/utils/datetime'
+import { formatDateTime, formatMonthDay } from '@/utils/datetime'
 import { formatElapsed } from '@/utils/cadence'
 import {
   deletePerson, getDatesForPerson, getInteractionsForPerson, PEOPLE_CHANGED_EVENT, updatePerson,
 } from '@/people/queries'
-import { daysToWeeks, nextOccurrence } from '@/people/home'
+import { daysToWeeks, dueDate, isSnoozed, nextOccurrence } from '@/people/home'
+import { hasEnoughForBalance, RECIPROCITY_WINDOW_DAYS } from '@/people/reciprocity'
+import { useShowReciprocity } from '@/people/useShowReciprocity'
 import { normalizeDirection } from '@/people/types'
 import type { Interaction, PersonCircle, PersonDate, PersonWithLastInteraction } from '@/people/types'
 import dayjs from 'dayjs'
@@ -35,6 +37,7 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
   const [logging, setLogging] = useState(false)
   const [editInteraction, setEditInteraction] = useState<Interaction | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const showReciprocity = useShowReciprocity()
   useEscapeKey(onClose)
 
   const load = useCallback(async () => {
@@ -57,6 +60,10 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
     : t('people.row.noContactYet')
   const PreferredIcon = person.preferred_channel ? CHANNEL_ICONS[person.preferred_channel] : null
   const today = dayjs().startOf('day')
+  const due = dueDate(person)
+  const snoozed = isSnoozed(person)
+  const r = person.reciprocity
+  const directed = r.outbound + r.inbound
 
   const meta: string[] = []
   if (circle) meta.push(circle.name)
@@ -76,6 +83,21 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
             </h2>
             {meta.length > 0 && <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{meta.join(' · ')}</p>}
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{t('people.detail.lastContact', { last })}</p>
+            {due && !person.archived && (
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{t('people.detail.catchUpBy', { date: formatMonthDay(due) })}</p>
+            )}
+            {snoozed && (
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                {t('people.detail.snoozedUntil', { date: formatMonthDay(dayjs(person.snoozed_until)) })}
+                {' · '}
+                <button
+                  onClick={() => updatePerson(person.sync_id, { snoozed_until: null })}
+                  className="text-green-500 dark:text-green-400 hover:underline"
+                >
+                  {t('people.detail.unsnooze')}
+                </button>
+              </p>
+            )}
             {person.archived && <p className="text-xs text-amber-500 mt-1">{t('people.detail.archived')}</p>}
           </div>
           <div className="flex items-center gap-1 shrink-0">
@@ -142,6 +164,15 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
 
           <section>
             <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-2">{t('people.detail.timeline')}</h3>
+            {/* Plain counts, no bar or percentage, and only once there is
+                enough logged for the split to mean something. */}
+            {showReciprocity && directed > 0 && (
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                {hasEnoughForBalance(r)
+                  ? t('people.detail.balance', { you: r.outbound, them: r.inbound, days: RECIPROCITY_WINDOW_DAYS })
+                  : t('people.detail.balanceTooFew')}
+              </p>
+            )}
             {interactions.length === 0 ? (
               <p className="text-sm text-slate-400 dark:text-slate-500">{t('people.detail.noInteractions')}</p>
             ) : (
@@ -149,7 +180,7 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
                 {interactions.map(i => {
                   const Icon = CHANNEL_ICONS[i.channel]
                   const direction = normalizeDirection(i.direction)
-                  const DirectionIcon = direction ? DIRECTION_ICONS[direction] : null
+                  const DirectionIcon = showReciprocity && direction ? DIRECTION_ICONS[direction] : null
                   const others = i.person_sync_ids.filter(id => id !== person.sync_id).map(nameOf).filter(Boolean)
                   return (
                     <li key={i.sync_id}>

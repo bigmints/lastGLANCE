@@ -8,6 +8,7 @@ import { DateTimePicker } from '@/components/DateTimePicker/DateTimePicker'
 import { deleteInteraction, logInteraction, updateInteraction } from '@/people/queries'
 import { INTERACTION_CHANNELS, INTERACTION_DIRECTIONS, normalizeDirection } from '@/people/types'
 import type { Interaction, InteractionChannel, InteractionDirection, PersonWithLastInteraction } from '@/people/types'
+import { suggestedChannel } from '@/people/home'
 import { CHANNEL_ICONS, CHANNEL_LABEL_KEYS, DIRECTION_ICONS, DIRECTION_LABEL_KEYS } from './channels'
 import { ConfirmDelete } from './ConfirmDelete'
 
@@ -31,7 +32,7 @@ export function QuickLogSheet({ people, initialPersonIds = [], interaction, init
   const isEdit = Boolean(interaction)
   const first = people.find(p => p.sync_id === initialPersonIds[0])
   const [channel, setChannel] = useState<InteractionChannel>(
-    interaction?.channel ?? first?.preferred_channel ?? 'in_person',
+    interaction?.channel ?? (first && suggestedChannel(first)) ?? 'in_person',
   )
   // Optional: a log without a direction is complete. Tapping the chosen one
   // again clears it.

@@ -663,7 +663,12 @@
     "household": "Household",
     "integrations": "Integrations",
     "integrationsDesc": "Connect lastGLANCE with dayGLANCE and with automation apps.",
-    "about": "About"
+    "about": "About",
+    "people": "People",
+    "showReciprocity": "Show who reached out",
+    "showReciprocityHint": "Arrows, Reach out reasons and the balance on a person. Who reached out is still recorded when hidden.",
+    "show": "Show",
+    "hide": "Hide"
   },
   "people": {
     "close": "Close",
@@ -732,7 +737,12 @@
       "archive": "Archive",
       "unarchive": "Unarchive",
       "deleteConfirm": "Delete {{name}}?",
-      "deleteDetail": "Their dates and the contacts logged only with them are deleted too. This can't be undone."
+      "deleteDetail": "Their dates and the contacts logged only with them are deleted too. This can't be undone.",
+      "catchUpBy": "Catch up by {{date}}",
+      "snoozedUntil": "Hidden from Reach out until {{date}}",
+      "unsnooze": "Show again",
+      "balance": "You {{you}}, them {{them}} · last {{days}} days",
+      "balanceTooFew": "Not enough logged yet to tell who reaches out more"
     },
     "form": {
       "addTitle": "Add person",
@@ -795,6 +805,18 @@
       "outbound": "I reached out",
       "inbound": "They reached out",
       "mutual": "Together"
+    },
+    "reason": {
+      "unreturned": "{{name}} got in touch; you haven't replied yet",
+      "streak_one": "You've reached out {{count}} time in a row",
+      "streak_other": "You've reached out {{count}} times in a row"
+    },
+    "snooze": {
+      "notNow": "Not now",
+      "ariaLabel": "Hide {{name}} from Reach out for a while",
+      "d3": "3 days",
+      "d7": "1 week",
+      "d14": "2 weeks"
     }
   }
 }

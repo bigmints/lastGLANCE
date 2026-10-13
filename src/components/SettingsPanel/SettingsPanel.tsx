@@ -3,11 +3,13 @@ import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import {
   X, Settings, ChevronDown, ChevronRight, Palette, Users, Plug, Archive, Info,
-  Sun, Moon, Monitor,
+  Sun, Moon, Monitor, Contact,
 } from 'lucide-react'
 import type { SyncEngine } from '@glance-apps/sync'
 import type { UseBillingResult } from '@glance-apps/billing/react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
+import { isPeopleEnabled } from '@/people/flag'
+import { setReciprocityShown, useShowReciprocity } from '@/people/useShowReciprocity'
 import { LanguagePicker } from '@/components/LanguagePicker/LanguagePicker'
 import { UsersPanel } from '@/components/UsersPanel/UsersPanel'
 import { BackupPanel } from '@/components/BackupModal/BackupModal'
@@ -17,7 +19,7 @@ import { formatTimeSample, type TimeFormat } from '@/utils/datetime'
 
 export type ThemePref = 'light' | 'dark' | 'system'
 
-export type SettingsSection = 'appearance' | 'sync' | 'integrations' | 'household' | 'data' | 'about'
+export type SettingsSection = 'appearance' | 'people' | 'sync' | 'integrations' | 'household' | 'data' | 'about'
 type SectionId = SettingsSection
 
 interface Props {
@@ -61,6 +63,9 @@ export function SettingsPanel(props: Props) {
 
   // Escape and Android's Back both close the sheet.
   useEscapeKey(onClose)
+
+  const [peopleEnabled] = useState(isPeopleEnabled)
+  const showReciprocity = useShowReciprocity()
 
   const toggle = (id: SectionId) => setOpen(o => (o === id ? null : id))
 
@@ -132,6 +137,26 @@ export function SettingsPanel(props: Props) {
               </p>
             </Field>
           </Section>
+
+          {peopleEnabled && (
+            <Section
+              id="people" open={open} onToggle={toggle}
+              icon={<Contact size={16} />} title={t('settings.people')}
+            >
+              <Field label={t('settings.showReciprocity')}>
+                <Segmented<'on' | 'off'>
+                  label={t('settings.showReciprocity')}
+                  value={showReciprocity ? 'on' : 'off'}
+                  onChange={v => setReciprocityShown(v === 'on')}
+                  options={[
+                    { value: 'on', label: t('settings.show') },
+                    { value: 'off', label: t('settings.hide') },
+                  ]}
+                />
+                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.showReciprocityHint')}</p>
+              </Field>
+            </Section>
+          )}
 
           <Section
             id="sync" open={open} onToggle={toggle}
