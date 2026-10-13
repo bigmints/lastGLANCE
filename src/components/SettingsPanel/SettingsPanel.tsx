@@ -8,7 +8,6 @@ import {
 import type { SyncEngine } from '@glance-apps/sync'
 import type { UseBillingResult } from '@glance-apps/billing/react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
-import { isPeopleEnabled } from '@/people/flag'
 import { setContactsEnabled, setReciprocityShown, useContactsEnabled, useShowReciprocity } from '@/people/settings'
 import { contactsSupported } from '@/native/contacts'
 import { ContactsModal } from '@/components/People/ContactsModal'
@@ -66,7 +65,6 @@ export function SettingsPanel(props: Props) {
   // Escape and Android's Back both close the sheet.
   useEscapeKey(onClose)
 
-  const [peopleEnabled] = useState(isPeopleEnabled)
   const showReciprocity = useShowReciprocity()
   const contactsEnabled = useContactsEnabled()
   // Turning Phone contacts on asks for permission right away, after the
@@ -144,39 +142,37 @@ export function SettingsPanel(props: Props) {
             </Field>
           </Section>
 
-          {peopleEnabled && (
-            <Section
-              id="people" open={open} onToggle={toggle}
-              icon={<Contact size={16} />} title={t('settings.people')}
-            >
-              <Field label={t('settings.showReciprocity')}>
+          <Section
+            id="people" open={open} onToggle={toggle}
+            icon={<Contact size={16} />} title={t('settings.people')}
+          >
+            <Field label={t('settings.showReciprocity')}>
+              <Segmented<'on' | 'off'>
+                label={t('settings.showReciprocity')}
+                value={showReciprocity ? 'on' : 'off'}
+                onChange={v => setReciprocityShown(v === 'on')}
+                options={[
+                  { value: 'on', label: t('settings.show') },
+                  { value: 'off', label: t('settings.hide') },
+                ]}
+              />
+              <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.showReciprocityHint')}</p>
+            </Field>
+            {contactsSupported() && (
+              <Field label={t('settings.phoneContacts')}>
                 <Segmented<'on' | 'off'>
-                  label={t('settings.showReciprocity')}
-                  value={showReciprocity ? 'on' : 'off'}
-                  onChange={v => setReciprocityShown(v === 'on')}
+                  label={t('settings.phoneContacts')}
+                  value={contactsEnabled ? 'on' : 'off'}
+                  onChange={v => { if (v === 'off') setContactsEnabled(false); else setAskingContacts(true) }}
                   options={[
-                    { value: 'on', label: t('settings.show') },
-                    { value: 'off', label: t('settings.hide') },
+                    { value: 'on', label: t('settings.on') },
+                    { value: 'off', label: t('settings.off') },
                   ]}
                 />
-                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.showReciprocityHint')}</p>
+                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.phoneContactsHint')}</p>
               </Field>
-              {contactsSupported() && (
-                <Field label={t('settings.phoneContacts')}>
-                  <Segmented<'on' | 'off'>
-                    label={t('settings.phoneContacts')}
-                    value={contactsEnabled ? 'on' : 'off'}
-                    onChange={v => { if (v === 'off') setContactsEnabled(false); else setAskingContacts(true) }}
-                    options={[
-                      { value: 'on', label: t('settings.on') },
-                      { value: 'off', label: t('settings.off') },
-                    ]}
-                  />
-                  <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.phoneContactsHint')}</p>
-                </Field>
-              )}
-            </Section>
-          )}
+            )}
+          </Section>
 
           <Section
             id="sync" open={open} onToggle={toggle}

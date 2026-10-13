@@ -213,9 +213,6 @@
     "allowPersistentStorage": "Zezwól na trwałe przechowywanie",
     "storageInfo": "Pamięć: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
-    "peopleOn": "Włączono „Ludzie”",
-    "peopleOff": "Wyłączono „Ludzie”",
-    "peopleRestarting": "Ponowne uruchamianie, aby zastosować…",
     "shortcuts": "skróty"
   },
   "iconPicker": {
