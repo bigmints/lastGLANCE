@@ -840,7 +840,7 @@
       "importButton": "Importar dos contactos",
       "linkButton": "Associar a um contacto",
       "disclosure1": "O lastGLANCE lê nomes, fotografias, aniversários e outras datas, números de telefone e endereços de e-mail dos seus contactos, para poder adicionar pessoas sem as escrever de novo e ligar-lhes, enviar mensagens ou e-mails a partir daqui.",
-      "disclosure2": "No lastGLANCE só são guardados os nomes e as datas que escolher. Só saem do telefone se usar a sincronização, cifrados como os restantes dados. Números, endereços e fotografias são lidos quando os usa e nunca são guardados.",
+      "disclosure2": "No lastGLANCE só são guardados os nomes e as datas que escolher. Só saem do telefone se usar a sincronização, cifrados como os restantes dados. Os números e endereços são lidos quando toca em Ligar, Mensagem ou E-mail, e a fotografia de um contacto quando abre essa pessoa. Nada disto é guardado.",
       "disclosure3": "O lastGLANCE nunca altera os seus contactos.",
       "continue": "Continuar",
       "denied": "O acesso aos contactos está desativado. Para o usar, permita Contactos para o lastGLANCE nas definições do telefone.",

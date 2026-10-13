@@ -840,7 +840,7 @@
       "importButton": "Importar de contactos",
       "linkButton": "Vincular con contacto",
       "disclosure1": "lastGLANCE lee nombres, fotos, cumpleaños y otras fechas, números de teléfono y correos de tus contactos, para que añadas personas sin volver a escribirlas y las llames, les escribas o les envíes un correo desde aquí.",
-      "disclosure2": "En lastGLANCE solo se guardan los nombres y fechas que elijas. Solo salen de tu teléfono si usas la sincronización, cifrados como el resto de tus datos. Los números, direcciones y fotos se leen al usarlos y nunca se guardan.",
+      "disclosure2": "En lastGLANCE solo se guardan los nombres y fechas que elijas. Solo salen de tu teléfono si usas la sincronización, cifrados como el resto de tus datos. Los números y direcciones se leen al tocar Llamar, Mensaje o Correo, y la foto de un contacto al abrir a esa persona. Nada de esto se guarda.",
       "disclosure3": "lastGLANCE nunca modifica tus contactos.",
       "continue": "Continuar",
       "denied": "El acceso a contactos está desactivado. Para usarlo, permite Contactos para lastGLANCE en los ajustes del teléfono.",

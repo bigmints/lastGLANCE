@@ -840,7 +840,7 @@
       "importButton": "Importa dai contatti",
       "linkButton": "Collega a un contatto",
       "disclosure1": "lastGLANCE legge nomi, foto, compleanni e altre date, numeri di telefono e indirizzi email dai tuoi contatti, così puoi aggiungere persone senza riscriverle e chiamarle, scrivere o inviare email da qui.",
-      "disclosure2": "In lastGLANCE vengono salvati solo i nomi e le date che scegli. Lasciano il telefono solo se usi la sincronizzazione, cifrati come il resto dei dati. Numeri, indirizzi e foto vengono letti quando li usi e mai salvati.",
+      "disclosure2": "In lastGLANCE vengono salvati solo i nomi e le date che scegli. Lasciano il telefono solo se usi la sincronizzazione, cifrati come il resto dei dati. Numeri e indirizzi vengono letti quando tocchi Chiama, Messaggio o Email, e la foto di un contatto quando apri quella persona. Niente di tutto questo viene salvato.",
       "disclosure3": "lastGLANCE non modifica mai i tuoi contatti.",
       "continue": "Continua",
       "denied": "L'accesso ai contatti è disattivato. Per usarlo, consenti Contatti per lastGLANCE nelle impostazioni del telefono.",
