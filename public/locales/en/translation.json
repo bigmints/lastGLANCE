@@ -19,7 +19,10 @@
     "done": "Done",
     "edit": "Edit",
     "settings": "Settings",
-    "language": "Language"
+    "language": "Language",
+    "modeSwitch": "Switch between chores and people",
+    "modeChores": "Chores",
+    "modePeople": "People"
   },
   "activityLog": {
     "title": "Activity Log",
@@ -200,6 +203,9 @@
     "allowPersistentStorage": "Allow persistent storage",
     "storageInfo": "Storage: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "People turned on",
+    "peopleOff": "People turned off",
+    "peopleRestarting": "Restarting to apply…",
     "shortcuts": "shortcuts"
   },
   "iconPicker": {
@@ -658,5 +664,137 @@
     "integrations": "Integrations",
     "integrationsDesc": "Connect lastGLANCE with dayGLANCE and with automation apps.",
     "about": "About"
+  },
+  "people": {
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "delete": "Delete",
+    "channel": {
+      "in_person": "In person",
+      "call": "Call",
+      "video": "Video call",
+      "text": "Text",
+      "email": "Email",
+      "other": "Other"
+    },
+    "dateKind": {
+      "birthday": "Birthday",
+      "anniversary": "Anniversary",
+      "custom": "Other date"
+    },
+    "starterCircles": {
+      "family": "Family",
+      "friends": "Friends",
+      "work": "Work"
+    },
+    "home": {
+      "addPerson": "Add person",
+      "circles": "Circles",
+      "reachOut": "Reach out",
+      "comingUp": "Coming up",
+      "everyone": "Everyone",
+      "noCircle": "No circle",
+      "emptyCircle": "Nobody here yet.",
+      "addToCircle": "Add a person to {{circle}}",
+      "showArchived": "Show archived ({{n}})",
+      "hideArchived": "Hide archived",
+      "reachOutEmpty": "Nobody is due right now.",
+      "comingUpEmpty": "No dates in the next 30 days."
+    },
+    "empty": {
+      "title": "Keep up with your people",
+      "body": "Add the people you want to stay close to, log when you last talked, and lastGLANCE shows who is due for a hello and whose birthday is coming up.",
+      "addFirst": "Add your first person",
+      "starterCircles": "Start with Family, Friends and Work circles"
+    },
+    "row": {
+      "noContactYet": "no contact logged yet",
+      "label": "{{name}}, last contact {{last}}",
+      "log": "Log",
+      "logAriaLabel": "Log contact with {{name}}",
+      "theyGotInTouch": "They got in touch",
+      "theyGotInTouchAriaLabel": "Log that {{name}} got in touch"
+    },
+    "detail": {
+      "edit": "Edit person",
+      "lastContact": "Last contact: {{last}}",
+      "archived": "Archived",
+      "everyNWeeks": "every {{n}} wk",
+      "logContact": "Log contact",
+      "prefers": "Prefers: {{channel}}",
+      "dates": "Dates",
+      "notes": "Notes",
+      "timeline": "Timeline",
+      "noInteractions": "Nothing logged yet.",
+      "with": "with {{names}}",
+      "archive": "Archive",
+      "unarchive": "Unarchive",
+      "deleteConfirm": "Delete {{name}}?",
+      "deleteDetail": "Their dates and the contacts logged only with them are deleted too. This can't be undone."
+    },
+    "form": {
+      "addTitle": "Add person",
+      "editTitle": "Edit person",
+      "add": "Add",
+      "optional": "(optional)",
+      "name": "Name",
+      "nickname": "Nickname",
+      "circle": "Circle",
+      "noCircle": "No circle",
+      "cadence": "Stay in touch every (weeks)",
+      "cadencePlaceholder": "e.g. 2",
+      "cadenceHint": "Leave empty to just keep a record without nudges.",
+      "preferredChannel": "Usual way to reach them",
+      "noPreference": "No preference",
+      "dates": "Important dates",
+      "addDate": "Add date",
+      "dateKind": "Kind of date",
+      "dateLabelPlaceholder": "What is it? (e.g. Name day)",
+      "month": "Month",
+      "day": "Day",
+      "year": "Year",
+      "yearPlaceholder": "Year?",
+      "removeDate": "Remove date",
+      "details": "Notes",
+      "detailsPlaceholder": "Kids' names, likes, things to ask about…",
+      "nameRequired": "Name is required",
+      "cadenceInvalid": "Enter a number of weeks greater than 0",
+      "yearInvalid": "Enter a year between 1 and 9999, or leave it empty"
+    },
+    "log": {
+      "title": "Log contact",
+      "editTitle": "Edit contact",
+      "how": "How",
+      "who": "Who",
+      "addPerson": "Add someone else…",
+      "removePerson": "Remove {{name}}",
+      "unknownPerson": "Someone",
+      "when": "When (defaults to now)",
+      "note": "Note",
+      "notePlaceholder": "What did you talk about?",
+      "logIt": "Log it",
+      "needPerson": "Add at least one person",
+      "deleteConfirm": "Delete this contact from the timeline?",
+      "direction": "Who reached out"
+    },
+    "circles": {
+      "title": "Circles",
+      "hint": "Group people however you like. Deleting a circle keeps its people.",
+      "rename": "Rename {{name}}",
+      "moveUp": "Move {{name}} up",
+      "moveDown": "Move {{name}} down",
+      "delete": "Delete {{name}}",
+      "newPlaceholder": "New circle",
+      "add": "Add",
+      "deleteConfirm": "Delete the {{name}} circle?",
+      "deleteDetail": "Its people stay, without a circle."
+    },
+    "direction": {
+      "outbound": "I reached out",
+      "inbound": "They reached out",
+      "mutual": "Together"
+    }
   }
 }

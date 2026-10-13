@@ -11,6 +11,20 @@ export const INTERACTION_CHANNELS: readonly InteractionChannel[] = [
 
 export type InteractionSource = 'manual' | 'quick_action' | 'intent'
 
+// Who started an interaction (docs: the reciprocity spec). `mutual` is a
+// planned-together event with no initiator; null is "not recorded", which
+// covers legacy rows, imports and logs where the user skipped the control.
+// Only outbound and inbound count toward reciprocity signals.
+export type InteractionDirection = 'outbound' | 'inbound' | 'mutual'
+
+export const INTERACTION_DIRECTIONS: readonly InteractionDirection[] = ['outbound', 'inbound', 'mutual']
+
+// Unknown or absent values (a row from before the field, or a value a newer
+// build added) read as not recorded.
+export function normalizeDirection(value: unknown): InteractionDirection | null {
+  return value === 'outbound' || value === 'inbound' || value === 'mutual' ? value : null
+}
+
 export type PersonDateKind = 'birthday' | 'anniversary' | 'custom'
 
 export interface Person {
@@ -39,6 +53,9 @@ export interface Interaction {
   person_sync_ids: string[]
   occurred_at: string
   channel: InteractionChannel
+  // Not indexed, so rows from before the field simply lack it; read it
+  // through normalizeDirection.
+  direction?: InteractionDirection | null
   note: string | null
   source: InteractionSource
   updated_at: string
@@ -82,6 +99,7 @@ export interface PeopleTombstone {
 export interface PersonWithLastInteraction extends Person {
   last_interaction_at: string | null
   last_channel: InteractionChannel | null
+  last_direction: InteractionDirection | null
   // Days since the last interaction, or since the person was added when there
   // is none yet, so a bulk import does not read as everyone overdue.
   elapsed_days: number

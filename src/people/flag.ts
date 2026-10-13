@@ -19,3 +19,19 @@ export function isPeopleEnabled(): boolean {
 export function isPeopleVaultSyncEnabled(): boolean {
   return read(PEOPLE_VAULT_SYNC_KEY) !== 'false'
 }
+
+export function setPeopleEnabled(on: boolean): void {
+  try { localStorage.setItem(PEOPLE_FLAG_KEY, on ? 'true' : 'false') } catch { /* storage blocked */ }
+}
+
+// The hidden switch: tapping the version in Settings > About this many times
+// in a row toggles the flag. A pause longer than the gap starts the count over.
+export const UNLOCK_TAPS = 7
+export const UNLOCK_GAP_MS = 1500
+
+export interface TapState { count: number; at: number }
+
+export function registerTap(prev: TapState, now: number): TapState {
+  const count = now - prev.at <= UNLOCK_GAP_MS ? prev.count + 1 : 1
+  return { count, at: now }
+}

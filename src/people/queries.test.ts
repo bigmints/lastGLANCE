@@ -84,6 +84,18 @@ describe('interactions', () => {
     expect((await getPerson(a.sync_id))!.snoozed_until).toBeNull()
   })
 
+  it('stores direction as given, or an explicit null, and reports the latest on the person', async () => {
+    const a = await createPerson({ name: 'A' })
+    const skipped = await logInteraction({ person_sync_ids: [a.sync_id], channel: 'call', occurred_at: dayjs().subtract(2, 'day').toISOString() })
+    expect(await db.interactions.where('sync_id').equals(skipped.sync_id).first()).toHaveProperty('direction', null)
+    expect((await getPeople())[0].last_direction).toBeNull()
+
+    const i = await logInteraction({ person_sync_ids: [a.sync_id], channel: 'call', direction: 'inbound' })
+    expect((await getPeople())[0].last_direction).toBe('inbound')
+    await updateInteraction(i.sync_id, { direction: 'mutual' })
+    expect((await getPeople())[0].last_direction).toBe('mutual')
+  })
+
   it('refuses an interaction with nobody in it', async () => {
     await expect(logInteraction({ person_sync_ids: [], channel: 'call' })).rejects.toThrow()
     const a = await createPerson({ name: 'A' })

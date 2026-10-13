@@ -19,7 +19,10 @@
     "done": "Fertig",
     "edit": "Bearbeiten",
     "settings": "Einstellungen",
-    "language": "Sprache"
+    "language": "Sprache",
+    "modeSwitch": "Zwischen Aufgaben und Menschen wechseln",
+    "modeChores": "Aufgaben",
+    "modePeople": "Menschen"
   },
   "activityLog": {
     "title": "Aktivitätsprotokoll",
@@ -200,6 +203,9 @@
     "allowPersistentStorage": "Dauerhaften Speicher erlauben",
     "storageInfo": "Speicher: {{used}} / ~{{quota}}",
     "versionInfo": "v{{version}} · {{date}}",
+    "peopleOn": "„Menschen“ aktiviert",
+    "peopleOff": "„Menschen“ deaktiviert",
+    "peopleRestarting": "Neustart zum Übernehmen…",
     "shortcuts": "Tastenkürzel"
   },
   "iconPicker": {
@@ -658,5 +664,137 @@
     "integrations": "Integrationen",
     "integrationsDesc": "Verbinde lastGLANCE mit dayGLANCE und mit Automatisierungs-Apps.",
     "about": "Über"
+  },
+  "people": {
+    "close": "Schließen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Speichern…",
+    "delete": "Löschen",
+    "channel": {
+      "in_person": "Persönlich",
+      "call": "Anruf",
+      "video": "Videoanruf",
+      "text": "Nachricht",
+      "email": "E-Mail",
+      "other": "Sonstiges"
+    },
+    "dateKind": {
+      "birthday": "Geburtstag",
+      "anniversary": "Jahrestag",
+      "custom": "Anderes Datum"
+    },
+    "starterCircles": {
+      "family": "Familie",
+      "friends": "Freunde",
+      "work": "Arbeit"
+    },
+    "home": {
+      "addPerson": "Person hinzufügen",
+      "circles": "Kreise",
+      "reachOut": "Melde dich mal",
+      "comingUp": "Demnächst",
+      "everyone": "Alle",
+      "noCircle": "Ohne Kreis",
+      "emptyCircle": "Noch niemand hier.",
+      "addToCircle": "Person zu {{circle}} hinzufügen",
+      "showArchived": "Archivierte anzeigen ({{n}})",
+      "hideArchived": "Archivierte ausblenden",
+      "reachOutEmpty": "Gerade ist niemand dran.",
+      "comingUpEmpty": "Keine Daten in den nächsten 30 Tagen."
+    },
+    "empty": {
+      "title": "Bleib mit deinen Menschen in Kontakt",
+      "body": "Füge die Menschen hinzu, mit denen du in Kontakt bleiben willst, halte fest, wann ihr zuletzt gesprochen habt, und lastGLANCE zeigt dir, wer mal wieder dran ist und wessen Geburtstag bald ansteht.",
+      "addFirst": "Erste Person hinzufügen",
+      "starterCircles": "Mit den Kreisen Familie, Freunde und Arbeit beginnen"
+    },
+    "row": {
+      "noContactYet": "noch kein Kontakt erfasst",
+      "label": "{{name}}, letzter Kontakt {{last}}",
+      "log": "Erfassen",
+      "logAriaLabel": "Kontakt mit {{name}} erfassen",
+      "theyGotInTouch": "Hat sich gemeldet",
+      "theyGotInTouchAriaLabel": "Erfassen, dass sich {{name}} gemeldet hat"
+    },
+    "detail": {
+      "edit": "Person bearbeiten",
+      "lastContact": "Letzter Kontakt: {{last}}",
+      "archived": "Archiviert",
+      "everyNWeeks": "alle {{n}} Wo.",
+      "logContact": "Kontakt erfassen",
+      "prefers": "Bevorzugt: {{channel}}",
+      "dates": "Daten",
+      "notes": "Notizen",
+      "timeline": "Verlauf",
+      "noInteractions": "Noch nichts erfasst.",
+      "with": "mit {{names}}",
+      "archive": "Archivieren",
+      "unarchive": "Wiederherstellen",
+      "deleteConfirm": "{{name}} löschen?",
+      "deleteDetail": "Die Daten und die nur mit dieser Person erfassten Kontakte werden ebenfalls gelöscht. Das lässt sich nicht rückgängig machen."
+    },
+    "form": {
+      "addTitle": "Person hinzufügen",
+      "editTitle": "Person bearbeiten",
+      "add": "Hinzufügen",
+      "optional": "(optional)",
+      "name": "Name",
+      "nickname": "Spitzname",
+      "circle": "Kreis",
+      "noCircle": "Kein Kreis",
+      "cadence": "In Kontakt bleiben alle (Wochen)",
+      "cadencePlaceholder": "z. B. 2",
+      "cadenceHint": "Leer lassen, um nur Kontakte festzuhalten, ohne Erinnerungen.",
+      "preferredChannel": "Üblicher Weg, sie zu erreichen",
+      "noPreference": "Keine Vorliebe",
+      "dates": "Wichtige Daten",
+      "addDate": "Datum hinzufügen",
+      "dateKind": "Art des Datums",
+      "dateLabelPlaceholder": "Was ist es? (z. B. Namenstag)",
+      "month": "Monat",
+      "day": "Tag",
+      "year": "Jahr",
+      "yearPlaceholder": "Jahr?",
+      "removeDate": "Datum entfernen",
+      "details": "Notizen",
+      "detailsPlaceholder": "Namen der Kinder, Vorlieben, Dinge, nach denen du fragen willst…",
+      "nameRequired": "Name ist erforderlich",
+      "cadenceInvalid": "Gib eine Anzahl Wochen größer als 0 ein",
+      "yearInvalid": "Gib ein Jahr zwischen 1 und 9999 ein oder lass das Feld leer"
+    },
+    "log": {
+      "title": "Kontakt erfassen",
+      "editTitle": "Kontakt bearbeiten",
+      "how": "Wie",
+      "who": "Wer",
+      "addPerson": "Weitere Person hinzufügen…",
+      "removePerson": "{{name}} entfernen",
+      "unknownPerson": "Jemand",
+      "when": "Wann (Standard: jetzt)",
+      "note": "Notiz",
+      "notePlaceholder": "Worüber habt ihr gesprochen?",
+      "logIt": "Erfassen",
+      "needPerson": "Füge mindestens eine Person hinzu",
+      "deleteConfirm": "Diesen Kontakt aus dem Verlauf löschen?",
+      "direction": "Wer hat sich gemeldet"
+    },
+    "circles": {
+      "title": "Kreise",
+      "hint": "Gruppiere Menschen, wie du willst. Beim Löschen eines Kreises bleiben seine Menschen erhalten.",
+      "rename": "{{name}} umbenennen",
+      "moveUp": "{{name}} nach oben",
+      "moveDown": "{{name}} nach unten",
+      "delete": "{{name}} löschen",
+      "newPlaceholder": "Neuer Kreis",
+      "add": "Hinzufügen",
+      "deleteConfirm": "Den Kreis {{name}} löschen?",
+      "deleteDetail": "Seine Menschen bleiben erhalten, ohne Kreis."
+    },
+    "direction": {
+      "outbound": "Ich habe mich gemeldet",
+      "inbound": "Sie haben sich gemeldet",
+      "mutual": "Gemeinsam"
+    }
   }
 }

@@ -7,8 +7,9 @@ import dayjs from 'dayjs'
 import { db } from '@/db/client'
 import { getMeUserSyncId, getMultiUserEnabled } from '@/multiuser/settings'
 import { markPeopleDirty } from './sync/dirtyTracker'
+import { normalizeDirection } from './types'
 import type {
-  Interaction, InteractionChannel, InteractionSource, Person, PersonCircle,
+  Interaction, InteractionChannel, InteractionDirection, InteractionSource, Person, PersonCircle,
   PersonDate, PersonDateKind, PersonWithLastInteraction,
 } from './types'
 
@@ -147,6 +148,7 @@ export async function getPeople(
         ...p,
         last_interaction_at: li ? li.occurred_at : null,
         last_channel: li ? li.channel : null,
+        last_direction: li ? normalizeDirection(li.direction) : null,
         elapsed_days: Math.max(0, Math.round(elapsed * 10) / 10),
       }
     })
@@ -157,6 +159,7 @@ export async function getPeople(
 export interface InteractionInput {
   person_sync_ids: string[]
   channel: InteractionChannel
+  direction?: InteractionDirection | null
   occurred_at?: string
   note?: string | null
   source?: InteractionSource
@@ -173,6 +176,7 @@ export async function logInteraction(input: InteractionInput): Promise<Interacti
     person_sync_ids: people,
     occurred_at: input.occurred_at ?? ts,
     channel: input.channel,
+    direction: input.direction ?? null,
     note: input.note ?? null,
     source: input.source ?? 'manual',
     updated_at: ts,
@@ -195,7 +199,7 @@ export async function logInteraction(input: InteractionInput): Promise<Interacti
 }
 
 export type InteractionPatch = Partial<Pick<Interaction,
-  'person_sync_ids' | 'occurred_at' | 'channel' | 'note'
+  'person_sync_ids' | 'occurred_at' | 'channel' | 'direction' | 'note'
 >>
 
 export async function updateInteraction(syncId: string, patch: InteractionPatch): Promise<void> {
@@ -348,4 +352,8 @@ export async function deleteCircle(syncId: string): Promise<void> {
 
 export async function getCircles(): Promise<PersonCircle[]> {
   return db.personCircles.orderBy('sort_order').toArray()
+}
+
+export async function getAllPersonDates(): Promise<PersonDate[]> {
+  return db.personDates.toArray()
 }
