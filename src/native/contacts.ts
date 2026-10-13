@@ -1,15 +1,17 @@
 import { registerPlugin } from '@capacitor/core'
-import { isAndroid } from './platform'
+import { isNativeShell } from './platform'
 
-// The phone's address book, read-only (ContactsPlugin.java). Android only for
-// now; iOS follows in its own PR, and the web has no contacts access, so every
-// entry point is hidden where contactsSupported() is false.
+// The phone's address book, read-only (ContactsPlugin.java on Android,
+// ContactsPlugin.swift on iOS, with the same shapes back). The web has no
+// contacts access, so every entry point is hidden where contactsSupported()
+// is false.
 
 export type ContactsPermission = 'granted' | 'denied' | 'prompt' | 'prompt-with-rationale'
 
 export interface RawContactEvent {
   date: string
   // ContactsContract Event.TYPE: 0 custom, 1 anniversary, 2 other, 3 birthday.
+  // iOS sends the same numbers.
   type: number
   label: string | null
 }
@@ -51,7 +53,7 @@ interface ContactsPlugin {
 const Contacts = registerPlugin<ContactsPlugin>('Contacts')
 
 export function contactsSupported(): boolean {
-  return isAndroid()
+  return isNativeShell()
 }
 
 export async function contactsPermission(): Promise<ContactsPermission> {

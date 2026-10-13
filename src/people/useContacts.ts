@@ -26,7 +26,7 @@ function readDismissed(): string[] {
 }
 
 export interface PeopleContacts {
-  // The setting is on and this device has contacts (Android).
+  // The setting is on and this device has contacts (Android or iOS).
   available: boolean
   links: ContactLink[]
   offers: BirthdayOffer[]
