@@ -6,9 +6,9 @@ import { useTranslation } from 'react-i18next'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import { DateTimePicker } from '@/components/DateTimePicker/DateTimePicker'
 import { deleteInteraction, logInteraction, updateInteraction } from '@/people/queries'
-import { INTERACTION_CHANNELS } from '@/people/types'
-import type { Interaction, InteractionChannel, PersonWithLastInteraction } from '@/people/types'
-import { CHANNEL_ICONS, CHANNEL_LABEL_KEYS } from './channels'
+import { INTERACTION_CHANNELS, INTERACTION_DIRECTIONS, normalizeDirection } from '@/people/types'
+import type { Interaction, InteractionChannel, InteractionDirection, PersonWithLastInteraction } from '@/people/types'
+import { CHANNEL_ICONS, CHANNEL_LABEL_KEYS, DIRECTION_ICONS, DIRECTION_LABEL_KEYS } from './channels'
 import { ConfirmDelete } from './ConfirmDelete'
 
 interface Props {
@@ -17,18 +17,26 @@ interface Props {
   initialPersonIds?: string[]
   // The interaction to edit. Without one the sheet logs a new interaction.
   interaction?: Interaction
+  // Preset direction for a new log: outbound from a Reach out card, unset
+  // everywhere else. Ignored when editing.
+  initialDirection?: InteractionDirection | null
   onClose: () => void
   onSaved?: () => void
 }
 
 // Logs (or edits) one interaction: how it happened, when, an optional note,
 // and everyone it covered.
-export function QuickLogSheet({ people, initialPersonIds = [], interaction, onClose, onSaved }: Props) {
+export function QuickLogSheet({ people, initialPersonIds = [], interaction, initialDirection = null, onClose, onSaved }: Props) {
   const { t } = useTranslation()
   const isEdit = Boolean(interaction)
   const first = people.find(p => p.sync_id === initialPersonIds[0])
   const [channel, setChannel] = useState<InteractionChannel>(
     interaction?.channel ?? first?.preferred_channel ?? 'in_person',
+  )
+  // Optional: a log without a direction is complete. Tapping the chosen one
+  // again clears it.
+  const [direction, setDirection] = useState<InteractionDirection | null>(
+    interaction ? normalizeDirection(interaction.direction) : initialDirection,
   )
   const [personIds, setPersonIds] = useState<string[]>(interaction?.person_sync_ids ?? initialPersonIds)
   const [date, setDate] = useState(interaction ? dayjs(interaction.occurred_at).format('YYYY-MM-DD') : '')
@@ -59,7 +67,7 @@ export function QuickLogSheet({ people, initialPersonIds = [], interaction, onCl
     if (personIds.length === 0) { setError(t('people.log.needPerson')); return }
     setSaving(true)
     try {
-      const fields = { person_sync_ids: personIds, channel, note: note.trim() || null, occurred_at: occurredAt() }
+      const fields = { person_sync_ids: personIds, channel, direction, note: note.trim() || null, occurred_at: occurredAt() }
       if (isEdit) await updateInteraction(interaction!.sync_id, fields)
       else await logInteraction(fields)
       onSaved?.()
@@ -113,6 +121,30 @@ export function QuickLogSheet({ people, initialPersonIds = [], interaction, onCl
                   >
                     <Icon size={13} />
                     {t(CHANNEL_LABEL_KEYS[c])}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div>
+            <p className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+              {t('people.log.direction')} <span className="text-slate-400 dark:text-slate-500">{t('people.form.optional')}</span>
+            </p>
+            <div className="flex flex-wrap gap-2" role="radiogroup">
+              {INTERACTION_DIRECTIONS.map(d => {
+                const Icon = DIRECTION_ICONS[d]
+                return (
+                  <button
+                    key={d}
+                    type="button"
+                    role="radio"
+                    aria-checked={direction === d}
+                    onClick={() => setDirection(cur => (cur === d ? null : d))}
+                    className={`${chip} ${direction === d ? on : off}`}
+                  >
+                    <Icon size={13} />
+                    {t(DIRECTION_LABEL_KEYS[d])}
                   </button>
                 )
               })}

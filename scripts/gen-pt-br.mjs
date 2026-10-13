@@ -255,6 +255,10 @@ const OVERRIDES = {
   'people.home.emptyCircle': 'Ninguém aqui ainda.',
   'people.home.reachOutEmpty': 'No momento, ninguém está esperando notícias.',
   'people.home.comingUpEmpty': 'Nenhuma data nos próximos 30 dias.',
+  'people.direction.outbound': 'Eu entrei em contato',
+  'people.direction.inbound': 'A outra pessoa entrou em contato',
+  'people.direction.mutual': 'Juntos',
+  'people.log.direction': 'Quem tomou a iniciativa',
   'people.empty.body':
     'Adicione as pessoas com quem você quer manter contato, registre quando conversaram pela última vez e o lastGLANCE mostra quem está esperando um oi e quais aniversários estão chegando.',
   'people.detail.noInteractions': 'Nada registrado ainda.',

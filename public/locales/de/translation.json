@@ -710,7 +710,9 @@
       "noContactYet": "noch kein Kontakt erfasst",
       "label": "{{name}}, letzter Kontakt {{last}}",
       "log": "Erfassen",
-      "logAriaLabel": "Kontakt mit {{name}} erfassen"
+      "logAriaLabel": "Kontakt mit {{name}} erfassen",
+      "theyGotInTouch": "Hat sich gemeldet",
+      "theyGotInTouchAriaLabel": "Erfassen, dass sich {{name}} gemeldet hat"
     },
     "detail": {
       "edit": "Person bearbeiten",
@@ -771,7 +773,8 @@
       "notePlaceholder": "Worüber habt ihr gesprochen?",
       "logIt": "Erfassen",
       "needPerson": "Füge mindestens eine Person hinzu",
-      "deleteConfirm": "Diesen Kontakt aus dem Verlauf löschen?"
+      "deleteConfirm": "Diesen Kontakt aus dem Verlauf löschen?",
+      "direction": "Wer hat sich gemeldet"
     },
     "circles": {
       "title": "Kreise",
@@ -784,6 +787,11 @@
       "add": "Hinzufügen",
       "deleteConfirm": "Den Kreis {{name}} löschen?",
       "deleteDetail": "Seine Menschen bleiben erhalten, ohne Kreis."
+    },
+    "direction": {
+      "outbound": "Ich habe mich gemeldet",
+      "inbound": "Sie haben sich gemeldet",
+      "mutual": "Gemeinsam"
     }
   }
 }

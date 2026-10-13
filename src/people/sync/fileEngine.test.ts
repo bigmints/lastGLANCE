@@ -20,7 +20,7 @@ function person(id: string, name: string, updatedAt: string): SyncPerson {
 function interaction(id: string, people: string[], updatedAt: string): SyncInteraction {
   return {
     kind: 'interaction', id, personSyncIds: people, occurredAt: '2026-02-01T12:00:00.000Z',
-    channel: 'video', note: null, source: 'manual', updatedAt,
+    channel: 'video', direction: 'inbound', note: null, source: 'manual', updatedAt,
   }
 }
 
@@ -100,6 +100,19 @@ describe('applyPeoplePayload and buildPeoplePayload', () => {
     const rows = await db.people.toArray()
     expect(rows.map(r => r.name)).toEqual(['Local newer'])
     expect(await db.peopleTombstones.get(P2)).toEqual({ id: P2, deleted_at: '2026-03-03T00:00:00.000Z' })
+  })
+
+  it('reads a missing or unknown direction as not recorded, and always writes the key', async () => {
+    const legacy = { ...interaction(I1, [P1], '2026-03-01T00:00:00.000Z') } as Partial<SyncInteraction>
+    delete legacy.direction
+    const future = { ...interaction('bbbbbbbb-0000-4000-8000-000000000002', [P1], '2026-03-01T00:00:00.000Z'), direction: 'sideways' }
+    await applyPeoplePayload(payload({
+      people: [person(P1, 'Sam', '2026-03-01T00:00:00.000Z')],
+      interactions: [legacy as SyncInteraction, future as unknown as SyncInteraction],
+    }), { allowEmpty: false })
+    const built = await buildPeoplePayload()
+    expect(built.interactions.map(i => i.direction)).toEqual([null, null])
+    expect(JSON.parse(JSON.stringify(built)).interactions[0]).toHaveProperty('direction', null)
   })
 
   it('ignores an empty payload unless allowed', async () => {

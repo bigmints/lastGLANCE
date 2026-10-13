@@ -710,7 +710,9 @@
       "noContactYet": "nenhum contato registrado",
       "label": "{{name}}, último contato {{last}}",
       "log": "Registrar",
-      "logAriaLabel": "Registrar contato com {{name}}"
+      "logAriaLabel": "Registrar contato com {{name}}",
+      "theyGotInTouch": "Entrou em contato",
+      "theyGotInTouchAriaLabel": "Registrar que {{name}} entrou em contato"
     },
     "detail": {
       "edit": "Editar pessoa",
@@ -771,7 +773,8 @@
       "notePlaceholder": "Sobre o que vocês conversaram?",
       "logIt": "Registrar",
       "needPerson": "Adicione pelo menos uma pessoa",
-      "deleteConfirm": "Excluir este contato do histórico?"
+      "deleteConfirm": "Excluir este contato do histórico?",
+      "direction": "Quem tomou a iniciativa"
     },
     "circles": {
       "title": "Círculos",
@@ -784,6 +787,11 @@
       "add": "Adicionar",
       "deleteConfirm": "Excluir o círculo {{name}}?",
       "deleteDetail": "As pessoas dele continuam, sem círculo."
+    },
+    "direction": {
+      "outbound": "Eu entrei em contato",
+      "inbound": "A outra pessoa entrou em contato",
+      "mutual": "Juntos"
     }
   }
 }

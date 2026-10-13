@@ -710,7 +710,9 @@
       "noContactYet": "nessun contatto registrato",
       "label": "{{name}}, ultimo contatto {{last}}",
       "log": "Registra",
-      "logAriaLabel": "Registra un contatto con {{name}}"
+      "logAriaLabel": "Registra un contatto con {{name}}",
+      "theyGotInTouch": "Si è fatto sentire",
+      "theyGotInTouchAriaLabel": "Registra che {{name}} si è fatto sentire"
     },
     "detail": {
       "edit": "Modifica persona",
@@ -771,7 +773,8 @@
       "notePlaceholder": "Di cosa avete parlato?",
       "logIt": "Registra",
       "needPerson": "Aggiungi almeno una persona",
-      "deleteConfirm": "Eliminare questo contatto dalla cronologia?"
+      "deleteConfirm": "Eliminare questo contatto dalla cronologia?",
+      "direction": "Chi si è fatto sentire"
     },
     "circles": {
       "title": "Cerchie",
@@ -784,6 +787,11 @@
       "add": "Aggiungi",
       "deleteConfirm": "Eliminare la cerchia {{name}}?",
       "deleteDetail": "Le sue persone restano, senza cerchia."
+    },
+    "direction": {
+      "outbound": "Mi sono fatto sentire io",
+      "inbound": "Si è fatto sentire lui/lei",
+      "mutual": "Insieme"
     }
   }
 }

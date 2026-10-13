@@ -1,10 +1,11 @@
-import { useRef } from 'react'
-import { Plus } from 'lucide-react'
+import { useRef, useState } from 'react'
+import { Check, PhoneIncoming, Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import type { PersonWithLastInteraction } from '@/people/types'
 import { cadenceRatio } from '@/people/home'
 import { formatElapsed, getCadenceColor } from '@/utils/cadence'
-import { CHANNEL_ICONS } from './channels'
+import { logInteraction } from '@/people/queries'
+import { CHANNEL_ICONS, DIRECTION_ICONS } from './channels'
 
 interface Props {
   person: PersonWithLastInteraction
@@ -23,6 +24,26 @@ export function PersonRow({ person, onOpen, onQuickLog }: Props) {
     ? formatElapsed(t, person.elapsed_days, person.last_interaction_at)
     : t('people.row.noContactYet')
   const ChannelIcon = person.last_channel ? CHANNEL_ICONS[person.last_channel] : null
+  // The arrow rides the channel icon; mutual and unrecorded show none.
+  const DirectionIcon = person.last_direction && person.last_direction !== 'mutual'
+    ? DIRECTION_ICONS[person.last_direction] : null
+  const [inbound, setInbound] = useState<'idle' | 'done'>('idle')
+
+  // "They got in touch": one tap, no sheet. Inbound contact is the kind
+  // nothing prompts you to log, so it gets the shortest path (see the
+  // reciprocity spec's logging-bias section).
+  async function logInbound(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (inbound !== 'idle') return
+    await logInteraction({
+      person_sync_ids: [person.sync_id],
+      channel: person.preferred_channel ?? 'other',
+      direction: 'inbound',
+      source: 'quick_action',
+    })
+    setInbound('done')
+    setTimeout(() => setInbound('idle'), 1500)
+  }
 
   // Long-press opens quick-log, like the spec's swipe/hold gesture; a plain
   // tap opens the person. The timer's firing marks the press as consumed so
@@ -71,9 +92,23 @@ export function PersonRow({ person, onOpen, onQuickLog }: Props) {
           </p>
           <p className="text-xs text-slate-400 dark:text-slate-500 tabular-nums mt-0.5 flex items-center gap-1">
             {ChannelIcon && <ChannelIcon size={11} className="shrink-0" />}
+            {DirectionIcon && <DirectionIcon size={10} className="shrink-0 -ml-0.5" aria-label={t(`people.direction.${person.last_direction}`)} />}
             <span className="truncate">{last}</span>
           </p>
         </div>
+        <button
+          onClick={logInbound}
+          onPointerDown={e => e.stopPropagation()}
+          className={`shrink-0 p-1.5 rounded-lg border transition-colors ${
+            inbound === 'done'
+              ? 'bg-green-500/20 border-green-500/40 text-green-500 dark:text-green-400'
+              : 'bg-slate-100 dark:bg-slate-700/60 border-slate-200 dark:border-slate-600/40 text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-100 hover:bg-slate-200 dark:hover:bg-slate-700'
+          }`}
+          aria-label={t('people.row.theyGotInTouchAriaLabel', { name: person.name })}
+          data-tooltip={t('people.row.theyGotInTouch')}
+        >
+          {inbound === 'done' ? <Check size={13} /> : <PhoneIncoming size={13} />}
+        </button>
         <button
           onClick={e => { e.stopPropagation(); onQuickLog(person) }}
           onPointerDown={e => e.stopPropagation()}

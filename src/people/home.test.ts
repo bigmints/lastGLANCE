@@ -14,7 +14,7 @@ function person(over: Partial<PersonWithLastInteraction> = {}): PersonWithLastIn
     sync_id: `p${seq}`, name: `Person ${seq}`, nickname: null, circle_sync_id: null,
     target_cadence_days: 14, preferred_channel: null, details: null, archived: false,
     snoozed_until: null, owner_user_sync_id: null, created_at: '2026-01-01T00:00:00.000Z',
-    updated_at: '2026-01-01T00:00:00.000Z', last_interaction_at: null, last_channel: null,
+    updated_at: '2026-01-01T00:00:00.000Z', last_interaction_at: null, last_channel: null, last_direction: null,
     elapsed_days: 0, ...over,
   }
 }

@@ -740,7 +740,9 @@
       "noContactYet": "контактів ще не записано",
       "label": "{{name}}, останній контакт {{last}}",
       "log": "Записати",
-      "logAriaLabel": "Записати контакт: {{name}}"
+      "logAriaLabel": "Записати контакт: {{name}}",
+      "theyGotInTouch": "Озвалися до мене",
+      "theyGotInTouchAriaLabel": "Записати, що {{name}} озвалися"
     },
     "detail": {
       "edit": "Редагувати людину",
@@ -801,7 +803,8 @@
       "notePlaceholder": "Про що ви говорили?",
       "logIt": "Записати",
       "needPerson": "Додайте хоча б одну людину",
-      "deleteConfirm": "Видалити цей контакт з історії?"
+      "deleteConfirm": "Видалити цей контакт з історії?",
+      "direction": "Хто озвався"
     },
     "circles": {
       "title": "Кола",
@@ -814,6 +817,11 @@
       "add": "Додати",
       "deleteConfirm": "Видалити коло {{name}}?",
       "deleteDetail": "Його люди залишаться, без кола."
+    },
+    "direction": {
+      "outbound": "Я озвався",
+      "inbound": "Озвалися до мене",
+      "mutual": "Разом"
     }
   }
 }

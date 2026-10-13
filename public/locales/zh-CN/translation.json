@@ -710,7 +710,9 @@
       "noContactYet": "尚未记录联系",
       "label": "{{name}}，上次联系 {{last}}",
       "log": "记录",
-      "logAriaLabel": "记录与 {{name}} 的联系"
+      "logAriaLabel": "记录与 {{name}} 的联系",
+      "theyGotInTouch": "对方联系了我",
+      "theyGotInTouchAriaLabel": "记录 {{name}} 主动联系了你"
     },
     "detail": {
       "edit": "编辑联系人",
@@ -771,7 +773,8 @@
       "notePlaceholder": "你们聊了什么？",
       "logIt": "记录",
       "needPerson": "请至少添加一人",
-      "deleteConfirm": "从时间线中删除这条联系记录？"
+      "deleteConfirm": "从时间线中删除这条联系记录？",
+      "direction": "谁主动联系"
     },
     "circles": {
       "title": "圈子",
@@ -784,6 +787,11 @@
       "add": "添加",
       "deleteConfirm": "删除 {{name}} 圈子？",
       "deleteDetail": "其中的人会保留，变为未分组。"
+    },
+    "direction": {
+      "outbound": "我主动联系",
+      "inbound": "对方主动联系",
+      "mutual": "共同约定"
     }
   }
 }

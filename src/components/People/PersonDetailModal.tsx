@@ -9,9 +9,10 @@ import {
   deletePerson, getDatesForPerson, getInteractionsForPerson, PEOPLE_CHANGED_EVENT, updatePerson,
 } from '@/people/queries'
 import { daysToWeeks, nextOccurrence } from '@/people/home'
+import { normalizeDirection } from '@/people/types'
 import type { Interaction, PersonCircle, PersonDate, PersonWithLastInteraction } from '@/people/types'
 import dayjs from 'dayjs'
-import { CHANNEL_ICONS, CHANNEL_LABEL_KEYS } from './channels'
+import { CHANNEL_ICONS, CHANNEL_LABEL_KEYS, DIRECTION_ICONS, DIRECTION_LABEL_KEYS } from './channels'
 import { ConfirmDelete } from './ConfirmDelete'
 import { PersonFormModal } from './PersonFormModal'
 import { QuickLogSheet } from './QuickLogSheet'
@@ -147,6 +148,8 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
               <ul className="space-y-2">
                 {interactions.map(i => {
                   const Icon = CHANNEL_ICONS[i.channel]
+                  const direction = normalizeDirection(i.direction)
+                  const DirectionIcon = direction ? DIRECTION_ICONS[direction] : null
                   const others = i.person_sync_ids.filter(id => id !== person.sync_id).map(nameOf).filter(Boolean)
                   return (
                     <li key={i.sync_id}>
@@ -157,7 +160,15 @@ export function PersonDetailModal({ person, people, circles, onClose }: Props) {
                         <Icon size={15} className="shrink-0 mt-0.5 text-slate-400 dark:text-slate-500" />
                         <span className="flex-1 min-w-0">
                           <span className="flex items-baseline justify-between gap-2">
-                            <span className="text-sm text-slate-700 dark:text-slate-200">{t(CHANNEL_LABEL_KEYS[i.channel])}</span>
+                            <span className="text-sm text-slate-700 dark:text-slate-200 flex items-center gap-1.5 min-w-0">
+                              {t(CHANNEL_LABEL_KEYS[i.channel])}
+                              {DirectionIcon && (
+                                <span className="inline-flex items-center gap-0.5 text-xs text-slate-400 dark:text-slate-500 truncate">
+                                  <DirectionIcon size={11} className="shrink-0" />
+                                  {t(DIRECTION_LABEL_KEYS[direction!])}
+                                </span>
+                              )}
+                            </span>
                             <span className="text-xs text-slate-400 dark:text-slate-500 tabular-nums shrink-0">{formatDateTime(i.occurred_at)}</span>
                           </span>
                           {others.length > 0 && (

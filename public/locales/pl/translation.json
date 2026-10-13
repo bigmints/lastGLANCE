@@ -740,7 +740,9 @@
       "noContactYet": "brak zapisanego kontaktu",
       "label": "{{name}}, ostatni kontakt {{last}}",
       "log": "Zapisz",
-      "logAriaLabel": "Zapisz kontakt z: {{name}}"
+      "logAriaLabel": "Zapisz kontakt z: {{name}}",
+      "theyGotInTouch": "Odezwał(a) się",
+      "theyGotInTouchAriaLabel": "Zapisz, że {{name}} się odezwał(a)"
     },
     "detail": {
       "edit": "Edytuj osobę",
@@ -801,7 +803,8 @@
       "notePlaceholder": "O czym rozmawialiście?",
       "logIt": "Zapisz",
       "needPerson": "Dodaj co najmniej jedną osobę",
-      "deleteConfirm": "Usunąć ten kontakt z historii?"
+      "deleteConfirm": "Usunąć ten kontakt z historii?",
+      "direction": "Kto się odezwał"
     },
     "circles": {
       "title": "Kręgi",
@@ -814,6 +817,11 @@
       "add": "Dodaj",
       "deleteConfirm": "Usunąć krąg {{name}}?",
       "deleteDetail": "Jego osoby zostaną, bez kręgu."
+    },
+    "direction": {
+      "outbound": "Ja się odezwałem",
+      "inbound": "Ta osoba się odezwała",
+      "mutual": "Wspólnie"
     }
   }
 }

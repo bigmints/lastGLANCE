@@ -710,7 +710,9 @@
       "noContactYet": "aucun contact noté",
       "label": "{{name}}, dernier contact {{last}}",
       "log": "Noter",
-      "logAriaLabel": "Noter un contact avec {{name}}"
+      "logAriaLabel": "Noter un contact avec {{name}}",
+      "theyGotInTouch": "M’a contacté",
+      "theyGotInTouchAriaLabel": "Noter que {{name}} vous a contacté"
     },
     "detail": {
       "edit": "Modifier la personne",
@@ -771,7 +773,8 @@
       "notePlaceholder": "De quoi avez-vous parlé ?",
       "logIt": "Noter",
       "needPerson": "Ajoutez au moins une personne",
-      "deleteConfirm": "Supprimer ce contact de l’historique ?"
+      "deleteConfirm": "Supprimer ce contact de l’historique ?",
+      "direction": "Qui a pris contact"
     },
     "circles": {
       "title": "Cercles",
@@ -784,6 +787,11 @@
       "add": "Ajouter",
       "deleteConfirm": "Supprimer le cercle {{name}} ?",
       "deleteDetail": "Ses membres restent, sans cercle."
+    },
+    "direction": {
+      "outbound": "J’ai fait le premier pas",
+      "inbound": "L’autre a fait le premier pas",
+      "mutual": "Ensemble"
     }
   }
 }

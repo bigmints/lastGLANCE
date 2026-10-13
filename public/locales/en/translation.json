@@ -710,7 +710,9 @@
       "noContactYet": "no contact logged yet",
       "label": "{{name}}, last contact {{last}}",
       "log": "Log",
-      "logAriaLabel": "Log contact with {{name}}"
+      "logAriaLabel": "Log contact with {{name}}",
+      "theyGotInTouch": "They got in touch",
+      "theyGotInTouchAriaLabel": "Log that {{name}} got in touch"
     },
     "detail": {
       "edit": "Edit person",
@@ -771,7 +773,8 @@
       "notePlaceholder": "What did you talk about?",
       "logIt": "Log it",
       "needPerson": "Add at least one person",
-      "deleteConfirm": "Delete this contact from the timeline?"
+      "deleteConfirm": "Delete this contact from the timeline?",
+      "direction": "Who reached out"
     },
     "circles": {
       "title": "Circles",
@@ -784,6 +787,11 @@
       "add": "Add",
       "deleteConfirm": "Delete the {{name}} circle?",
       "deleteDetail": "Its people stay, without a circle."
+    },
+    "direction": {
+      "outbound": "I reached out",
+      "inbound": "They reached out",
+      "mutual": "Together"
     }
   }
 }

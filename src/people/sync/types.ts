@@ -4,7 +4,8 @@
 // types, and an explicit tag beats guessing from field names, which is what
 // made chore-side `entityKind` fragile.
 
-import type { Interaction, InteractionChannel, InteractionSource, Person, PersonCircle, PersonDate, PersonDateKind } from '../types'
+import { normalizeDirection } from '../types'
+import type { Interaction, InteractionChannel, InteractionDirection, InteractionSource, Person, PersonCircle, PersonDate, PersonDateKind } from '../types'
 
 export interface SyncPerson {
   kind: 'person'
@@ -28,6 +29,9 @@ export interface SyncInteraction {
   personSyncIds: string[]
   occurredAt: string
   channel: InteractionChannel
+  // Always present on the wire, null when not recorded: JSON drops undefined
+  // keys, so an absent field could not be told from a peer that lacks it.
+  direction: InteractionDirection | null
   note: string | null
   source: InteractionSource
   updatedAt: string
@@ -113,6 +117,7 @@ export function toSyncInteraction(i: Interaction): SyncInteraction {
     personSyncIds: i.person_sync_ids,
     occurredAt: i.occurred_at,
     channel: i.channel,
+    direction: normalizeDirection(i.direction),
     note: i.note,
     source: i.source,
     updatedAt: i.updated_at,
@@ -125,6 +130,7 @@ export function fromSyncInteraction(s: SyncInteraction): Omit<Interaction, 'id'>
     person_sync_ids: [...s.personSyncIds],
     occurred_at: s.occurredAt,
     channel: s.channel,
+    direction: normalizeDirection(s.direction),
     note: s.note ?? null,
     source: s.source,
     updated_at: s.updatedAt,

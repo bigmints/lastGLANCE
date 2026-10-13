@@ -6,7 +6,7 @@ import { createCircle } from '@/people/queries'
 import { groupByCircle, reachOutList, upcomingDates, visibleToMe } from '@/people/home'
 import type { UpcomingDate } from '@/people/home'
 import { usePeopleData } from '@/people/usePeopleData'
-import type { PersonWithLastInteraction } from '@/people/types'
+import type { InteractionDirection, PersonWithLastInteraction } from '@/people/types'
 import { formatMonthShort } from '@/utils/datetime'
 import { CircleManagerModal } from './CircleManagerModal'
 import { PersonDetailModal } from './PersonDetailModal'
@@ -95,7 +95,7 @@ export function PeopleHome() {
   const { multiUserEnabled, meId } = useUsersContext()
   const { people: all, circles, dates, loading } = usePeopleData()
   const [openId, setOpenId] = useState<string | null>(null)
-  const [logFor, setLogFor] = useState<string[] | null>(null)
+  const [logFor, setLogFor] = useState<{ ids: string[]; direction: InteractionDirection | null } | null>(null)
   const [adding, setAdding] = useState<{ circleId: string | null } | null>(null)
   const [managingCircles, setManagingCircles] = useState(false)
   const [showArchived, setShowArchived] = useState(false)
@@ -124,9 +124,15 @@ export function PeopleHome() {
   const open = mine.find(p => p.sync_id === openId) ?? null
 
   const openPerson = (p: PersonWithLastInteraction) => setOpenId(p.sync_id)
-  const quickLog = (p: PersonWithLastInteraction) => setLogFor([p.sync_id])
-  const row = (p: PersonWithLastInteraction) => (
-    <PersonRow key={p.sync_id} person={p} onOpen={openPerson} onQuickLog={quickLog} />
+  // Logging from a Reach out card presets "I reached out": that list is
+  // where you go to do the reaching.
+  const row = (p: PersonWithLastInteraction, fromReachOut = false) => (
+    <PersonRow
+      key={p.sync_id}
+      person={p}
+      onOpen={openPerson}
+      onQuickLog={() => setLogFor({ ids: [p.sync_id], direction: fromReachOut ? 'outbound' : null })}
+    />
   )
 
   async function addStarterCircles() {
@@ -154,7 +160,7 @@ export function PeopleHome() {
       >
         {g.people.length === 0
           ? <p className="text-sm text-slate-400 dark:text-slate-500">{t('people.home.emptyCircle')}</p>
-          : <div className="space-y-2">{g.people.map(row)}</div>}
+          : <div className="space-y-2">{g.people.map(p => row(p))}</div>}
       </Card>
     ),
   }))
@@ -170,7 +176,7 @@ export function PeopleHome() {
           >
             {showArchived ? t('people.home.hideArchived') : t('people.home.showArchived', { n: archived.length })}
           </button>
-          {showArchived && <div className="space-y-2 mt-3 opacity-70">{archived.map(row)}</div>}
+          {showArchived && <div className="space-y-2 mt-3 opacity-70">{archived.map(p => row(p))}</div>}
         </Card>
       ),
     })
@@ -218,7 +224,7 @@ export function PeopleHome() {
           <div className="w-full min-[1060px]:w-[429px] shrink-0 grid sm:grid-cols-2 min-[1060px]:grid-cols-1 items-start content-start gap-5 min-[1060px]:p-6 min-[1060px]:border-r border-slate-200 dark:border-slate-800/80">
             <Card title={t('people.home.reachOut')}>
               {reachOut.length
-                ? <div className="space-y-2">{reachOut.map(row)}</div>
+                ? <div className="space-y-2">{reachOut.map(p => row(p, true))}</div>
                 : <p className="text-sm text-slate-400 dark:text-slate-500">{t('people.home.reachOutEmpty')}</p>}
             </Card>
             <Card title={t('people.home.comingUp')}>
@@ -248,7 +254,12 @@ export function PeopleHome() {
         <PersonDetailModal person={open} people={mine} circles={circles} onClose={() => setOpenId(null)} />
       )}
       {logFor && (
-        <QuickLogSheet people={mine} initialPersonIds={logFor} onClose={() => setLogFor(null)} />
+        <QuickLogSheet
+          people={mine}
+          initialPersonIds={logFor.ids}
+          initialDirection={logFor.direction}
+          onClose={() => setLogFor(null)}
+        />
       )}
       {adding && (
         <PersonFormModal
