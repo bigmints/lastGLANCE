@@ -5,6 +5,7 @@
     "dayglanceIntegration": "Integração dayGLANCE",
     "journal": "Diário",
     "journalTooltip": "Reveja tudo o que foi concluído",
+    "journalTooltipPeople": "Reveja com quem esteve em contacto",
     "backupRestore": "Cópia de segurança e restauro",
     "helpFeedback": "Ajuda e feedback",
     "toggleTheme": "Alternar tema",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} conclusão",
     "completions_other": "{{count}} conclusões",
-    "noCompletions": "Nenhuma conclusão"
+    "noCompletions": "Nenhuma conclusão",
+    "interactions_one": "{{count}} contacto",
+    "interactions_other": "{{count}} contactos",
+    "noInteractions": "Nenhum contacto"
   },
   "help": {
     "title": "Ajuda e feedback",
@@ -339,7 +343,15 @@
     "csvCategory": "Categoria",
     "csvUser": "Utilizador",
     "csvSource": "Origem",
-    "csvNote": "Nota"
+    "csvNote": "Nota",
+    "filterPeoplePlaceholder": "Filtrar por pessoa ou nota…",
+    "allChannels": "Todos os tipos",
+    "statInteractions": "Contactos",
+    "statPeople": "Pessoas",
+    "emptyPeople": "Nada registado neste período.",
+    "csvPeople": "Pessoas",
+    "csvHow": "Como",
+    "csvDirection": "Direção"
   },
   "logModal": {
     "lastDone": "Última vez: {{elapsed}}",

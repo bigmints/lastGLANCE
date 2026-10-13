@@ -5,6 +5,7 @@
     "dayglanceIntegration": "Інтеграція з dayGLANCE",
     "journal": "Журнал",
     "journalTooltip": "Переглянути все, що було виконано",
+    "journalTooltipPeople": "Переглянути контакти з людьми",
     "backupRestore": "Резервне копіювання та відновлення",
     "helpFeedback": "Довідка та відгуки",
     "toggleTheme": "Перемкнути тему",
@@ -193,7 +194,12 @@
     "completions_few": "{{count}} виконання",
     "completions_many": "{{count}} виконань",
     "completions_other": "{{count}} виконання",
-    "noCompletions": "Немає виконань"
+    "noCompletions": "Немає виконань",
+    "interactions_one": "{{count}} контакт",
+    "interactions_few": "{{count}} контакти",
+    "interactions_many": "{{count}} контактів",
+    "interactions_other": "{{count}} контакту",
+    "noInteractions": "Немає контактів"
   },
   "help": {
     "title": "Довідка та відгуки",
@@ -349,7 +355,15 @@
     "csvCategory": "Категорія",
     "csvUser": "Користувач",
     "csvSource": "Джерело",
-    "csvNote": "Нотатка"
+    "csvNote": "Нотатка",
+    "filterPeoplePlaceholder": "Фільтрувати за людиною або нотаткою…",
+    "allChannels": "Усі типи",
+    "statInteractions": "Контакти",
+    "statPeople": "Люди",
+    "emptyPeople": "У цьому діапазоні нічого не записано.",
+    "csvPeople": "Люди",
+    "csvHow": "Як",
+    "csvDirection": "Напрямок"
   },
   "logModal": {
     "lastDone": "Востаннє: {{elapsed}}",

@@ -5,6 +5,7 @@
     "dayglanceIntegration": "dayGLANCE 集成",
     "journal": "日志",
     "journalTooltip": "查看所有已完成记录",
+    "journalTooltipPeople": "查看与谁保持了联系",
     "backupRestore": "备份与恢复",
     "helpFeedback": "帮助与反馈",
     "toggleTheme": "切换主题",
@@ -189,7 +190,10 @@
   "heatmap": {
     "completions_one": "{{count}} 条完成记录",
     "completions_other": "{{count}} 条完成记录",
-    "noCompletions": "无完成记录"
+    "noCompletions": "无完成记录",
+    "interactions_one": "{{count}} 次联系",
+    "interactions_other": "{{count}} 次联系",
+    "noInteractions": "无联系记录"
   },
   "help": {
     "title": "帮助与反馈",
@@ -339,7 +343,15 @@
     "csvCategory": "分类",
     "csvUser": "用户",
     "csvSource": "来源",
-    "csvNote": "备注"
+    "csvNote": "备注",
+    "filterPeoplePlaceholder": "按联系人或备注筛选…",
+    "allChannels": "所有方式",
+    "statInteractions": "联系",
+    "statPeople": "人数",
+    "emptyPeople": "此时间范围内没有记录。",
+    "csvPeople": "联系人",
+    "csvHow": "方式",
+    "csvDirection": "方向"
   },
   "logModal": {
     "lastDone": "上次完成：{{elapsed}}",
