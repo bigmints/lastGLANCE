@@ -688,7 +688,9 @@ function AppInner() {
           {/* ── Mobile: journal + settings + Edit. The heatmap is hidden at
               this width, so the journal gets its own button rather than
               hiding inside settings. ── */}
-          <div className="flex items-center gap-2 sm:hidden">
+          {/* In People mode the four buttons form a 2x2 block: Journal and
+              Settings above, Circles and Add person below. */}
+          <div className={`${choresMode ? 'flex items-center' : 'grid grid-cols-2'} gap-2 sm:hidden`}>
             <button
               onClick={() => openJournal(null)}
               className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 transition-colors"
