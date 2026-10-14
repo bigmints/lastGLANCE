@@ -686,7 +686,9 @@
     "digestTime": "Lembrete para falar com alguém",
     "digestTimeHint": "Quando chega o lembrete diário das pessoas em atraso. Ative-o para alguém com Lembrar quando estiver em atraso.",
     "on": "Sim",
-    "off": "Não"
+    "off": "Não",
+    "datesToDayglance": "Aniversários para o dayGLANCE",
+    "datesToDayglanceHint": "Envia os aniversários e datas de hoje para o dayGLANCE como eventos de dia inteiro. Apenas neste dispositivo."
   },
   "people": {
     "close": "Fechar",
@@ -795,7 +797,11 @@
       "headsUp": "Lembrete",
       "onTheDay": "Lembrar no próprio dia",
       "daysBefore_one": "Também {{count}} dia antes",
-      "daysBefore_other": "Também {{count}} dias antes"
+      "daysBefore_other": "Também {{count}} dias antes",
+      "autoSendDayglance": "Adicionar ao dayGLANCE quando estiver em atraso",
+      "autoSendDayglanceHint": "Envia para o dayGLANCE uma tarefa como «Ligar a Sam» quando estiver em atraso.",
+      "sendToLifeglance": "Adicionar contactos ao lifeGLANCE",
+      "sendToLifeglanceHint": "Cada contacto que registar com esta pessoa vai para a sua cronologia do lifeGLANCE."
     },
     "log": {
       "title": "Registar contacto",
@@ -897,6 +903,28 @@
       "open": "Abrir",
       "channelName": "Lembretes de pessoas",
       "channelDescription": "Aniversários, datas e as pessoas com quem queria falar."
+    },
+    "intents": {
+      "task": {
+        "in_person": "Estar com {{name}}",
+        "in_personBack": "Dar notícias a {{name}}",
+        "call": "Ligar a {{name}}",
+        "callBack": "Ligar de volta a {{name}}",
+        "video": "Videochamada com {{name}}",
+        "videoBack": "Devolver a videochamada a {{name}}",
+        "text": "Enviar mensagem a {{name}}",
+        "textBack": "Responder a {{name}}",
+        "email": "Enviar e-mail a {{name}}",
+        "emailBack": "Responder ao e-mail de {{name}}",
+        "other": "Contactar {{name}}",
+        "otherBack": "Dar notícias a {{name}}"
+      },
+      "dateTitle": "{{name}}: {{label}}",
+      "timeline": {
+        "outbound": "Contactei {{names}}",
+        "inbound": "Notícias de {{names}}",
+        "mutual": "Contacto com {{names}}"
+      }
     }
   }
 }

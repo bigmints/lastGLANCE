@@ -686,7 +686,9 @@
     "digestTime": "Catch-up reminder",
     "digestTimeHint": "When the daily reminder about overdue people goes out. Turn it on for someone with Remind me when overdue.",
     "on": "On",
-    "off": "Off"
+    "off": "Off",
+    "datesToDayglance": "Birthdays to dayGLANCE",
+    "datesToDayglanceHint": "Sends today's birthdays and dates to dayGLANCE as all-day items. On this device only."
   },
   "people": {
     "close": "Close",
@@ -795,7 +797,11 @@
       "headsUp": "Reminder",
       "onTheDay": "Remind on the day",
       "daysBefore_one": "Also {{count}} day before",
-      "daysBefore_other": "Also {{count}} days before"
+      "daysBefore_other": "Also {{count}} days before",
+      "autoSendDayglance": "Add to dayGLANCE when overdue",
+      "autoSendDayglanceHint": "Sends a task like “Call Sam” to dayGLANCE once they're past due.",
+      "sendToLifeglance": "Add contacts to lifeGLANCE",
+      "sendToLifeglanceHint": "Each contact you log with them goes on your lifeGLANCE timeline."
     },
     "log": {
       "title": "Log contact",
@@ -897,6 +903,28 @@
       "open": "Open",
       "channelName": "People reminders",
       "channelDescription": "Birthdays, dates and who you meant to catch up with."
+    },
+    "intents": {
+      "task": {
+        "in_person": "See {{name}}",
+        "in_personBack": "Get back to {{name}}",
+        "call": "Call {{name}}",
+        "callBack": "Call {{name}} back",
+        "video": "Video call {{name}}",
+        "videoBack": "Video call {{name}} back",
+        "text": "Text {{name}}",
+        "textBack": "Text {{name}} back",
+        "email": "Email {{name}}",
+        "emailBack": "Reply to {{name}}",
+        "other": "Reach out to {{name}}",
+        "otherBack": "Get back to {{name}}"
+      },
+      "dateTitle": "{{name}}: {{label}}",
+      "timeline": {
+        "outbound": "Reached out to {{names}}",
+        "inbound": "{{names}} reached out",
+        "mutual": "Caught up with {{names}}"
+      }
     }
   }
 }

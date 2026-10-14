@@ -44,6 +44,11 @@ export interface Person {
   // Reminders). Off by default, like the chore flag. Optional because rows
   // from before the field lack it; absent reads as off.
   notify_when_overdue?: boolean
+  // GLANCE intents (docs: the People spec, Intents), both off by default and
+  // absent on older rows. Once past due, a "Call Sam" task goes to dayGLANCE;
+  // each contact logged with them goes to the lifeGLANCE timeline.
+  add_to_dayglance_when_overdue?: boolean
+  send_to_lifeglance?: boolean
   // The household user this person belongs to. Other members' People are
   // hidden in the UI (not cryptographically private). Null when multi-user is
   // off, which reads as "mine" on every device.

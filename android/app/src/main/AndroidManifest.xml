@@ -36,6 +36,7 @@
                 <action android:name="app.lastglance.COMPLETE" />
                 <action android:name="app.lastglance.OPEN" />
                 <action android:name="app.lastglance.QUERY" />
+                <action android:name="app.lastglance.LOG_INTERACTION" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
@@ -52,6 +53,7 @@
                 <action android:name="app.lastglance.COMPLETE" />
                 <action android:name="app.lastglance.OPEN" />
                 <action android:name="app.lastglance.QUERY" />
+                <action android:name="app.lastglance.LOG_INTERACTION" />
             </intent-filter>
         </receiver>
 
