@@ -231,6 +231,10 @@ const RULES = [
 // Whole-string replacements for the handful of sentences a word-level rule
 // cannot rebuild — passive reordering and the addressee pronoun.
 const OVERRIDES = {
+  // pt-PT "num" and the fronted reflexive read European in Brazil.
+  'people.form.notifyHint': 'Entra em um único lembrete por dia, às 18:00.',
+  'settings.dateRemindersHint':
+    'Uma notificação às 9:00 em aniversários e outras datas. Os lembretes para falar com alguém são definidos por pessoa.',
   // Brazilian quotes and gerund for the hidden People switch.
   // "É guardada primeiro uma cópia…" — the fronted feminine passive has no
   // masculine word-for-word counterpart once the noun is "backup".

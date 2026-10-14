@@ -680,6 +680,8 @@
     "hide": "Ocultar",
     "phoneContacts": "Contactos do telefone",
     "phoneContactsHint": "Importe pessoas dos seus contactos e associe-as para ligar, enviar mensagens e e-mails. Só leitura; números e endereços nunca são guardados nem sincronizados.",
+    "dateReminders": "Lembretes de datas",
+    "dateRemindersHint": "Uma notificação às 9:00 em aniversários e outras datas. Os lembretes para falar com alguém definem-se por pessoa.",
     "on": "Sim",
     "off": "Não"
   },
@@ -784,7 +786,13 @@
       "detailsPlaceholder": "Nomes dos filhos, gostos, coisas a perguntar…",
       "nameRequired": "O nome é obrigatório",
       "cadenceInvalid": "Introduza um número de semanas superior a 0",
-      "yearInvalid": "Introduza um ano entre 1 e 9999 ou deixe em branco"
+      "yearInvalid": "Introduza um ano entre 1 e 9999 ou deixe em branco",
+      "notifyOverdue": "Lembrar quando estiver em atraso",
+      "notifyHint": "Entra num único lembrete por dia, às 18:00.",
+      "headsUp": "Lembrete",
+      "onTheDay": "Lembrar no próprio dia",
+      "daysBefore_one": "Também {{count}} dia antes",
+      "daysBefore_other": "Também {{count}} dias antes"
     },
     "log": {
       "title": "Registar contacto",
@@ -872,6 +880,20 @@
       "birthdayChanged": "Nos Contactos, o aniversário de {{name}} é a {{date}}.",
       "update": "Atualizar",
       "keep": "Manter o meu"
+    },
+    "reminders": {
+      "today": "Hoje: {{label}}",
+      "turnsToday": "Faz {{age}} anos hoje",
+      "inDays_one": "{{label}} amanhã",
+      "inDays_other": "{{label}} daqui a {{count}} dias",
+      "digestOne": "Está na hora de falar com {{name}}",
+      "digest_one": "{{count}} pessoa com quem queria falar",
+      "digest_other": "{{count}} pessoas com quem queria falar",
+      "more_one": "mais {{count}}",
+      "more_other": "mais {{count}}",
+      "open": "Abrir",
+      "channelName": "Lembretes de pessoas",
+      "channelDescription": "Aniversários, datas e as pessoas com quem queria falar."
     }
   }
 }

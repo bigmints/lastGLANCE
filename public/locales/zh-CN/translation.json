@@ -680,6 +680,8 @@
     "hide": "隐藏",
     "phoneContacts": "手机通讯录",
     "phoneContactsHint": "从通讯录导入联系人，并关联后直接拨打电话、发短信和邮件。只读；号码和地址从不保存或同步。",
+    "dateReminders": "日期提醒",
+    "dateRemindersHint": "在生日和其他日期当天 9:00 发送通知。联系提醒按人单独设置。",
     "on": "开",
     "off": "关"
   },
@@ -784,7 +786,13 @@
       "detailsPlaceholder": "孩子的名字、喜好、想问的事…",
       "nameRequired": "请填写姓名",
       "cadenceInvalid": "请输入大于 0 的周数",
-      "yearInvalid": "请输入 1 到 9999 之间的年份，或留空"
+      "yearInvalid": "请输入 1 到 9999 之间的年份，或留空",
+      "notifyOverdue": "到期时提醒我",
+      "notifyHint": "合并到每天 18:00 的一条提醒中。",
+      "headsUp": "提醒",
+      "onTheDay": "当天提醒",
+      "daysBefore_one": "并提前 {{count}} 天",
+      "daysBefore_other": "并提前 {{count}} 天"
     },
     "log": {
       "title": "记录联系",
@@ -872,6 +880,20 @@
       "birthdayChanged": "通讯录中 {{name}} 的生日是 {{date}}。",
       "update": "更新",
       "keep": "保留我的"
+    },
+    "reminders": {
+      "today": "今天：{{label}}",
+      "turnsToday": "今天满 {{age}} 岁",
+      "inDays_one": "{{count}} 天后：{{label}}",
+      "inDays_other": "{{count}} 天后：{{label}}",
+      "digestOne": "该联系 {{name}} 了",
+      "digest_one": "{{count}} 位你想联系的人",
+      "digest_other": "{{count}} 位你想联系的人",
+      "more_one": "另外 {{count}} 人",
+      "more_other": "另外 {{count}} 人",
+      "open": "打开",
+      "channelName": "联系人提醒",
+      "channelDescription": "生日、纪念日，以及你想联系的人。"
     }
   }
 }

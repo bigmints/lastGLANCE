@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { db } from '@/db/client'
 import { applyPeoplePayload, buildPeoplePayload, mergePeoplePayloads } from './fileEngine'
 import type { PeoplePayload, SyncInteraction, SyncPerson } from './types'
-import { emptyPeoplePayload } from './types'
+import { emptyPeoplePayload, fromSyncPerson, toSyncPerson } from './types'
 
 const P1 = 'aaaaaaaa-0000-4000-8000-000000000001'
 const P2 = 'aaaaaaaa-0000-4000-8000-000000000002'
@@ -12,7 +12,7 @@ const I1 = 'bbbbbbbb-0000-4000-8000-000000000001'
 function person(id: string, name: string, updatedAt: string): SyncPerson {
   return {
     kind: 'person', id, name, nickname: null, circleSyncId: null, targetCadenceDays: 14,
-    preferredChannel: null, details: null, archived: false, snoozedUntil: null,
+    preferredChannel: null, details: null, archived: false, snoozedUntil: null, notifyWhenOverdue: false,
     ownerUserSyncId: null, createdAt: '2026-01-01T00:00:00.000Z', updatedAt,
   }
 }
@@ -121,5 +121,19 @@ describe('applyPeoplePayload and buildPeoplePayload', () => {
     expect(await db.people.count()).toBe(1)
     await applyPeoplePayload(payload({ tombstones: { [P1]: '2026-04-01T00:00:00.000Z' } }), { allowEmpty: true })
     expect(await db.people.count()).toBe(0)
+  })
+})
+
+describe('notifyWhenOverdue on the wire', () => {
+  it('reads a person from a build without the field as not notifying', () => {
+    const { notifyWhenOverdue: _omit, ...old } = person(P1, 'Old', '2026-01-01T00:00:00.000Z')
+    void _omit
+    expect(fromSyncPerson(old as SyncPerson).notify_when_overdue).toBe(false)
+  })
+
+  it('always writes the field', () => {
+    const row = fromSyncPerson({ ...person(P1, 'New', '2026-01-01T00:00:00.000Z'), notifyWhenOverdue: true })
+    expect(toSyncPerson(row).notifyWhenOverdue).toBe(true)
+    expect(toSyncPerson({ ...row, notify_when_overdue: undefined }).notifyWhenOverdue).toBe(false)
   })
 })

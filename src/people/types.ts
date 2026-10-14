@@ -40,6 +40,10 @@ export interface Person {
   details: string | null
   archived: boolean
   snoozed_until: string | null
+  // One line in the daily People digest once overdue (docs: the People spec,
+  // Reminders). Off by default, like the chore flag. Optional because rows
+  // from before the field lack it; absent reads as off.
+  notify_when_overdue?: boolean
   // The household user this person belongs to. Other members' People are
   // hidden in the UI (not cryptographically private). Null when multi-user is
   // off, which reads as "mine" on every device.

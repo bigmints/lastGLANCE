@@ -680,6 +680,8 @@
     "hide": "Ausblenden",
     "phoneContacts": "Telefonkontakte",
     "phoneContactsHint": "Menschen aus deinen Kontakten importieren und für Anruf, SMS und E-Mail verknüpfen. Nur lesend; Nummern und Adressen werden nie gespeichert oder synchronisiert.",
+    "dateReminders": "Termin-Erinnerungen",
+    "dateRemindersHint": "Eine Benachrichtigung um 9 Uhr an Geburtstagen und anderen Terminen. Erinnerungen zum Melden stellst du pro Person ein.",
     "on": "An",
     "off": "Aus"
   },
@@ -784,7 +786,13 @@
       "detailsPlaceholder": "Namen der Kinder, Vorlieben, Dinge, nach denen du fragen willst…",
       "nameRequired": "Name ist erforderlich",
       "cadenceInvalid": "Gib eine Anzahl Wochen größer als 0 ein",
-      "yearInvalid": "Gib ein Jahr zwischen 1 und 9999 ein oder lass das Feld leer"
+      "yearInvalid": "Gib ein Jahr zwischen 1 und 9999 ein oder lass das Feld leer",
+      "notifyOverdue": "Erinnern, wenn überfällig",
+      "notifyHint": "Kommt in eine gemeinsame Erinnerung pro Tag, um 18 Uhr.",
+      "headsUp": "Erinnerung",
+      "onTheDay": "Am Tag erinnern",
+      "daysBefore_one": "Auch {{count}} Tag vorher",
+      "daysBefore_other": "Auch {{count}} Tage vorher"
     },
     "log": {
       "title": "Kontakt erfassen",
@@ -872,6 +880,20 @@
       "birthdayChanged": "In Kontakte ist der Geburtstag von {{name}} am {{date}}.",
       "update": "Übernehmen",
       "keep": "Meinen behalten"
+    },
+    "reminders": {
+      "today": "Heute: {{label}}",
+      "turnsToday": "Wird heute {{age}}",
+      "inDays_one": "{{label}} morgen",
+      "inDays_other": "{{label}} in {{count}} Tagen",
+      "digestOne": "Zeit, dich bei {{name}} zu melden",
+      "digest_one": "{{count}} Person, bei der du dich melden wolltest",
+      "digest_other": "{{count}} Menschen, bei denen du dich melden wolltest",
+      "more_one": "{{count}} weitere",
+      "more_other": "{{count}} weitere",
+      "open": "Öffnen",
+      "channelName": "Erinnerungen für Menschen",
+      "channelDescription": "Geburtstage, Termine und bei wem du dich melden wolltest."
     }
   }
 }

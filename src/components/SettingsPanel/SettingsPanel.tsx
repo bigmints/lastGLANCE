@@ -8,8 +8,11 @@ import {
 import type { SyncEngine } from '@glance-apps/sync'
 import type { UseBillingResult } from '@glance-apps/billing/react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
-import { setContactsEnabled, setReciprocityShown, useContactsEnabled, useShowReciprocity } from '@/people/settings'
+import {
+  setContactsEnabled, setDateRemindersOn, setReciprocityShown, useContactsEnabled, useDateRemindersOn, useShowReciprocity,
+} from '@/people/settings'
 import { contactsSupported } from '@/native/contacts'
+import { isNativeShell } from '@/native/platform'
 import { ContactsModal } from '@/components/People/ContactsModal'
 import { LanguagePicker } from '@/components/LanguagePicker/LanguagePicker'
 import { UsersPanel } from '@/components/UsersPanel/UsersPanel'
@@ -66,6 +69,7 @@ export function SettingsPanel(props: Props) {
   useEscapeKey(onClose)
 
   const showReciprocity = useShowReciprocity()
+  const dateReminders = useDateRemindersOn()
   const contactsEnabled = useContactsEnabled()
   // Turning Phone contacts on asks for permission right away, after the
   // in-app disclosure; the switch only turns on once it is granted.
@@ -170,6 +174,20 @@ export function SettingsPanel(props: Props) {
                   ]}
                 />
                 <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.phoneContactsHint')}</p>
+              </Field>
+            )}
+            {isNativeShell() && (
+              <Field label={t('settings.dateReminders')}>
+                <Segmented<'on' | 'off'>
+                  label={t('settings.dateReminders')}
+                  value={dateReminders ? 'on' : 'off'}
+                  onChange={v => setDateRemindersOn(v === 'on')}
+                  options={[
+                    { value: 'on', label: t('settings.on') },
+                    { value: 'off', label: t('settings.off') },
+                  ]}
+                />
+                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.dateRemindersHint')}</p>
               </Field>
             )}
           </Section>

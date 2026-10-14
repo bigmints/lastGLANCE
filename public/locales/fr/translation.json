@@ -680,6 +680,8 @@
     "hide": "Masquer",
     "phoneContacts": "Contacts du téléphone",
     "phoneContactsHint": "Importez des proches depuis vos contacts et liez-les pour appeler, écrire ou envoyer un e-mail. Lecture seule ; les numéros et adresses ne sont jamais enregistrés ni synchronisés.",
+    "dateReminders": "Rappels de dates",
+    "dateRemindersHint": "Une notification à 9 h pour les anniversaires et autres dates. Les rappels pour prendre des nouvelles se règlent par proche.",
     "on": "Oui",
     "off": "Non"
   },
@@ -784,7 +786,13 @@
       "detailsPlaceholder": "Prénoms des enfants, goûts, choses à demander…",
       "nameRequired": "Le nom est obligatoire",
       "cadenceInvalid": "Saisissez un nombre de semaines supérieur à 0",
-      "yearInvalid": "Saisissez une année entre 1 et 9999, ou laissez vide"
+      "yearInvalid": "Saisissez une année entre 1 et 9999, ou laissez vide",
+      "notifyOverdue": "Me le rappeler en cas de retard",
+      "notifyHint": "Regroupé dans un seul rappel par jour, à 18 h.",
+      "headsUp": "Rappel",
+      "onTheDay": "Rappel le jour même",
+      "daysBefore_one": "Et aussi {{count}} jour avant",
+      "daysBefore_other": "Et aussi {{count}} jours avant"
     },
     "log": {
       "title": "Noter un contact",
@@ -872,6 +880,20 @@
       "birthdayChanged": "Dans Contacts, l'anniversaire de {{name}} est le {{date}}.",
       "update": "Mettre à jour",
       "keep": "Garder le mien"
+    },
+    "reminders": {
+      "today": "Aujourd'hui : {{label}}",
+      "turnsToday": "Fête ses {{age}} ans aujourd'hui",
+      "inDays_one": "{{label}} demain",
+      "inDays_other": "{{label}} dans {{count}} jours",
+      "digestOne": "Le moment de prendre des nouvelles de {{name}}",
+      "digest_one": "{{count}} proche dont vous vouliez prendre des nouvelles",
+      "digest_other": "{{count}} proches dont vous vouliez prendre des nouvelles",
+      "more_one": "{{count}} autre",
+      "more_other": "{{count}} autres",
+      "open": "Ouvrir",
+      "channelName": "Rappels des proches",
+      "channelDescription": "Anniversaires, dates et proches dont vous vouliez prendre des nouvelles."
     }
   }
 }

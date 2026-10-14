@@ -17,3 +17,13 @@ const contacts = localSetting(CONTACTS_ENABLED_KEY, false)
 
 export const setContactsEnabled = contacts.set
 export const useContactsEnabled = contacts.use
+
+// Birthday and date notifications (docs: the People spec, Reminders): on by
+// default on the phone apps. Per device, like the system permission it rides
+// on. The overdue digest is per person instead (notify_when_overdue).
+export const DATE_REMINDERS_KEY = 'lg-people-date-reminders'
+const dateReminders = localSetting(DATE_REMINDERS_KEY, true)
+
+export const isDateRemindersOn = dateReminders.get
+export const setDateRemindersOn = dateReminders.set
+export const useDateRemindersOn = dateReminders.use
