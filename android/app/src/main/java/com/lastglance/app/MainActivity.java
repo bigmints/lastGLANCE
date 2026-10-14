@@ -171,6 +171,12 @@ public class MainActivity extends BridgeActivity {
             return syncId != null ? "chore:" + syncId : null;
         } else if ("filter".equals(host)) {
             return "filter:soon";
+        } else if ("person".equals(host) || "log".equals(host)) {
+            // People widgets: open a person, or quick-log for them.
+            String syncId = data.getLastPathSegment();
+            return syncId != null ? host + ":" + syncId : null;
+        } else if ("people".equals(host)) {
+            return "people";
         } else if ("action".equals(host)) {
             String action = data.getLastPathSegment();
             if ("search".equals(action)) return "action:search";

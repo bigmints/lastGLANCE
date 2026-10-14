@@ -19,7 +19,7 @@ import { PersonDetailModal } from './PersonDetailModal'
 import { PersonFormModal } from './PersonFormModal'
 import { PersonRow } from './PersonRow'
 import { QuickLogSheet } from './QuickLogSheet'
-import { dateKindLabel, daysUntilLabel } from './labels'
+import { dateKindLabel, daysUntilLabel, reachOutReasonLabel } from './labels'
 
 // The header's Circles and Add person buttons live in App.tsx, outside this
 // tree; they reach the sheets here through these events.
@@ -166,12 +166,7 @@ export function PeopleHome() {
       snoozable={fromReachOut}
     />
   )
-  const reasonText = ({ person, reason }: ReachOutItem): string | null => {
-    if (!reason) return null
-    if (reason.kind === 'date') return `${dateKindLabel(t, reason.upcoming.date)} · ${daysUntilLabel(t, reason.upcoming.daysUntil)}`
-    if (reason.kind === 'unreturned') return t('people.reason.unreturned', { name: person.nickname || person.name })
-    return t('people.reason.streak', { count: reason.count })
-  }
+  const reasonText = (item: ReachOutItem) => reachOutReasonLabel(t, item)
 
   async function addStarterCircles() {
     for (const key of STARTER_CIRCLES) await createCircle(t(`people.starterCircles.${key}`))
