@@ -15,6 +15,9 @@ import type {
 } from './types'
 
 export const PEOPLE_CHANGED_EVENT = 'lg:people-changed'
+// Fired with the new Interaction as `detail` when one is logged on this
+// device (not when one arrives by sync), so the lifeGLANCE send happens once.
+export const INTERACTION_LOGGED_EVENT = 'lg:interaction-logged'
 
 function notifyChanged(): void {
   if (typeof window === 'undefined') return
@@ -45,6 +48,8 @@ export interface PersonInput {
   preferred_channel?: InteractionChannel | null
   details?: string | null
   notify_when_overdue?: boolean
+  add_to_dayglance_when_overdue?: boolean
+  send_to_lifeglance?: boolean
 }
 
 export async function createPerson(input: PersonInput): Promise<Person> {
@@ -60,6 +65,8 @@ export async function createPerson(input: PersonInput): Promise<Person> {
     archived: false,
     snoozed_until: null,
     notify_when_overdue: input.notify_when_overdue ?? false,
+    add_to_dayglance_when_overdue: input.add_to_dayglance_when_overdue ?? false,
+    send_to_lifeglance: input.send_to_lifeglance ?? false,
     owner_user_sync_id: getMultiUserEnabled() ? getMeUserSyncId() : null,
     created_at: ts,
     updated_at: ts,
@@ -72,7 +79,8 @@ export async function createPerson(input: PersonInput): Promise<Person> {
 
 export type PersonPatch = Partial<Pick<Person,
   'name' | 'nickname' | 'circle_sync_id' | 'target_cadence_days' | 'preferred_channel' |
-  'details' | 'archived' | 'snoozed_until' | 'notify_when_overdue'
+  'details' | 'archived' | 'snoozed_until' | 'notify_when_overdue' |
+  'add_to_dayglance_when_overdue' | 'send_to_lifeglance'
 >>
 
 export async function updatePerson(syncId: string, patch: PersonPatch): Promise<void> {
@@ -171,6 +179,12 @@ export interface InteractionInput {
   occurred_at?: string
   note?: string | null
   source?: InteractionSource
+  // A fixed id, so a re-delivered intent logs once (see interactionExists).
+  sync_id?: string
+}
+
+export async function interactionExists(syncId: string): Promise<boolean> {
+  return (await db.interactions.where('sync_id').equals(syncId).count()) > 0
 }
 
 // Logs one interaction for one or more people. Logging clears any snooze on
@@ -180,7 +194,7 @@ export async function logInteraction(input: InteractionInput): Promise<Interacti
   if (people.length === 0) throw new Error('an interaction needs at least one person')
   const ts = now()
   const interaction: Interaction = {
-    sync_id: crypto.randomUUID(),
+    sync_id: input.sync_id ?? crypto.randomUUID(),
     person_sync_ids: people,
     occurred_at: input.occurred_at ?? ts,
     channel: input.channel,
@@ -203,6 +217,9 @@ export async function logInteraction(input: InteractionInput): Promise<Interacti
   markPeopleDirty(interaction.sync_id)
   for (const pid of unsnoozed) markPeopleDirty(pid)
   notifyChanged()
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(INTERACTION_LOGGED_EVENT, { detail: interaction }))
+  }
   return interaction
 }
 

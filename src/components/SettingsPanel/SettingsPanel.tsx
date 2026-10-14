@@ -9,9 +9,11 @@ import type { SyncEngine } from '@glance-apps/sync'
 import type { UseBillingResult } from '@glance-apps/billing/react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import {
-  setContactsEnabled, setDateReminderMinutes, setDateRemindersOn, setDigestMinutes, setReciprocityShown,
-  useContactsEnabled, useDateReminderMinutes, useDateRemindersOn, useDigestMinutes, useShowReciprocity,
+  setContactsEnabled, setDateReminderMinutes, setDateRemindersOn, setDatesToDayglanceOn, setDigestMinutes,
+  setReciprocityShown, useContactsEnabled, useDateReminderMinutes, useDateRemindersOn, useDatesToDayglanceOn,
+  useDigestMinutes, useShowReciprocity,
 } from '@/people/settings'
+import { useIntents } from '@/intents/IntentsContext'
 import { contactsSupported } from '@/native/contacts'
 import { isNativeShell } from '@/native/platform'
 import { ContactsModal } from '@/components/People/ContactsModal'
@@ -73,6 +75,8 @@ export function SettingsPanel(props: Props) {
   const dateReminders = useDateRemindersOn()
   const dateReminderMinutes = useDateReminderMinutes()
   const digestMinutes = useDigestMinutes()
+  const datesToDayglance = useDatesToDayglanceOn()
+  const { isConfigured: intentsOn } = useIntents()
   const contactsEnabled = useContactsEnabled()
   // Turning Phone contacts on asks for permission right away, after the
   // in-app disclosure; the switch only turns on once it is granted.
@@ -205,6 +209,20 @@ export function SettingsPanel(props: Props) {
               <Field label={t('settings.digestTime')} htmlFor="settings-digest-time">
                 <TimeInput id="settings-digest-time" minutes={digestMinutes} onChange={setDigestMinutes} />
                 <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.digestTimeHint')}</p>
+              </Field>
+            )}
+            {intentsOn && (
+              <Field label={t('settings.datesToDayglance')}>
+                <Segmented<'on' | 'off'>
+                  label={t('settings.datesToDayglance')}
+                  value={datesToDayglance ? 'on' : 'off'}
+                  onChange={v => setDatesToDayglanceOn(v === 'on')}
+                  options={[
+                    { value: 'on', label: t('settings.on') },
+                    { value: 'off', label: t('settings.off') },
+                  ]}
+                />
+                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.datesToDayglanceHint')}</p>
               </Field>
             )}
           </Section>

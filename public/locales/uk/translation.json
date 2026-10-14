@@ -718,7 +718,9 @@
     "digestTime": "Нагадування озватися",
     "digestTimeHint": "Коли надходить щоденне нагадування про протерміновані контакти. Увімкніть його для людини через Нагадувати, коли час.",
     "on": "Увімк.",
-    "off": "Вимк."
+    "off": "Вимк.",
+    "datesToDayglance": "Дні народження в dayGLANCE",
+    "datesToDayglanceHint": "Надсилає сьогоднішні дні народження й дати в dayGLANCE як події на весь день. Лише на цьому пристрої."
   },
   "people": {
     "close": "Закрити",
@@ -829,7 +831,11 @@
       "daysBefore_one": "Також за {{count}} день",
       "daysBefore_few": "Також за {{count}} дні",
       "daysBefore_many": "Також за {{count}} днів",
-      "daysBefore_other": "Також за {{count}} дня"
+      "daysBefore_other": "Також за {{count}} дня",
+      "autoSendDayglance": "Додавати в dayGLANCE у разі протермінування",
+      "autoSendDayglanceHint": "Надсилає в dayGLANCE завдання на кшталт «Подзвонити: Sam», коли час вийшов.",
+      "sendToLifeglance": "Додавати контакти в lifeGLANCE",
+      "sendToLifeglanceHint": "Кожен контакт, який ви записуєте з цією людиною, потрапляє на вашу стрічку часу в lifeGLANCE."
     },
     "log": {
       "title": "Записати контакт",
@@ -945,6 +951,28 @@
       "open": "Відкрити",
       "channelName": "Нагадування про людей",
       "channelDescription": "Дні народження, дати й ті, кому ви хотіли озватися."
+    },
+    "intents": {
+      "task": {
+        "in_person": "Зустрітися: {{name}}",
+        "in_personBack": "Озватися: {{name}}",
+        "call": "Подзвонити: {{name}}",
+        "callBack": "Передзвонити: {{name}}",
+        "video": "Відеодзвінок: {{name}}",
+        "videoBack": "Передзвонити по відео: {{name}}",
+        "text": "Написати: {{name}}",
+        "textBack": "Відповісти: {{name}}",
+        "email": "Ел. лист: {{name}}",
+        "emailBack": "Відповісти на лист: {{name}}",
+        "other": "Озватися: {{name}}",
+        "otherBack": "Озватися у відповідь: {{name}}"
+      },
+      "dateTitle": "{{name}}: {{label}}",
+      "timeline": {
+        "outbound": "Контакт від мене: {{names}}",
+        "inbound": "Контакт від: {{names}}",
+        "mutual": "Контакт: {{names}}"
+      }
     }
   }
 }

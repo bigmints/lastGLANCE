@@ -686,7 +686,9 @@
     "digestTime": "Rappel pour prendre des nouvelles",
     "digestTimeHint": "L'heure du rappel quotidien des proches en retard. Activez-le pour un proche avec Me le rappeler en cas de retard.",
     "on": "Oui",
-    "off": "Non"
+    "off": "Non",
+    "datesToDayglance": "Anniversaires vers dayGLANCE",
+    "datesToDayglanceHint": "Envoie les anniversaires et dates du jour à dayGLANCE comme événements sur la journée. Sur cet appareil uniquement."
   },
   "people": {
     "close": "Fermer",
@@ -795,7 +797,11 @@
       "headsUp": "Rappel",
       "onTheDay": "Rappel le jour même",
       "daysBefore_one": "Et aussi {{count}} jour avant",
-      "daysBefore_other": "Et aussi {{count}} jours avant"
+      "daysBefore_other": "Et aussi {{count}} jours avant",
+      "autoSendDayglance": "Ajouter à dayGLANCE en cas de retard",
+      "autoSendDayglanceHint": "Envoie à dayGLANCE une tâche comme « Appeler Sam » une fois le délai dépassé.",
+      "sendToLifeglance": "Ajouter les contacts à lifeGLANCE",
+      "sendToLifeglanceHint": "Chaque contact que vous enregistrez avec cette personne s'ajoute à votre frise lifeGLANCE."
     },
     "log": {
       "title": "Noter un contact",
@@ -897,6 +903,28 @@
       "open": "Ouvrir",
       "channelName": "Rappels des proches",
       "channelDescription": "Anniversaires, dates et proches dont vous vouliez prendre des nouvelles."
+    },
+    "intents": {
+      "task": {
+        "in_person": "Voir {{name}}",
+        "in_personBack": "Revenir vers {{name}}",
+        "call": "Appeler {{name}}",
+        "callBack": "Rappeler {{name}}",
+        "video": "Appel vidéo avec {{name}}",
+        "videoBack": "Rappeler {{name}} en vidéo",
+        "text": "Écrire à {{name}}",
+        "textBack": "Répondre à {{name}}",
+        "email": "Envoyer un e-mail à {{name}}",
+        "emailBack": "Répondre à l'e-mail de {{name}}",
+        "other": "Contacter {{name}}",
+        "otherBack": "Revenir vers {{name}}"
+      },
+      "dateTitle": "{{name}} : {{label}}",
+      "timeline": {
+        "outbound": "Pris contact avec {{names}}",
+        "inbound": "Des nouvelles de {{names}}",
+        "mutual": "Échange avec {{names}}"
+      }
     }
   }
 }

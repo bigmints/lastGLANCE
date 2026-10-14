@@ -13,6 +13,7 @@ function person(id: string, name: string, updatedAt: string): SyncPerson {
   return {
     kind: 'person', id, name, nickname: null, circleSyncId: null, targetCadenceDays: 14,
     preferredChannel: null, details: null, archived: false, snoozedUntil: null, notifyWhenOverdue: false,
+    addToDayglanceWhenOverdue: false, sendToLifeglance: false,
     ownerUserSyncId: null, createdAt: '2026-01-01T00:00:00.000Z', updatedAt,
   }
 }
@@ -135,5 +136,22 @@ describe('notifyWhenOverdue on the wire', () => {
     const row = fromSyncPerson({ ...person(P1, 'New', '2026-01-01T00:00:00.000Z'), notifyWhenOverdue: true })
     expect(toSyncPerson(row).notifyWhenOverdue).toBe(true)
     expect(toSyncPerson({ ...row, notify_when_overdue: undefined }).notifyWhenOverdue).toBe(false)
+  })
+})
+
+describe('GLANCE intent opt-ins on the wire', () => {
+  it('reads a person from a build without them as opted out', () => {
+    const { addToDayglanceWhenOverdue: _a, sendToLifeglance: _b, ...old } = person(P1, 'Old', '2026-01-01T00:00:00.000Z')
+    void _a; void _b
+    const row = fromSyncPerson(old as SyncPerson)
+    expect(row.add_to_dayglance_when_overdue).toBe(false)
+    expect(row.send_to_lifeglance).toBe(false)
+  })
+
+  it('round-trips both', () => {
+    const row = fromSyncPerson({
+      ...person(P1, 'New', '2026-01-01T00:00:00.000Z'), addToDayglanceWhenOverdue: true, sendToLifeglance: true,
+    })
+    expect(toSyncPerson(row)).toMatchObject({ addToDayglanceWhenOverdue: true, sendToLifeglance: true })
   })
 })

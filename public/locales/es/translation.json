@@ -686,7 +686,9 @@
     "digestTime": "Recordatorio para ponerte al día",
     "digestTimeHint": "Cuándo llega el recordatorio diario de las personas pendientes. Actívalo para alguien con Recordarme cuando toque.",
     "on": "Sí",
-    "off": "No"
+    "off": "No",
+    "datesToDayglance": "Cumpleaños a dayGLANCE",
+    "datesToDayglanceHint": "Envía los cumpleaños y fechas de hoy a dayGLANCE como eventos de todo el día. Solo en este dispositivo."
   },
   "people": {
     "close": "Cerrar",
@@ -795,7 +797,11 @@
       "headsUp": "Recordatorio",
       "onTheDay": "Recordar el mismo día",
       "daysBefore_one": "También {{count}} día antes",
-      "daysBefore_other": "También {{count}} días antes"
+      "daysBefore_other": "También {{count}} días antes",
+      "autoSendDayglance": "Añadir a dayGLANCE cuando toque",
+      "autoSendDayglanceHint": "Envía a dayGLANCE una tarea como «Llamar a Sam» cuando toque contactar.",
+      "sendToLifeglance": "Añadir contactos a lifeGLANCE",
+      "sendToLifeglanceHint": "Cada contacto que registres con esta persona va a tu línea de tiempo de lifeGLANCE."
     },
     "log": {
       "title": "Registrar contacto",
@@ -897,6 +903,28 @@
       "open": "Abrir",
       "channelName": "Recordatorios de personas",
       "channelDescription": "Cumpleaños, fechas y con quién querías ponerte al día."
+    },
+    "intents": {
+      "task": {
+        "in_person": "Ver a {{name}}",
+        "in_personBack": "Responder a {{name}}",
+        "call": "Llamar a {{name}}",
+        "callBack": "Devolver la llamada a {{name}}",
+        "video": "Videollamada con {{name}}",
+        "videoBack": "Devolver la videollamada a {{name}}",
+        "text": "Escribir a {{name}}",
+        "textBack": "Responder a {{name}}",
+        "email": "Enviar un correo a {{name}}",
+        "emailBack": "Responder el correo de {{name}}",
+        "other": "Contactar con {{name}}",
+        "otherBack": "Responder a {{name}}"
+      },
+      "dateTitle": "{{name}}: {{label}}",
+      "timeline": {
+        "outbound": "Contacté con {{names}}",
+        "inbound": "Noticias de {{names}}",
+        "mutual": "Contacto con {{names}}"
+      }
     }
   }
 }

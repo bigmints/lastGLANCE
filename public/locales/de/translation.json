@@ -686,7 +686,9 @@
     "digestTime": "Erinnerung zum Melden",
     "digestTimeHint": "Wann die tägliche Erinnerung an überfällige Menschen kommt. Schalte sie pro Person mit Erinnern, wenn überfällig ein.",
     "on": "An",
-    "off": "Aus"
+    "off": "Aus",
+    "datesToDayglance": "Geburtstage an dayGLANCE",
+    "datesToDayglanceHint": "Schickt die heutigen Geburtstage und Termine als ganztägige Einträge an dayGLANCE. Nur auf diesem Gerät."
   },
   "people": {
     "close": "Schließen",
@@ -795,7 +797,11 @@
       "headsUp": "Erinnerung",
       "onTheDay": "Am Tag erinnern",
       "daysBefore_one": "Auch {{count}} Tag vorher",
-      "daysBefore_other": "Auch {{count}} Tage vorher"
+      "daysBefore_other": "Auch {{count}} Tage vorher",
+      "autoSendDayglance": "Bei Überfälligkeit zu dayGLANCE hinzufügen",
+      "autoSendDayglanceHint": "Schickt eine Aufgabe wie „Sam anrufen“ an dayGLANCE, sobald der Kontakt überfällig ist.",
+      "sendToLifeglance": "Kontakte zu lifeGLANCE hinzufügen",
+      "sendToLifeglanceHint": "Jeder Kontakt, den du mit dieser Person einträgst, landet in deiner lifeGLANCE-Zeitleiste."
     },
     "log": {
       "title": "Kontakt erfassen",
@@ -897,6 +903,28 @@
       "open": "Öffnen",
       "channelName": "Erinnerungen für Menschen",
       "channelDescription": "Geburtstage, Termine und bei wem du dich melden wolltest."
+    },
+    "intents": {
+      "task": {
+        "in_person": "{{name}} treffen",
+        "in_personBack": "Bei {{name}} zurückmelden",
+        "call": "{{name}} anrufen",
+        "callBack": "{{name}} zurückrufen",
+        "video": "Videoanruf mit {{name}}",
+        "videoBack": "{{name}} per Video zurückrufen",
+        "text": "{{name}} schreiben",
+        "textBack": "{{name}} zurückschreiben",
+        "email": "{{name}} mailen",
+        "emailBack": "Auf die E-Mail von {{name}} antworten",
+        "other": "Bei {{name}} melden",
+        "otherBack": "Bei {{name}} zurückmelden"
+      },
+      "dateTitle": "{{name}}: {{label}}",
+      "timeline": {
+        "outbound": "Bei {{names}} gemeldet",
+        "inbound": "Von {{names}} gehört",
+        "mutual": "Kontakt mit {{names}}"
+      }
     }
   }
 }

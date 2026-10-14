@@ -27,6 +27,7 @@ import { useUsers } from '@/multiuser/useUsers'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useWidgetSnapshot } from '@/hooks/useWidgetSnapshot'
 import { useReminders } from '@/hooks/useReminders'
+import { usePeopleIntents } from '@/hooks/usePeopleIntents'
 import { usePendingCompletions } from '@/hooks/usePendingCompletions'
 import { usePendingDeepLink } from '@/hooks/usePendingDeepLink'
 import { useIntentsPoller } from '@/hooks/useIntentsPoller'
@@ -167,6 +168,7 @@ function AppInner() {
   useNotifications()
   useWidgetSnapshot()
   useReminders()
+  usePeopleIntents()
   usePendingCompletions()
   usePendingDeepLink()
   const { refreshConfig } = useIntents()

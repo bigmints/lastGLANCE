@@ -168,7 +168,7 @@ function digestReminders(
 // runs in has it, and the catch covers any that does not.
 type ListFormatCtor = new (locale: string, o: { style: string; type: string }) => { format(items: string[]): string }
 
-function listFormat(locale: string, items: string[]): string {
+export function listFormat(locale: string, items: string[]): string {
   try {
     const ListFormat = (Intl as unknown as { ListFormat: ListFormatCtor }).ListFormat
     return new ListFormat(locale, { style: 'long', type: 'conjunction' }).format(items)

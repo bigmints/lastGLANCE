@@ -41,3 +41,12 @@ export const useDateReminderMinutes = dateTime.use
 export const getDigestMinutes = digestTime.get
 export const setDigestMinutes = digestTime.set
 export const useDigestMinutes = digestTime.use
+
+// Today's birthdays and dates to dayGLANCE (docs: the People spec, Intents):
+// off by default, and per device so two phones don't both send them.
+export const DATES_TO_DAYGLANCE_KEY = 'lg-people-dates-dayglance'
+const datesToDayglance = localSetting(DATES_TO_DAYGLANCE_KEY, false)
+
+export const isDatesToDayglanceOn = datesToDayglance.get
+export const setDatesToDayglanceOn = datesToDayglance.set
+export const useDatesToDayglanceOn = datesToDayglance.use

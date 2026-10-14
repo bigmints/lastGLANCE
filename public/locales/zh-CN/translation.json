@@ -686,7 +686,9 @@
     "digestTime": "联系提醒",
     "digestTimeHint": "每天提醒逾期联系人的时间。在某人资料中打开“到期时提醒我”即可加入。",
     "on": "开",
-    "off": "关"
+    "off": "关",
+    "datesToDayglance": "生日发送到 dayGLANCE",
+    "datesToDayglanceHint": "将今天的生日和日期作为全天事项发送到 dayGLANCE。仅限本设备。"
   },
   "people": {
     "close": "关闭",
@@ -795,7 +797,11 @@
       "headsUp": "提醒",
       "onTheDay": "当天提醒",
       "daysBefore_one": "并提前 {{count}} 天",
-      "daysBefore_other": "并提前 {{count}} 天"
+      "daysBefore_other": "并提前 {{count}} 天",
+      "autoSendDayglance": "逾期时添加到 dayGLANCE",
+      "autoSendDayglanceHint": "超过联系周期后，向 dayGLANCE 发送一条类似“给 Sam 打电话”的任务。",
+      "sendToLifeglance": "将联系记录添加到 lifeGLANCE",
+      "sendToLifeglanceHint": "你与此人的每次联系记录都会加入 lifeGLANCE 时间线。"
     },
     "log": {
       "title": "记录联系",
@@ -897,6 +903,28 @@
       "open": "打开",
       "channelName": "联系人提醒",
       "channelDescription": "生日、纪念日，以及你想联系的人。"
+    },
+    "intents": {
+      "task": {
+        "in_person": "和{{name}}见面",
+        "in_personBack": "回复{{name}}",
+        "call": "给{{name}}打电话",
+        "callBack": "给{{name}}回电话",
+        "video": "和{{name}}视频通话",
+        "videoBack": "给{{name}}回视频电话",
+        "text": "给{{name}}发消息",
+        "textBack": "回复{{name}}的消息",
+        "email": "给{{name}}发邮件",
+        "emailBack": "回复{{name}}的邮件",
+        "other": "联系{{name}}",
+        "otherBack": "回复{{name}}"
+      },
+      "dateTitle": "{{name}}：{{label}}",
+      "timeline": {
+        "outbound": "联系了{{names}}",
+        "inbound": "{{names}}联系了我",
+        "mutual": "和{{names}}聊了聊"
+      }
     }
   }
 }

@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { Bell, BookUser, Plus, Trash2, X } from 'lucide-react'
+import { ArrowUpRight, Bell, BookUser, Plus, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
+import { useIntents } from '@/intents/IntentsContext'
 import { requestNotificationPermission } from '@/hooks/useNotifications'
 import { getActiveLocale } from '@/utils/datetime'
 import {
@@ -67,6 +68,9 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
   const [details, setDetails] = useState(person?.details ?? '')
   const [notify, setNotify] = useState(person?.notify_when_overdue ?? false)
   const [notifyBlocked, setNotifyBlocked] = useState(false)
+  const [toDayglance, setToDayglance] = useState(person?.add_to_dayglance_when_overdue ?? false)
+  const [toLifeglance, setToLifeglance] = useState(person?.send_to_lifeglance ?? false)
+  const { isConfigured: intentsOn } = useIntents()
   const [drafts, setDrafts] = useState<DraftDate[]>(() => dates.map(toDraft))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -110,6 +114,8 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
         preferred_channel: channel || null,
         details: details.trim() || null,
         notify_when_overdue: notify,
+        add_to_dayglance_when_overdue: toDayglance,
+        send_to_lifeglance: toLifeglance,
       }
       let saved: Person
       if (person) {
@@ -246,7 +252,24 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
               {notifyBlocked && (
                 <p className="text-xs text-amber-500 dark:text-amber-400">{t('choreForm.notifyBlocked')}</p>
               )}
+              {intentsOn && (
+                <IntentSwitch
+                  on={toDayglance}
+                  onToggle={() => setToDayglance(v => !v)}
+                  label={t('people.form.autoSendDayglance')}
+                  hint={t('people.form.autoSendDayglanceHint')}
+                />
+              )}
             </div>
+          )}
+
+          {intentsOn && (
+            <IntentSwitch
+              on={toLifeglance}
+              onToggle={() => setToLifeglance(v => !v)}
+              label={t('people.form.sendToLifeglance')}
+              hint={t('people.form.sendToLifeglanceHint')}
+            />
           )}
 
           <div>
@@ -381,5 +404,30 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
       </div>
     </div>,
     document.body,
+  )
+}
+
+// A switch row for sending to another GLANCE app, as on the chore form.
+function IntentSwitch({ on, onToggle, label, hint }: { on: boolean; onToggle: () => void; label: string; hint: string }) {
+  return (
+    <div className="flex items-center justify-between py-1">
+      <div className="flex flex-col gap-0.5">
+        <div className="flex items-center gap-2">
+          <ArrowUpRight size={13} className={on ? 'text-green-400' : 'text-slate-400 dark:text-slate-500'} />
+          <span className="text-sm text-slate-600 dark:text-slate-300">{label}</span>
+        </div>
+        <span className="text-xs text-slate-400 dark:text-slate-500 pl-5">{hint}</span>
+      </div>
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`relative w-10 h-6 rounded-full transition-colors shrink-0 ml-3 ${on ? 'bg-green-400' : 'bg-slate-300 dark:bg-slate-600'}`}
+        aria-checked={on}
+        aria-label={label}
+        role="switch"
+      >
+        <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${on ? 'translate-x-4' : ''}`} />
+      </button>
+    </div>
   )
 }

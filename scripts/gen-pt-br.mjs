@@ -296,6 +296,16 @@ const OVERRIDES = {
   'people.log.notePlaceholder': 'Sobre o que vocês conversaram?',
   'people.circles.hint': 'Agrupe as pessoas como quiser. Excluir um círculo mantém as pessoas dele.',
   'people.circles.deleteDetail': 'As pessoas dele continuam, sem círculo.',
+  // People intents: Brazil "liga para" and "manda mensagem para", and the
+  // European "contactei" and "cronologia".
+  'people.intents.task.call': 'Ligar para {{name}}',
+  'people.intents.task.callBack': 'Retornar a ligação de {{name}}',
+  'people.intents.task.text': 'Mandar mensagem para {{name}}',
+  'people.intents.task.email': 'Mandar e-mail para {{name}}',
+  'people.intents.task.videoBack': 'Retornar a videochamada de {{name}}',
+  'people.intents.timeline.outbound': 'Entrei em contato com {{names}}',
+  'people.form.autoSendDayglanceHint': 'Envia para o dayGLANCE uma tarefa como “Ligar para Sam” quando estiver em atraso.',
+  'people.form.sendToLifeglanceHint': 'Cada contato que você registrar com esta pessoa vai para a sua linha do tempo do lifeGLANCE.',
 }
 
 const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

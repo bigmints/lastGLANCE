@@ -718,7 +718,9 @@
     "digestTime": "Przypomnienie o kontakcie",
     "digestTimeHint": "Kiedy przychodzi codzienne przypomnienie o zaległych osobach. Włącz je dla osoby opcją Przypominaj o zaległości.",
     "on": "Wł.",
-    "off": "Wył."
+    "off": "Wył.",
+    "datesToDayglance": "Urodziny do dayGLANCE",
+    "datesToDayglanceHint": "Wysyła dzisiejsze urodziny i daty do dayGLANCE jako wydarzenia całodniowe. Tylko na tym urządzeniu."
   },
   "people": {
     "close": "Zamknij",
@@ -829,7 +831,11 @@
       "daysBefore_one": "Także {{count}} dzień wcześniej",
       "daysBefore_few": "Także {{count}} dni wcześniej",
       "daysBefore_many": "Także {{count}} dni wcześniej",
-      "daysBefore_other": "Także {{count}} dnia wcześniej"
+      "daysBefore_other": "Także {{count}} dnia wcześniej",
+      "autoSendDayglance": "Dodaj do dayGLANCE po terminie",
+      "autoSendDayglanceHint": "Wysyła do dayGLANCE zadanie w rodzaju „Zadzwonić: Sam”, gdy minie termin kontaktu.",
+      "sendToLifeglance": "Dodawaj kontakty do lifeGLANCE",
+      "sendToLifeglanceHint": "Każdy kontakt zapisany z tą osobą trafia na Twoją oś czasu w lifeGLANCE."
     },
     "log": {
       "title": "Zapisz kontakt",
@@ -945,6 +951,28 @@
       "open": "Otwórz",
       "channelName": "Przypomnienia o ludziach",
       "channelDescription": "Urodziny, daty i osoby, do których warto się odezwać."
+    },
+    "intents": {
+      "task": {
+        "in_person": "Spotkanie: {{name}}",
+        "in_personBack": "Odezwać się: {{name}}",
+        "call": "Zadzwonić: {{name}}",
+        "callBack": "Oddzwonić: {{name}}",
+        "video": "Wideorozmowa: {{name}}",
+        "videoBack": "Oddzwonić przez wideo: {{name}}",
+        "text": "Napisać: {{name}}",
+        "textBack": "Odpisać: {{name}}",
+        "email": "E-mail: {{name}}",
+        "emailBack": "Odpowiedzieć na e-mail: {{name}}",
+        "other": "Odezwać się: {{name}}",
+        "otherBack": "Odezwać się w odpowiedzi: {{name}}"
+      },
+      "dateTitle": "{{name}}: {{label}}",
+      "timeline": {
+        "outbound": "Kontakt ode mnie: {{names}}",
+        "inbound": "Kontakt od: {{names}}",
+        "mutual": "Kontakt: {{names}}"
+      }
     }
   }
 }

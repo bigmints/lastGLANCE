@@ -99,7 +99,8 @@ public class MainActivity extends BridgeActivity {
         if (!action.equals("app.lastglance.CREATE")
             && !action.equals("app.lastglance.COMPLETE")
             && !action.equals("app.lastglance.OPEN")
-            && !action.equals("app.lastglance.QUERY")) {
+            && !action.equals("app.lastglance.QUERY")
+            && !action.equals("app.lastglance.LOG_INTERACTION")) {
             return;
         }
 
