@@ -680,6 +680,11 @@
     "hide": "Hide",
     "phoneContacts": "Phone contacts",
     "phoneContactsHint": "Import people from your contacts and link them for Call, Text and Email. Read only; numbers and addresses are never stored or synced.",
+    "dateReminders": "Date reminders",
+    "dateRemindersHint": "A notification on birthdays and other dates, at the time you pick.",
+    "reminderTime": "Time",
+    "digestTime": "Catch-up reminder",
+    "digestTimeHint": "When the daily reminder about overdue people goes out. Turn it on for someone with Remind me when overdue.",
     "on": "On",
     "off": "Off"
   },
@@ -784,7 +789,13 @@
       "detailsPlaceholder": "Kids' names, likes, things to ask about…",
       "nameRequired": "Name is required",
       "cadenceInvalid": "Enter a number of weeks greater than 0",
-      "yearInvalid": "Enter a year between 1 and 9999, or leave it empty"
+      "yearInvalid": "Enter a year between 1 and 9999, or leave it empty",
+      "notifyOverdue": "Remind me when overdue",
+      "notifyHint": "Joins one catch-up reminder a day. Pick its time in Settings.",
+      "headsUp": "Reminder",
+      "onTheDay": "Remind on the day",
+      "daysBefore_one": "Also {{count}} day before",
+      "daysBefore_other": "Also {{count}} days before"
     },
     "log": {
       "title": "Log contact",
@@ -872,6 +883,20 @@
       "birthdayChanged": "Contacts has {{name}}'s birthday as {{date}}.",
       "update": "Update",
       "keep": "Keep mine"
+    },
+    "reminders": {
+      "today": "{{label}} today",
+      "turnsToday": "Turns {{age}} today",
+      "inDays_one": "{{label}} tomorrow",
+      "inDays_other": "{{label}} in {{count}} days",
+      "digestOne": "Time to catch up with {{name}}",
+      "digest_one": "{{count}} person you meant to catch up with",
+      "digest_other": "{{count}} people you meant to catch up with",
+      "more_one": "{{count}} more",
+      "more_other": "{{count}} more",
+      "open": "Open",
+      "channelName": "People reminders",
+      "channelDescription": "Birthdays, dates and who you meant to catch up with."
     }
   }
 }

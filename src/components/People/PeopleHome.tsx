@@ -10,6 +10,7 @@ import { usePeopleContacts } from '@/people/useContacts'
 import { useShowReciprocity } from '@/people/settings'
 import type { InteractionDirection, PersonWithLastInteraction } from '@/people/types'
 import { formatMonthShort } from '@/utils/datetime'
+import { clearPendingOpenPerson, OPEN_PERSON_PENDING_EVENT, peekPendingOpenPerson } from '@/native/pendingOpenPerson'
 import { CircleManagerModal } from './CircleManagerModal'
 import { ContactsModal } from './ContactsModal'
 import { ContactsNotices } from './ContactsNotices'
@@ -124,6 +125,24 @@ export function PeopleHome() {
   }, [])
 
   const mine = useMemo(() => visibleToMe(all, multiUserEnabled, meId), [all, multiUserEnabled, meId])
+
+  // A People notification tap (src/native/reminders.ts). Taken once People
+  // has loaded, whether the tap came first (cold start) or later.
+  useEffect(() => {
+    if (loading) return
+    const take = () => {
+      const req = peekPendingOpenPerson()
+      if (!req) return
+      clearPendingOpenPerson()
+      if (req.action === 'home') return
+      if (!mine.some(p => p.sync_id === req.personSyncId)) return
+      if (req.action === 'log') setLogFor({ ids: [req.personSyncId], direction: 'outbound' })
+      else setOpenId(req.personSyncId)
+    }
+    take()
+    window.addEventListener(OPEN_PERSON_PENDING_EVENT, take)
+    return () => window.removeEventListener(OPEN_PERSON_PENDING_EVENT, take)
+  }, [loading, mine])
   const active = useMemo(() => mine.filter(p => !p.archived), [mine])
   const archived = useMemo(() => mine.filter(p => p.archived), [mine])
   const reachOut = useMemo(

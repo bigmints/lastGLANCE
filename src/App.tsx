@@ -46,6 +46,7 @@ import { createDbEngine } from '@/sync/dbEngine'
 import { PeopleHome, PEOPLE_ADD_EVENT, PEOPLE_CIRCLES_EVENT } from '@/components/People/PeopleHome'
 import { hasOpenSurface } from '@/utils/dismissStack'
 import { peekPendingOpenChore } from '@/native/pendingOpenChore'
+import { OPEN_PERSON_PENDING_EVENT, peekPendingOpenPerson } from '@/native/pendingOpenPerson'
 import { createPeopleFileEngine } from '@/people/sync/fileEngine'
 import { createPeopleDbEngine } from '@/people/sync/dbEngine'
 import { registerPeopleDbEngine } from '@/people/sync/dirtyTracker'
@@ -177,10 +178,11 @@ function AppInner() {
   const billing = useSubscription()
   const [editMode, setEditMode] = useState(false)
   // Chores | People.
-  // A notification tap that launched the app is about a chore, so it opens on
-  // chores whatever mode was last used.
+  // A notification tap that launched the app opens the mode it is about,
+  // whatever mode was last used.
   const [mode, setModeState] = useState<AppMode>(() =>
-    localStorage.getItem(MODE_KEY) === 'people' && !peekPendingOpenChore() ? 'people' : 'chores')
+    peekPendingOpenPerson() ? 'people'
+      : localStorage.getItem(MODE_KEY) === 'people' && !peekPendingOpenChore() ? 'people' : 'chores')
   const setMode = (next: AppMode) => {
     setModeState(next)
     setEditMode(false)
@@ -192,8 +194,13 @@ function AppInner() {
 
   useEffect(() => {
     const toChores = () => { if (modeRef.current !== 'chores') setModeState('chores') }
+    const toPeople = () => { if (modeRef.current !== 'people') setModeState('people') }
     for (const name of CHORE_EVENTS) window.addEventListener(name, toChores)
-    return () => { for (const name of CHORE_EVENTS) window.removeEventListener(name, toChores) }
+    window.addEventListener(OPEN_PERSON_PENDING_EVENT, toPeople)
+    return () => {
+      for (const name of CHORE_EVENTS) window.removeEventListener(name, toChores)
+      window.removeEventListener(OPEN_PERSON_PENDING_EVENT, toPeople)
+    }
   }, [])
   const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem('lg-welcome-dismissed'))
   const [welcomeClearing, setWelcomeClearing] = useState(false)

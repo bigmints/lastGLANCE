@@ -18,6 +18,8 @@ export interface SyncPerson {
   details: string | null
   archived: boolean
   snoozedUntil: string | null
+  // Optional: builds from before the field send people without it.
+  notifyWhenOverdue?: boolean
   ownerUserSyncId: string | null
   createdAt: string
   updatedAt: string
@@ -87,6 +89,7 @@ export function toSyncPerson(p: Person): SyncPerson {
     details: p.details,
     archived: p.archived,
     snoozedUntil: p.snoozed_until,
+    notifyWhenOverdue: !!p.notify_when_overdue,
     ownerUserSyncId: p.owner_user_sync_id,
     createdAt: p.created_at,
     updatedAt: p.updated_at,
@@ -104,6 +107,7 @@ export function fromSyncPerson(s: SyncPerson): Omit<Person, 'id'> {
     details: s.details ?? null,
     archived: !!s.archived,
     snoozed_until: s.snoozedUntil ?? null,
+    notify_when_overdue: !!s.notifyWhenOverdue,
     owner_user_sync_id: s.ownerUserSyncId ?? null,
     created_at: s.createdAt,
     updated_at: s.updatedAt,

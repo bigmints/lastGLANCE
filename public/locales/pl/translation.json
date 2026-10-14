@@ -712,6 +712,11 @@
     "hide": "Ukryj",
     "phoneContacts": "Kontakty w telefonie",
     "phoneContactsHint": "Importuj osoby z kontaktów i połącz je, by dzwonić, pisać i wysyłać e-maile. Tylko odczyt; numery i adresy nigdy nie są zapisywane ani synchronizowane.",
+    "dateReminders": "Przypomnienia o datach",
+    "dateRemindersHint": "Powiadomienie w urodziny i inne daty, o wybranej godzinie.",
+    "reminderTime": "Godzina",
+    "digestTime": "Przypomnienie o kontakcie",
+    "digestTimeHint": "Kiedy przychodzi codzienne przypomnienie o zaległych osobach. Włącz je dla osoby opcją Przypominaj o zaległości.",
     "on": "Wł.",
     "off": "Wył."
   },
@@ -816,7 +821,15 @@
       "detailsPlaceholder": "Imiona dzieci, upodobania, o co zapytać…",
       "nameRequired": "Imię jest wymagane",
       "cadenceInvalid": "Podaj liczbę tygodni większą od 0",
-      "yearInvalid": "Podaj rok od 1 do 9999 albo zostaw puste"
+      "yearInvalid": "Podaj rok od 1 do 9999 albo zostaw puste",
+      "notifyOverdue": "Przypominaj o zaległości",
+      "notifyHint": "Trafia do jednego przypomnienia dziennie. Godzinę ustawisz w Ustawieniach.",
+      "headsUp": "Przypomnienie",
+      "onTheDay": "Przypomnij w dniu",
+      "daysBefore_one": "Także {{count}} dzień wcześniej",
+      "daysBefore_few": "Także {{count}} dni wcześniej",
+      "daysBefore_many": "Także {{count}} dni wcześniej",
+      "daysBefore_other": "Także {{count}} dnia wcześniej"
     },
     "log": {
       "title": "Zapisz kontakt",
@@ -912,6 +925,26 @@
       "birthdayChanged": "W Kontaktach urodziny osoby {{name}} to {{date}}.",
       "update": "Zaktualizuj",
       "keep": "Zostaw moje"
+    },
+    "reminders": {
+      "today": "Dziś: {{label}}",
+      "turnsToday": "Dziś kończy {{age}}",
+      "inDays_one": "{{label}} jutro",
+      "inDays_few": "{{label}} za {{count}} dni",
+      "inDays_many": "{{label}} za {{count}} dni",
+      "inDays_other": "{{label}} za {{count}} dnia",
+      "digestOne": "Czas się odezwać: {{name}}",
+      "digest_one": "{{count}} osoba czeka na kontakt",
+      "digest_few": "{{count}} osoby czekają na kontakt",
+      "digest_many": "{{count}} osób czeka na kontakt",
+      "digest_other": "{{count}} osoby czeka na kontakt",
+      "more_one": "jeszcze {{count}}",
+      "more_few": "jeszcze {{count}}",
+      "more_many": "jeszcze {{count}}",
+      "more_other": "jeszcze {{count}}",
+      "open": "Otwórz",
+      "channelName": "Przypomnienia o ludziach",
+      "channelDescription": "Urodziny, daty i osoby, do których warto się odezwać."
     }
   }
 }

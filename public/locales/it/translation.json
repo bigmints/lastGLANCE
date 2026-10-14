@@ -680,6 +680,11 @@
     "hide": "Nascondi",
     "phoneContacts": "Contatti del telefono",
     "phoneContactsHint": "Importa persone dai contatti e collegale per chiamare, scrivere e inviare email. Sola lettura; numeri e indirizzi non vengono mai salvati né sincronizzati.",
+    "dateReminders": "Promemoria delle date",
+    "dateRemindersHint": "Una notifica per compleanni e altre date, all'ora che scegli.",
+    "reminderTime": "Ora",
+    "digestTime": "Promemoria per sentire qualcuno",
+    "digestTimeHint": "Quando arriva il promemoria giornaliero delle persone da sentire. Attivalo per qualcuno con Ricordamelo quando è ora.",
     "on": "Sì",
     "off": "No"
   },
@@ -784,7 +789,13 @@
       "detailsPlaceholder": "Nomi dei figli, gusti, cose da chiedere…",
       "nameRequired": "Il nome è obbligatorio",
       "cadenceInvalid": "Inserisci un numero di settimane maggiore di 0",
-      "yearInvalid": "Inserisci un anno tra 1 e 9999, oppure lascia vuoto"
+      "yearInvalid": "Inserisci un anno tra 1 e 9999, oppure lascia vuoto",
+      "notifyOverdue": "Ricordamelo quando è ora",
+      "notifyHint": "Rientra in un unico promemoria al giorno. Scegli l'ora nelle Impostazioni.",
+      "headsUp": "Promemoria",
+      "onTheDay": "Ricorda il giorno stesso",
+      "daysBefore_one": "Anche {{count}} giorno prima",
+      "daysBefore_other": "Anche {{count}} giorni prima"
     },
     "log": {
       "title": "Registra contatto",
@@ -872,6 +883,20 @@
       "birthdayChanged": "In Contatti il compleanno di {{name}} è il {{date}}.",
       "update": "Aggiorna",
       "keep": "Tieni il mio"
+    },
+    "reminders": {
+      "today": "Oggi: {{label}}",
+      "turnsToday": "Compie {{age}} anni oggi",
+      "inDays_one": "{{label}} domani",
+      "inDays_other": "{{label}} tra {{count}} giorni",
+      "digestOne": "È ora di sentire {{name}}",
+      "digest_one": "{{count}} persona che volevi sentire",
+      "digest_other": "{{count}} persone che volevi sentire",
+      "more_one": "altri {{count}}",
+      "more_other": "altri {{count}}",
+      "open": "Apri",
+      "channelName": "Promemoria persone",
+      "channelDescription": "Compleanni, date e le persone che volevi sentire."
     }
   }
 }

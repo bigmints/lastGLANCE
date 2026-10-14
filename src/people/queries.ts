@@ -44,6 +44,7 @@ export interface PersonInput {
   target_cadence_days?: number | null
   preferred_channel?: InteractionChannel | null
   details?: string | null
+  notify_when_overdue?: boolean
 }
 
 export async function createPerson(input: PersonInput): Promise<Person> {
@@ -58,6 +59,7 @@ export async function createPerson(input: PersonInput): Promise<Person> {
     details: input.details ?? null,
     archived: false,
     snoozed_until: null,
+    notify_when_overdue: input.notify_when_overdue ?? false,
     owner_user_sync_id: getMultiUserEnabled() ? getMeUserSyncId() : null,
     created_at: ts,
     updated_at: ts,
@@ -70,7 +72,7 @@ export async function createPerson(input: PersonInput): Promise<Person> {
 
 export type PersonPatch = Partial<Pick<Person,
   'name' | 'nickname' | 'circle_sync_id' | 'target_cadence_days' | 'preferred_channel' |
-  'details' | 'archived' | 'snoozed_until'
+  'details' | 'archived' | 'snoozed_until' | 'notify_when_overdue'
 >>
 
 export async function updatePerson(syncId: string, patch: PersonPatch): Promise<void> {

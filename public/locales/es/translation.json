@@ -680,6 +680,11 @@
     "hide": "Ocultar",
     "phoneContacts": "Contactos del teléfono",
     "phoneContactsHint": "Importa personas de tus contactos y vincúlalas para llamar, enviar mensajes y correos. Solo lectura; los números y direcciones nunca se guardan ni sincronizan.",
+    "dateReminders": "Recordatorios de fechas",
+    "dateRemindersHint": "Una notificación en cumpleaños y otras fechas, a la hora que elijas.",
+    "reminderTime": "Hora",
+    "digestTime": "Recordatorio para ponerte al día",
+    "digestTimeHint": "Cuándo llega el recordatorio diario de las personas pendientes. Actívalo para alguien con Recordarme cuando toque.",
     "on": "Sí",
     "off": "No"
   },
@@ -784,7 +789,13 @@
       "detailsPlaceholder": "Nombres de los hijos, gustos, cosas que preguntar…",
       "nameRequired": "El nombre es obligatorio",
       "cadenceInvalid": "Introduce un número de semanas mayor que 0",
-      "yearInvalid": "Introduce un año entre 1 y 9999, o déjalo vacío"
+      "yearInvalid": "Introduce un año entre 1 y 9999, o déjalo vacío",
+      "notifyOverdue": "Recordarme cuando toque",
+      "notifyHint": "Entra en un único recordatorio diario. Elige su hora en Ajustes.",
+      "headsUp": "Recordatorio",
+      "onTheDay": "Recordar el mismo día",
+      "daysBefore_one": "También {{count}} día antes",
+      "daysBefore_other": "También {{count}} días antes"
     },
     "log": {
       "title": "Registrar contacto",
@@ -872,6 +883,20 @@
       "birthdayChanged": "En Contactos, el cumpleaños de {{name}} es el {{date}}.",
       "update": "Actualizar",
       "keep": "Mantener el mío"
+    },
+    "reminders": {
+      "today": "Hoy: {{label}}",
+      "turnsToday": "Cumple {{age}} hoy",
+      "inDays_one": "{{label}} mañana",
+      "inDays_other": "{{label}} en {{count}} días",
+      "digestOne": "Es hora de ponerte al día con {{name}}",
+      "digest_one": "{{count}} persona con la que querías ponerte al día",
+      "digest_other": "{{count}} personas con las que querías ponerte al día",
+      "more_one": "{{count}} más",
+      "more_other": "{{count}} más",
+      "open": "Abrir",
+      "channelName": "Recordatorios de personas",
+      "channelDescription": "Cumpleaños, fechas y con quién querías ponerte al día."
     }
   }
 }

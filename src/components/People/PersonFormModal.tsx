@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { BookUser, Plus, Trash2, X } from 'lucide-react'
+import { Bell, BookUser, Plus, Trash2, X } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
+import { requestNotificationPermission } from '@/hooks/useNotifications'
 import { getActiveLocale } from '@/utils/datetime'
 import {
   addPersonDate, createPerson, deletePersonDate, updatePerson, updatePersonDate,
@@ -32,15 +33,20 @@ interface DraftDate {
   month: number
   day: number
   year: string
+  remind: number
 }
 
 const DATE_KINDS: PersonDateKind[] = ['birthday', 'anniversary', 'custom']
 const DAYS_IN_MONTH = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+// Heads-up choices, in days before the date. Every date also notifies on the
+// day itself.
+const HEADS_UP_DAYS = [0, 1, 2, 3, 7, 14]
 
 function toDraft(d: PersonDate): DraftDate {
   return {
     key: d.sync_id, sync_id: d.sync_id, kind: d.kind, label: d.label ?? '',
     month: d.month, day: d.day, year: d.year !== null ? String(d.year) : '',
+    remind: d.remind_days_before,
   }
 }
 
@@ -59,6 +65,8 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
   const [weeks, setWeeks] = useState(daysToWeeks(person?.target_cadence_days ?? null))
   const [channel, setChannel] = useState<InteractionChannel | ''>(person?.preferred_channel ?? '')
   const [details, setDetails] = useState(person?.details ?? '')
+  const [notify, setNotify] = useState(person?.notify_when_overdue ?? false)
+  const [notifyBlocked, setNotifyBlocked] = useState(false)
   const [drafts, setDrafts] = useState<DraftDate[]>(() => dates.map(toDraft))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -81,7 +89,7 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
 
   function addDraft() {
     const kind: PersonDateKind = drafts.some(d => d.kind === 'birthday') ? 'custom' : 'birthday'
-    setDrafts(ds => [...ds, { key: crypto.randomUUID(), sync_id: null, kind, label: '', month: 1, day: 1, year: '' }])
+    setDrafts(ds => [...ds, { key: crypto.randomUUID(), sync_id: null, kind, label: '', month: 1, day: 1, year: '', remind: 0 }])
   }
 
   async function handleSave() {
@@ -101,6 +109,7 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
         target_cadence_days: cadence,
         preferred_channel: channel || null,
         details: details.trim() || null,
+        notify_when_overdue: notify,
       }
       let saved: Person
       if (person) {
@@ -119,6 +128,7 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
           month: d.month,
           day: d.day,
           year: parseYear(d.year) as number | null,
+          remind_days_before: d.remind,
         }
         if (!d.sync_id) {
           await addPersonDate({ person_sync_id: saved.sync_id, ...row })
@@ -126,7 +136,7 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
         }
         const before = dates.find(x => x.sync_id === d.sync_id)
         if (before && (before.kind !== row.kind || before.label !== row.label || before.month !== row.month ||
-          before.day !== row.day || before.year !== row.year)) {
+          before.day !== row.day || before.year !== row.year || before.remind_days_before !== row.remind_days_before)) {
           await updatePersonDate(d.sync_id, row)
         }
       }
@@ -205,6 +215,40 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{t('people.form.cadenceHint')}</p>
           </div>
 
+          {weeks.trim() && (
+            <div>
+              <div className="flex items-center justify-between py-1">
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <Bell size={13} className={notify ? 'text-green-400' : 'text-slate-400 dark:text-slate-500'} />
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{t('people.form.notifyOverdue')}</span>
+                  </div>
+                  <span className="text-xs text-slate-400 dark:text-slate-500 pl-5">{t('people.form.notifyHint')}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!notify) {
+                      const perm = await requestNotificationPermission()
+                      if (perm === 'denied') { setNotifyBlocked(true); return }
+                      setNotifyBlocked(false)
+                    }
+                    setNotify(v => !v)
+                  }}
+                  className={`relative w-10 h-6 rounded-full transition-colors shrink-0 ml-3 ${notify ? 'bg-green-400' : 'bg-slate-300 dark:bg-slate-600'}`}
+                  aria-checked={notify}
+                  aria-label={t('people.form.notifyOverdue')}
+                  role="switch"
+                >
+                  <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${notify ? 'translate-x-4' : ''}`} />
+                </button>
+              </div>
+              {notifyBlocked && (
+                <p className="text-xs text-amber-500 dark:text-amber-400">{t('choreForm.notifyBlocked')}</p>
+              )}
+            </div>
+          )}
+
           <div>
             <label className={label}>{t('people.form.preferredChannel')}</label>
             <select value={channel} onChange={e => setChannel(e.target.value as InteractionChannel | '')} className={input}>
@@ -281,6 +325,24 @@ export function PersonFormModal({ person, dates = [], circles, initialCircleId =
                     className={`${small} w-24`}
                     aria-label={t('people.form.year')}
                   />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Bell size={12} className={`shrink-0 ${d.remind ? 'text-green-400' : 'text-slate-400 dark:text-slate-500'}`} />
+                  <select
+                    value={d.remind}
+                    onChange={e => patchDraft(d.key, { remind: Number(e.target.value) })}
+                    className={`${small} flex-1`}
+                    aria-label={t('people.form.headsUp')}
+                  >
+                    {HEADS_UP_DAYS.map(n => (
+                      <option key={n} value={n}>
+                        {n === 0 ? t('people.form.onTheDay') : t('people.form.daysBefore', { count: n })}
+                      </option>
+                    ))}
+                    {!HEADS_UP_DAYS.includes(d.remind) && (
+                      <option value={d.remind}>{t('people.form.daysBefore', { count: d.remind })}</option>
+                    )}
+                  </select>
                 </div>
               </div>
             ))}
