@@ -17,7 +17,7 @@ import { getMeUserSyncId, getMultiUserEnabled } from '@/multiuser/settings'
 import { getAllPersonDates, getPeople } from '@/people/queries'
 import { visibleToMe } from '@/people/home'
 import { buildPeopleReminders, NEAR_DATE_DAYS, type PeopleReminder } from '@/people/reminders'
-import { isDateRemindersOn } from '@/people/settings'
+import { getDateReminderMinutes, getDigestMinutes, isDateRemindersOn } from '@/people/settings'
 import { getActiveLocale } from '@/utils/datetime'
 import { OPEN_PERSON_PENDING_EVENT, setPendingOpenPerson } from './pendingOpenPerson'
 import type { ChoreWithLastCompletion } from '@/types'
@@ -285,7 +285,11 @@ async function buildPeopleDescriptors(): Promise<ReminderDescriptor[]> {
   const mine = visibleToMe(people, getMultiUserEnabled(), getMeUserSyncId())
   const now = dayjs()
   return buildPeopleReminders(i18n.t.bind(i18n), mine, dates, {
-    now, datesOn: isDateRemindersOn(), locale: getActiveLocale(),
+    now,
+    datesOn: isDateRemindersOn(),
+    locale: getActiveLocale(),
+    dateMinutes: getDateReminderMinutes(),
+    digestMinutes: getDigestMinutes(),
   }).map(r => peopleDescriptor(r, now.valueOf()))
 }
 

@@ -9,7 +9,8 @@ import type { SyncEngine } from '@glance-apps/sync'
 import type { UseBillingResult } from '@glance-apps/billing/react'
 import { useEscapeKey } from '@/hooks/useEscapeKey'
 import {
-  setContactsEnabled, setDateRemindersOn, setReciprocityShown, useContactsEnabled, useDateRemindersOn, useShowReciprocity,
+  setContactsEnabled, setDateReminderMinutes, setDateRemindersOn, setDigestMinutes, setReciprocityShown,
+  useContactsEnabled, useDateReminderMinutes, useDateRemindersOn, useDigestMinutes, useShowReciprocity,
 } from '@/people/settings'
 import { contactsSupported } from '@/native/contacts'
 import { isNativeShell } from '@/native/platform'
@@ -70,6 +71,8 @@ export function SettingsPanel(props: Props) {
 
   const showReciprocity = useShowReciprocity()
   const dateReminders = useDateRemindersOn()
+  const dateReminderMinutes = useDateReminderMinutes()
+  const digestMinutes = useDigestMinutes()
   const contactsEnabled = useContactsEnabled()
   // Turning Phone contacts on asks for permission right away, after the
   // in-app disclosure; the switch only turns on once it is granted.
@@ -187,7 +190,21 @@ export function SettingsPanel(props: Props) {
                     { value: 'off', label: t('settings.off') },
                   ]}
                 />
+                {dateReminders && (
+                  <TimeInput
+                    id="settings-date-time"
+                    label={t('settings.reminderTime')}
+                    minutes={dateReminderMinutes}
+                    onChange={setDateReminderMinutes}
+                  />
+                )}
                 <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.dateRemindersHint')}</p>
+              </Field>
+            )}
+            {isNativeShell() && (
+              <Field label={t('settings.digestTime')} htmlFor="settings-digest-time">
+                <TimeInput id="settings-digest-time" minutes={digestMinutes} onChange={setDigestMinutes} />
+                <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.digestTimeHint')}</p>
               </Field>
             )}
           </Section>
@@ -297,6 +314,32 @@ function Field({ label, htmlFor, children }: { label: string; htmlFor?: string; 
         ? <label htmlFor={htmlFor} className={cls}>{label}</label>
         : <div className={cls}>{label}</div>}
       {children}
+    </div>
+  )
+}
+
+// A time of day as minutes after midnight. A cleared field changes nothing.
+function TimeInput({ id, label, minutes, onChange }: {
+  id: string; label?: string; minutes: number; onChange: (minutes: number) => void
+}) {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const input = (
+    <input
+      id={id}
+      type="time"
+      value={`${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`}
+      onChange={e => {
+        const [h, m] = e.target.value.split(':').map(Number)
+        if (Number.isInteger(h) && Number.isInteger(m)) onChange(h * 60 + m)
+      }}
+      className="bg-slate-100 dark:bg-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-green-400"
+    />
+  )
+  if (!label) return input
+  return (
+    <div className="mt-2 flex items-center gap-3">
+      <label htmlFor={id} className="text-sm text-slate-600 dark:text-slate-300">{label}</label>
+      {input}
     </div>
   )
 }

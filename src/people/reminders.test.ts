@@ -149,3 +149,28 @@ describe('the digest', () => {
     expect(buildPeopleReminders(t, [overdue({ archived: true })], [], { now: NOW })).toEqual([])
   })
 })
+
+describe('reminder times', () => {
+  it('uses the chosen date time for the day and the heads-up', () => {
+    const p = person()
+    const rs = buildPeopleReminders(t, [p], [date(p.sync_id, 10, 20, { remind_days_before: 1 })], {
+      now: NOW, dateMinutes: 7 * 60 + 30,
+    })
+    expect(rs.map(r => r.at.format('MM-DD HH:mm'))).toEqual(['10-20 07:30', '10-19 07:30'])
+  })
+
+  it('counts a date time later today as still ahead', () => {
+    const p = person()
+    const [r] = buildPeopleReminders(t, [p], [date(p.sync_id, 10, 12)], { now: NOW, dateMinutes: 20 * 60 })
+    expect(r.at.format('YYYY-MM-DD HH:mm')).toBe('2026-10-12 20:00')
+  })
+
+  it('uses the chosen digest time, starting tomorrow once it has passed today', () => {
+    const p = person({ notify_when_overdue: true, target_cadence_days: 14, last_interaction_at: '2026-09-01T12:00:00' })
+    const early = buildPeopleReminders(t, [p], [], { now: NOW, digestMinutes: 8 * 60 + 15 })
+    expect(early[0].at.format('YYYY-MM-DD HH:mm')).toBe('2026-10-13 08:15')
+    expect(early[6].at.format('YYYY-MM-DD HH:mm')).toBe('2026-10-19 08:15')
+    const late = buildPeopleReminders(t, [p], [], { now: NOW, digestMinutes: 21 * 60 })
+    expect(late[0].at.format('YYYY-MM-DD HH:mm')).toBe('2026-10-12 21:00')
+  })
+})

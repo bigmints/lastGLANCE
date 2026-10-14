@@ -1,4 +1,5 @@
-import { localSetting } from './localSetting'
+import { localSetting, localTimeSetting } from './localSetting'
+import { DEFAULT_DATE_MINUTES, DEFAULT_DIGEST_MINUTES } from './reminders'
 
 // "Show reciprocity" (docs: the reciprocity spec): off hides every direction
 // arrow, reason line and balance. Direction is still recorded and still
@@ -27,3 +28,16 @@ const dateReminders = localSetting(DATE_REMINDERS_KEY, true)
 export const isDateRemindersOn = dateReminders.get
 export const setDateRemindersOn = dateReminders.set
 export const useDateRemindersOn = dateReminders.use
+
+// When those notifications go out, in minutes after midnight, per device.
+export const DATE_REMINDER_TIME_KEY = 'lg-people-date-reminder-time'
+export const DIGEST_TIME_KEY = 'lg-people-digest-time'
+const dateTime = localTimeSetting(DATE_REMINDER_TIME_KEY, DEFAULT_DATE_MINUTES)
+const digestTime = localTimeSetting(DIGEST_TIME_KEY, DEFAULT_DIGEST_MINUTES)
+
+export const getDateReminderMinutes = dateTime.get
+export const setDateReminderMinutes = dateTime.set
+export const useDateReminderMinutes = dateTime.use
+export const getDigestMinutes = digestTime.get
+export const setDigestMinutes = digestTime.set
+export const useDigestMinutes = digestTime.use

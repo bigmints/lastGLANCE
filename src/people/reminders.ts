@@ -2,18 +2,20 @@
 // Pure, like home.ts: src/native/reminders.ts loads the data, merges these
 // with the chore reminders and does the scheduling.
 //
-// Dates fire at DATE_HOUR local on the day, plus an optional heads-up
-// `remind_days_before` days earlier at the same hour. Overdue people never get
-// a notification each: everyone who opted in shares one digest a day at
-// DIGEST_HOUR, so a long list never turns into a stream of nags.
+// Dates fire at the date time (local, set in Settings) on the day, plus an
+// optional heads-up `remind_days_before` days earlier at the same time.
+// Overdue people never get a notification each: everyone who opted in shares
+// one digest a day at the digest time, so a long list never turns into a
+// stream of nags.
 
 import dayjs, { type Dayjs } from 'dayjs'
 import type { TFunction } from 'i18next'
 import { dueDate, isSnoozed, nextOccurrence } from './home'
 import type { PersonDate, PersonWithLastInteraction } from './types'
 
-export const DATE_HOUR = 9
-export const DIGEST_HOUR = 18
+// Defaults for the two times, in minutes after midnight: 9 AM and 6 PM.
+export const DEFAULT_DATE_MINUTES = 9 * 60
+export const DEFAULT_DIGEST_MINUTES = 18 * 60
 // How far ahead dates are scheduled. Every app open re-runs the schedule, so a
 // short horizon loses nothing and keeps a big address book well clear of
 // Android's 500-alarm limit per app.
@@ -53,14 +55,20 @@ function turningOn(date: PersonDate, on: Dayjs): number | null {
   return date.year !== null && on.year() > date.year ? on.year() - date.year : null
 }
 
+// `minutes` after midnight on `day`, set by clock fields so a DST change
+// that day does not shift it.
+function atTime(day: Dayjs, minutes: number): Dayjs {
+  return day.startOf('day').hour(Math.floor(minutes / 60)).minute(minutes % 60)
+}
+
 // The first occurrence whose notification, `lead` days before it at
-// DATE_HOUR, is still ahead of `now`.
-function nextFiring(date: PersonDate, lead: number, now: Dayjs): { on: Dayjs; at: Dayjs } {
+// `minutes`, is still ahead of `now`.
+function nextFiring(date: PersonDate, lead: number, minutes: number, now: Dayjs): { on: Dayjs; at: Dayjs } {
   let on = nextOccurrence(date.month, date.day, now.startOf('day').add(lead, 'day'))
-  let at = on.subtract(lead, 'day').hour(DATE_HOUR)
+  let at = atTime(on.subtract(lead, 'day'), minutes)
   if (!at.isAfter(now)) {
     on = nextOccurrence(date.month, date.day, on.add(1, 'day'))
-    at = on.subtract(lead, 'day').hour(DATE_HOUR)
+    at = atTime(on.subtract(lead, 'day'), minutes)
   }
   return { on, at }
 }
@@ -70,6 +78,7 @@ function dateReminders(
   dates: PersonDate[],
   byId: Map<string, PersonWithLastInteraction>,
   now: Dayjs,
+  minutes: number,
 ): PeopleReminder[] {
   const horizon = now.add(DATE_HORIZON_DAYS, 'day')
   const out: PeopleReminder[] = []
@@ -78,7 +87,7 @@ function dateReminders(
     if (!person) continue
     const label = dateLabel(t, date)
 
-    const day = nextFiring(date, 0, now)
+    const day = nextFiring(date, 0, minutes, now)
     if (day.at.isBefore(horizon)) {
       const turning = turningOn(date, day.on)
       out.push({
@@ -95,7 +104,7 @@ function dateReminders(
 
     const lead = Math.max(0, Math.floor(date.remind_days_before || 0))
     if (lead === 0) continue
-    const early = nextFiring(date, lead, now)
+    const early = nextFiring(date, lead, minutes, now)
     if (!early.at.isBefore(horizon)) continue
     const turning = turningOn(date, early.on)
     out.push({
@@ -129,11 +138,12 @@ function digestReminders(
   people: PersonWithLastInteraction[],
   now: Dayjs,
   locale: string,
+  minutes: number,
 ): PeopleReminder[] {
   const out: PeopleReminder[] = []
-  let at = now.startOf('day').hour(DIGEST_HOUR)
-  if (!at.isAfter(now)) at = at.add(1, 'day')
-  for (let i = 0; i < DIGEST_DAYS; i++, at = at.add(1, 'day')) {
+  const first = atTime(now, minutes).isAfter(now) ? now : now.add(1, 'day')
+  for (let i = 0; i < DIGEST_DAYS; i++) {
+    const at = atTime(first.add(i, 'day'), minutes)
     const due = digestPeople(people, at)
     if (due.length === 0) continue
     let title: string
@@ -173,12 +183,15 @@ export function buildPeopleReminders(
   t: TFunction,
   people: PersonWithLastInteraction[],
   dates: PersonDate[],
-  { now = dayjs(), datesOn = true, locale = 'en' }: { now?: Dayjs; datesOn?: boolean; locale?: string } = {},
+  {
+    now = dayjs(), datesOn = true, locale = 'en',
+    dateMinutes = DEFAULT_DATE_MINUTES, digestMinutes = DEFAULT_DIGEST_MINUTES,
+  }: { now?: Dayjs; datesOn?: boolean; locale?: string; dateMinutes?: number; digestMinutes?: number } = {},
 ): PeopleReminder[] {
   const active = people.filter(p => !p.archived)
   const byId = new Map(active.map(p => [p.sync_id, p]))
   return [
-    ...(datesOn ? dateReminders(t, dates, byId, now) : []),
-    ...digestReminders(t, active, now, locale),
+    ...(datesOn ? dateReminders(t, dates, byId, now, dateMinutes) : []),
+    ...digestReminders(t, active, now, locale, digestMinutes),
   ]
 }
