@@ -3,6 +3,13 @@ import { getFillRatio, getCadenceColor, needsAttention } from '@/utils/cadence'
 import { getMeUserSyncId, getMultiUserEnabled } from '@/multiuser/settings'
 import { ownedByMe } from '@/utils/choreFilter'
 import { pushWidgetSnapshot } from './widgetBridge'
+import { buildPeopleSnapshot, type PeopleSnapshot } from './peopleSnapshot'
+import { getAllPersonDates, getPeople } from '@/people/queries'
+import { visibleToMe } from '@/people/home'
+import { isReciprocityShown } from '@/people/settings'
+// The bare singleton, as in reminders.ts: '@/i18n' boots the detector and
+// HTTP backend as an import side effect.
+import i18n from 'i18next'
 import dayjs from 'dayjs'
 
 // How many days of completion history to ship to the heatmap widget.
@@ -37,6 +44,9 @@ export interface WidgetSnapshot {
   counts: { overdue: number; soon: number }
   heatmap: Record<string, number>
   chores: SnapshotChore[]
+  // Added with the People widgets; widgets from before simply ignore it, and
+  // the People widgets treat its absence as empty.
+  people: PeopleSnapshot
 }
 
 function choreState(target: number | null, elapsed: number | null): ChoreState {
@@ -103,12 +113,17 @@ export async function buildSnapshot(): Promise<WidgetSnapshot> {
     if (!dayjs(date).isBefore(cutoff)) heatmap[date] = n
   }
 
+  // People, as this user sees them (household members' People stay hidden).
+  const [people, dates] = await Promise.all([getPeople(), getAllPersonDates()])
+  const mine = visibleToMe(people, getMultiUserEnabled(), meId)
+
   return {
     version: 1,
     generatedAt: new Date().toISOString(),
     counts: { overdue, soon },
     heatmap,
     chores,
+    people: buildPeopleSnapshot(i18n.t.bind(i18n), mine, dates, dayjs(), isReciprocityShown()),
   }
 }
 
