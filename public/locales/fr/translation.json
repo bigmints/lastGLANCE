@@ -667,6 +667,8 @@
     "timeFormat": "Format de l'heure",
     "timeAuto": "Automatique",
     "timeAutoHint": "Automatique utilise l'horloge de votre langue ({{example}}).",
+    "weekStart": "La semaine commence le",
+    "weekStartHint": "Automatique suit la région et les réglages de votre appareil.",
     "syncAttention": "Action requise",
     "syncDesc": "Gardez vos tâches et votre historique synchronisés sur tous vos appareils.",
     "household": "Foyer",

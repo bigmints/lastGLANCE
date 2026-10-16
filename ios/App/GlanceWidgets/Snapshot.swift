@@ -170,19 +170,31 @@ struct WidgetSnapshot: Decodable {
     // Keyed "yyyy-MM-dd" (local dates, as produced by dayjs in the WebView) to a
     // completion count for that day.
     let heatmap: [String: Int]
+    // The heatmap grid's first row, 0 = Sunday … 6 = Saturday: the app's own
+    // week start (issue #362). Nil from a snapshot written before it existed.
+    let weekStart: Int?
     let chores: [SnapshotChore]
     let people: PeopleSnapshot
+
+    // The week start to draw with: the app's, else the system calendar's
+    // (Calendar.firstWeekday is 1 = Sunday … 7 = Saturday).
+    var effectiveWeekStart: Int {
+        if let w = weekStart, (0...6).contains(w) { return w }
+        return (Calendar.current.firstWeekday - 1 + 7) % 7
+    }
 
     init(version: Int = 1,
          generatedAt: String? = nil,
          counts: Counts = Counts(),
          heatmap: [String: Int] = [:],
+         weekStart: Int? = nil,
          chores: [SnapshotChore] = [],
          people: PeopleSnapshot = PeopleSnapshot()) {
         self.version = version
         self.generatedAt = generatedAt
         self.counts = counts
         self.heatmap = heatmap
+        self.weekStart = weekStart
         self.chores = chores
         self.people = people
     }
@@ -193,12 +205,13 @@ struct WidgetSnapshot: Decodable {
         generatedAt = try? c.decode(String.self, forKey: .generatedAt)
         counts = (try? c.decode(Counts.self, forKey: .counts)) ?? Counts()
         heatmap = (try? c.decode([String: Int].self, forKey: .heatmap)) ?? [:]
+        weekStart = try? c.decode(Int.self, forKey: .weekStart)
         chores = (try? c.decode([SnapshotChore].self, forKey: .chores)) ?? []
         people = (try? c.decode(PeopleSnapshot.self, forKey: .people)) ?? PeopleSnapshot()
     }
 
     private enum CodingKeys: String, CodingKey {
-        case version, generatedAt, counts, heatmap, chores, people
+        case version, generatedAt, counts, heatmap, weekStart, chores, people
     }
 }
 
