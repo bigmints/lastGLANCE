@@ -19,7 +19,10 @@ import { TooltipHost } from '@/components/Tooltip/Tooltip'
 import { ToastProvider, useToast } from '@/components/Toast/Toast'
 import { PaywallModal } from '@/components/PaywallModal/PaywallModal'
 import { SettingsPanel, type ThemePref, type SettingsSection } from '@/components/SettingsPanel/SettingsPanel'
-import { getTimeFormat, setTimeFormat as applyTimeFormat, type TimeFormat } from '@/utils/datetime'
+import {
+  getTimeFormat, setTimeFormat as applyTimeFormat, type TimeFormat,
+  getWeekStartPref, setWeekStartPref as applyWeekStartPref, type WeekStartPref, WEEK_START_CHANGED_EVENT,
+} from '@/utils/datetime'
 import { ReviewerBanner } from '@/components/ReviewerBanner/ReviewerBanner'
 import { useSubscription, exitReviewerMode } from '@/billing/billing'
 import { UsersContext } from '@/multiuser/UsersContext'
@@ -223,6 +226,7 @@ function AppInner() {
   // section it was opened from. Cleared when Settings itself closes.
   const [settingsReturn, setSettingsReturn] = useState<SettingsSection | null>(null)
   const [timeFormat, setTimeFormatState] = useState<TimeFormat>(getTimeFormat)
+  const [weekStartPref, setWeekStartPrefState] = useState<WeekStartPref>(getWeekStartPref)
   const [ribbonKey, setRibbonKey] = useState(0)
   const [heatmapWeeks, setHeatmapWeeks] = useState<HeatDay[][]>([])
   const [waveKey, setWaveKey] = useState(0)
@@ -314,6 +318,12 @@ function AppInner() {
   const changeTimeFormat = useCallback((pref: TimeFormat) => {
     applyTimeFormat(pref)
     setTimeFormatState(pref)
+  }, [])
+
+  // The grids rebuild from WEEK_START_CHANGED_EVENT, which this dispatches.
+  const changeWeekStart = useCallback((pref: WeekStartPref) => {
+    applyWeekStartPref(pref)
+    setWeekStartPrefState(pref)
   }, [])
 
   // Full-screen (hide the status bar) in landscape, restore it in portrait.
@@ -567,6 +577,14 @@ function AppInner() {
 
   // Switching modes swaps what the heatmap counts, and replays the wave.
   useEffect(() => { loadHeatmap() }, [loadHeatmap, mode])
+
+  // A new week start (the setting, or the OS answering after the first paint)
+  // reshapes every column, so rebuild the grid on it.
+  useEffect(() => {
+    const onWeekStart = () => { void refreshHeatmapQuietly() }
+    window.addEventListener(WEEK_START_CHANGED_EVENT, onWeekStart)
+    return () => window.removeEventListener(WEEK_START_CHANGED_EVENT, onWeekStart)
+  }, [refreshHeatmapQuietly])
 
   // People edits (a log, a delete, a synced change) only move the heatmap in
   // People mode; in chores mode they leave it alone.
@@ -985,6 +1003,8 @@ function AppInner() {
           onThemeChange={setThemePref}
           timeFormat={timeFormat}
           onTimeFormatChange={changeTimeFormat}
+          weekStart={weekStartPref}
+          onWeekStartChange={changeWeekStart}
           syncIcon={syncIcon}
           syncWarn={syncWarn}
           onOpenSync={fromSettings('sync', () => setShowSyncSettings(true))}

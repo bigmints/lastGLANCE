@@ -63,6 +63,15 @@ public class WidgetBridgePlugin extends Plugin {
         call.resolve(ret);
     }
 
+    // The system's first day of the week (SystemWeekStart), for Automatic
+    // week start in the web UI.
+    @PluginMethod
+    public void systemWeekStart(PluginCall call) {
+        JSObject ret = new JSObject();
+        ret.put("weekStart", SystemWeekStart.get());
+        call.resolve(ret);
+    }
+
     // Hand the pending shared text (for a new chore's name) to the web app, and
     // clear it.
     @PluginMethod

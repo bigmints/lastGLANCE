@@ -22,7 +22,7 @@ import { UsersPanel } from '@/components/UsersPanel/UsersPanel'
 import { BackupPanel } from '@/components/BackupModal/BackupModal'
 import { HelpContent } from '@/components/HelpModal/HelpModal'
 import { SubscriptionStatus } from '@/components/PaywallModal/SubscriptionStatus'
-import { formatTimeSample, type TimeFormat } from '@/utils/datetime'
+import { formatTimeSample, formatWeekdayShort, type TimeFormat, type WeekStartPref } from '@/utils/datetime'
 
 export type ThemePref = 'light' | 'dark' | 'system'
 
@@ -37,6 +37,8 @@ interface Props {
   onThemeChange: (pref: ThemePref) => void
   timeFormat: TimeFormat
   onTimeFormatChange: (pref: TimeFormat) => void
+  weekStart: WeekStartPref
+  onWeekStartChange: (pref: WeekStartPref) => void
   /** Cloud Sync's live status icon, and whether it is in a failed state. */
   syncIcon: ReactNode
   syncWarn: boolean
@@ -150,6 +152,20 @@ export function SettingsPanel(props: Props) {
               <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">
                 {t('settings.timeAutoHint', { example: formatTimeSample(sample, 'auto') })}
               </p>
+            </Field>
+            <Field label={t('settings.weekStart')}>
+              <Segmented<WeekStartPref>
+                label={t('settings.weekStart')}
+                value={props.weekStart}
+                onChange={props.onWeekStartChange}
+                options={[
+                  { value: 'auto', label: t('settings.timeAuto') },
+                  { value: 'mon', label: formatWeekdayShort(1) },
+                  { value: 'sun', label: formatWeekdayShort(0) },
+                  { value: 'sat', label: formatWeekdayShort(6) },
+                ]}
+              />
+              <p className="mt-1.5 text-xs text-slate-400 dark:text-slate-500">{t('settings.weekStartHint')}</p>
             </Field>
           </Section>
 

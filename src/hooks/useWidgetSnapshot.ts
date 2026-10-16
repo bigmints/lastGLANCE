@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { pushSnapshot } from '@/native/snapshot'
 import { PEOPLE_CHANGED_EVENT } from '@/people/queries'
 import i18n from 'i18next'
+import { WEEK_START_CHANGED_EVENT } from '@/utils/datetime'
 
 // Keeps the native widget snapshot fresh. Pushes on mount, whenever a chore is
 // logged, People change or a sync is applied (the signals the in-app heatmap
@@ -25,6 +26,8 @@ export function useWidgetSnapshot(): void {
     window.addEventListener(PEOPLE_CHANGED_EVENT, onPeople)
     // The People block carries text in the app's language.
     i18n.on('languageChanged', onChange)
+    // The heatmap widgets draw their grid from the snapshot's week start.
+    window.addEventListener(WEEK_START_CHANGED_EVENT, onChange)
 
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') pushSnapshot()
@@ -36,6 +39,7 @@ export function useWidgetSnapshot(): void {
       window.removeEventListener('lg:sync-applied', onChange)
       window.removeEventListener(PEOPLE_CHANGED_EVENT, onPeople)
       i18n.off('languageChanged', onChange)
+      window.removeEventListener(WEEK_START_CHANGED_EVENT, onChange)
       clearTimeout(peopleTimer)
       document.removeEventListener('visibilitychange', onVisibility)
     }
