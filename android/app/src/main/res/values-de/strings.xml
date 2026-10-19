@@ -33,4 +33,6 @@
     <string name="widget_days_ago">vor %1$d T.</string>
     <string name="widget_count_overdue">%1$d überfällig</string>
     <string name="widget_count_soon">%1$d bald fällig</string>
+    <string name="launcher_permission_label">lastGLANCE-Daten für GLANCElauncher lesen</string>
+    <string name="launcher_permission_description">Erlaubt GLANCElauncher, deine Aufgaben und Personen zu lesen und ihm Aufgaben zum Anlegen oder Erledigen sowie Kontakte zum Eintragen zu senden.</string>
 </resources>

@@ -25,6 +25,7 @@ public class MainActivity extends BridgeActivity {
         // Register app-local plugins before the bridge starts.
         registerPlugin(WidgetBridgePlugin.class);
         registerPlugin(IntentsBridgePlugin.class);
+        registerPlugin(com.lastglance.app.launcher.LauncherBridgePlugin.class);
         registerPlugin(BillingBridgePlugin.class);
         registerPlugin(WebDavHttpPlugin.class);
         registerPlugin(SecureStorePlugin.class);

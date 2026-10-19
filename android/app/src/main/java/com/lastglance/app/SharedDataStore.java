@@ -28,6 +28,19 @@ public final class SharedDataStore {
     // Single-depth on purpose: each Activity intent is self-sufficient and a live
     // broadcast wakes the WebView immediately, so bursts don't queue here.
     private static final String KEY_PENDING_INTENT = "pending_intent";
+    // The GLANCElauncher snapshot (docs/launcher-integration.md), pushed by the
+    // web app through LauncherBridgePlugin and served read-only by
+    // LauncherProvider. Separate from the widget snapshot: a different shape,
+    // with a different reader.
+    private static final String KEY_LAUNCHER_SNAPSHOT = "launcher_snapshot";
+    // The launcher's inbound writes, a JSON array of {action, payload, clientId,
+    // receivedAt}, appended by LauncherIntentReceiver and drained by the web app
+    // through LauncherBridgePlugin. A QUEUE, unlike the automation slot above:
+    // the launcher may send two writes in a row at a dead app and the second
+    // must not replace the first. Each write carries its own client id, so the
+    // web layer dedupes a re-sent one and the queue can be bounded.
+    private static final String KEY_PENDING_LAUNCHER_INTENTS = "pending_launcher_intents";
+    private static final int PENDING_LAUNCHER_INTENTS_MAX = 200;
 
     private SharedDataStore() {}
 
@@ -97,6 +110,35 @@ public final class SharedDataStore {
         String value = prefs(context).getString(KEY_PENDING_INTENT, null);
         if (value != null) prefs(context).edit().remove(KEY_PENDING_INTENT).apply();
         return value;
+    }
+
+    public static void writeLauncherSnapshot(Context context, String json) {
+        prefs(context).edit().putString(KEY_LAUNCHER_SNAPSHOT, json).apply();
+    }
+
+    public static String readLauncherSnapshot(Context context) {
+        return prefs(context).getString(KEY_LAUNCHER_SNAPSHOT, null);
+    }
+
+    // Append one launcher write to the durable queue, dropping the oldest past
+    // the cap. Written synchronously (commit) so the entry is on disk before the
+    // receiver returns and the wake broadcast goes out.
+    public static void appendPendingLauncherIntent(Context context, String entryJson) {
+        try {
+            JSONArray arr = new JSONArray(prefs(context).getString(KEY_PENDING_LAUNCHER_INTENTS, "[]"));
+            arr.put(new JSONObject(entryJson));
+            while (arr.length() > PENDING_LAUNCHER_INTENTS_MAX) arr.remove(0);
+            prefs(context).edit().putString(KEY_PENDING_LAUNCHER_INTENTS, arr.toString()).commit();
+        } catch (Exception e) {
+            // A malformed entry is the receiver's bug, not a write to keep.
+        }
+    }
+
+    // Return the queued launcher writes as a JSON array string and clear the queue.
+    public static String readAndClearPendingLauncherIntents(Context context) {
+        String raw = prefs(context).getString(KEY_PENDING_LAUNCHER_INTENTS, "[]");
+        prefs(context).edit().remove(KEY_PENDING_LAUNCHER_INTENTS).apply();
+        return raw;
     }
 
     // Master switch for the Android/Tasker automation-intents transport. OFF by
