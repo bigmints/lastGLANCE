@@ -73,7 +73,7 @@ type AppMode = 'chores' | 'people'
 const MODE_KEY = 'lg-mode'
 // Events that open something in the chores view (notification taps, widgets,
 // launcher shortcuts, shares). In People mode they switch back to chores.
-const CHORE_EVENTS = ['lg:open-chore', 'lg:open-chore-pending', 'lg:open-search', 'lg:new-chore', 'lg:widget-filter-soon']
+const CHORE_EVENTS = ['lg:open-chore', 'lg:open-chore-pending', 'lg:open-search', 'lg:new-chore', 'lg:widget-filter-soon', 'lg:open-chores']
 
 function buildHeaderHeatmap(counts: Map<string, number>): HeatDay[][] {
   const today = dayjs()
