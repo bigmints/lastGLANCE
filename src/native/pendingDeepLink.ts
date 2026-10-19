@@ -6,9 +6,10 @@ import { OPEN_PERSON_PENDING_EVENT, setPendingOpenPerson, type PendingPeopleOpen
 // MainActivity). A chore tap reuses the durable pending-open mechanism (the
 // Ribbon consumes it once its data has loaded, so cold-start ordering doesn't
 // matter); a "soon" tap switches on the attention filter; the action targets open
-// search / the new-chore form (Ribbon owns both and handles cold-start retry).
-// People widget taps (person:, log:, people) go through the People pending
-// request, like a People notification tap.
+// search / the new-chore form (Ribbon owns both and handles cold-start retry);
+// "chores" only switches the mode (App listens for it with the other chore
+// events). People widget taps (person:, log:, people) go through the People
+// pending request, like a People notification tap.
 export async function routeWidgetDeepLink(): Promise<void> {
   const link = await consumeDeepLink()
   if (link) {
@@ -21,6 +22,8 @@ export async function routeWidgetDeepLink(): Promise<void> {
       window.dispatchEvent(new Event('lg:open-search'))
     } else if (link === 'action:add') {
       window.dispatchEvent(new Event('lg:new-chore'))
+    } else if (link === 'chores') {
+      window.dispatchEvent(new Event('lg:open-chores'))
     } else {
       const people = peopleRequest(link)
       if (people) {

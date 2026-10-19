@@ -101,6 +101,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return (id.isEmpty || id == "/") ? nil : "log:\(id)"
         case "people":
             return "people"
+        case "chores":
+            return "chores"
         case "action":
             switch url.lastPathComponent {
             case "search": return "action:search"
