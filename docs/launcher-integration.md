@@ -41,8 +41,37 @@ Each cursor has `_id`, `id` and `json` columns, the row as JSON. Every push
 calls `notifyChange` on the authority, so a `ContentObserver` registered on
 any collection URI sees every change. `insert`, `update` and `delete` throw.
 
-The snapshot is as fresh as the app's last JavaScript run. `meta.updatedAt` is
-the stamp the launcher shows staleness from.
+## Freshness: the heartbeat and REFRESH
+
+The snapshot is pushed only when its content changes, so `meta.updatedAt` says
+when something last moved, not when the app last looked. Two more stamps say
+that, written natively by `LauncherBridgePlugin.touchHeartbeat` and merged into
+`meta` by the provider:
+
+- `checkedAt` (ms): every run of the snapshot builder, changed or not, and
+  every return to the foreground.
+- `syncedAt` (ISO): the latest completed cycle across the roads that are on
+  (the file engine's and the vault engine's `getLastSynced`), the moment other
+  devices' changes are known to be in. Null without one.
+
+`meta` also carries `rendererAlive` (whether the Capacitor bridge is loaded in
+the process at the moment of the read) and `refreshLog`, the last 20 REFRESH
+requests.
+
+**`com.lastglance.app.launcher.REFRESH`** asks the app to confirm its data now.
+It is not a write: it carries a `clientId` for dedupe and logging only, is never
+in the handled ledger, and the launcher sends it outside its outbox. The
+receiver routes it by liveness and logs every request with the liveness it saw:
+
+| Outcome | When |
+| --- | --- |
+| `queued` | the renderer is alive: queued and woken; the web layer runs every road (chores and People, file and vault) to completion, re-pushes, re-stamps the heartbeat, then reports `ran` (with `durationMs`) or `failed` (with `reason`) into the same entry |
+| `coalesced` | a queued refresh from the last minute has no outcome yet |
+| `deferred` | no renderer in the process: nothing can run the sync (lastGLANCE stays on this path; a headless Capacitor bridge is a separate spike) |
+
+The launcher measures staleness per app from `syncedAt` when sync is
+configured and from `checkedAt` otherwise, and shows the log in its
+diagnostics panel.
 
 ## Writes: the launcher receiver
 
@@ -114,7 +143,12 @@ With the launcher's real digests in `launcher_certs.xml` and both apps installed
 4. A contact: `.LOG_INTERACTION` with `--es payload '{"person_id":"<an id from
    people>","channel":"call"}'`; the person's `lastInteractionAt` moves and the
    interaction's id in the app is the `clientId`.
-5. Permission: from any app without the permission the query is refused
+5. A refresh: `am broadcast -a com.lastglance.app.launcher.REFRESH -n
+   com.lastglance.app/.launcher.LauncherIntentReceiver --es clientId rf-1`.
+   With the app alive, `meta.refreshLog` shows the entry go `queued` then
+   `ran`; with the process killed (`adb shell am kill com.lastglance.app`,
+   never `force-stop`), the entry is `deferred` and `rendererAlive` reads false.
+6. Permission: from any app without the permission the query is refused
    with a `SecurityException` and the broadcast is not delivered.
 
 Unit tests: `npx vitest run src/native/launcherSnapshot.test.ts

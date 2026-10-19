@@ -22,7 +22,7 @@ import org.json.JSONObject
  *    (src/intents/launcherWrites.ts) and dedupes on the id, so a re-sent
  *    write is harmless.
  *
- * Actions: `com.lastglance.app.launcher.CREATE`, `.COMPLETE` and `.LOG_INTERACTION`.
+ * Actions: `com.lastglance.app.launcher.CREATE`, `.COMPLETE`, `.LOG_INTERACTION` and `.REFRESH` (not a write: see [refresh]).
  */
 class LauncherIntentReceiver : BroadcastReceiver() {
 
@@ -32,6 +32,10 @@ class LauncherIntentReceiver : BroadcastReceiver() {
         val clientId = intent.getStringExtra("clientId")?.takeIf { it.isNotBlank() }
         if (clientId == null) {
             Log.w(TAG, "Dropped $action: no clientId")
+            return
+        }
+        if (action == ACTION_REFRESH) {
+            refresh(context, clientId)
             return
         }
         // Re-serialise through JSONObject so a crafted payload cannot inject structure.
@@ -53,11 +57,45 @@ class LauncherIntentReceiver : BroadcastReceiver() {
         context.sendBroadcast(Intent(IntentReceiver.INTENT_RECEIVED).setPackage(context.packageName))
     }
 
+    /**
+     * REFRESH, routed by liveness (docs/launcher-integration.md, "Freshness").
+     * Alive: queued and woken; the web layer runs every sync road and re-pushes,
+     * reporting `ran` or `failed` into the log entry. Dead: `deferred`, since
+     * nothing can run the sync; the launcher shows the honest age. A second
+     * request inside [INFLIGHT_MS] of one still running is `coalesced`.
+     */
+    private fun refresh(context: Context, clientId: String) {
+        if (SharedDataStore.launcherRefreshSeen(context, clientId)) return
+        val now = System.currentTimeMillis()
+        val alive = LauncherBridgePlugin.rendererAlive
+        val last = SharedDataStore.lastLauncherRefresh(context)
+        val entry = JSONObject().put("clientId", clientId).put("requestedAt", now).put("liveness", if (alive) "alive" else "dead")
+        val inFlight = last != null && last.optString("outcome") == "queued" && !last.has("finishedAt") && now - last.optLong("requestedAt") < INFLIGHT_MS
+        when {
+            inFlight -> entry.put("outcome", "coalesced").put("reason", "a refresh is in flight")
+            !alive -> entry.put("outcome", "deferred").put("reason", "process not running")
+            else -> {
+                entry.put("outcome", "queued")
+                SharedDataStore.appendPendingLauncherIntent(
+                    context,
+                    JSONObject().put("action", ACTION_REFRESH).put("payload", JSONObject()).put("clientId", clientId).put("receivedAt", now).toString(),
+                )
+            }
+        }
+        SharedDataStore.appendLauncherRefresh(context, entry)
+        context.contentResolver.notifyChange(LauncherProvider.CONTENT_URI, null)
+        if (entry.optString("outcome") == "queued") {
+            context.sendBroadcast(Intent(IntentReceiver.INTENT_RECEIVED).setPackage(context.packageName))
+        }
+    }
+
     companion object {
         private const val TAG = "LauncherIntents"
+        private const val INFLIGHT_MS = 60_000L
         const val ACTION_CREATE = "com.lastglance.app.launcher.CREATE"
         const val ACTION_COMPLETE = "com.lastglance.app.launcher.COMPLETE"
         const val ACTION_LOG_INTERACTION = "com.lastglance.app.launcher.LOG_INTERACTION"
-        val ACTIONS = setOf(ACTION_CREATE, ACTION_COMPLETE, ACTION_LOG_INTERACTION)
+        const val ACTION_REFRESH = "com.lastglance.app.launcher.REFRESH"
+        val ACTIONS = setOf(ACTION_CREATE, ACTION_COMPLETE, ACTION_LOG_INTERACTION, ACTION_REFRESH)
     }
 }

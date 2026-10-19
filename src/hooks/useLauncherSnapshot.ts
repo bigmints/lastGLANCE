@@ -4,7 +4,7 @@ import { getCategories, getChoresForCategory } from '@/db/queries'
 import { getAllPersonDates, getCircles, getPeople, PEOPLE_CHANGED_EVENT } from '@/people/queries'
 import { getMeUserSyncId, getMultiUserEnabled } from '@/multiuser/settings'
 import { buildLauncherSnapshot, launcherSnapshotFingerprint } from '@/native/launcherSnapshot'
-import { pushLauncherSnapshot } from '@/native/launcherBridge'
+import { pushLauncherSnapshot, touchLauncherHeartbeat } from '@/native/launcherBridge'
 import { LAUNCHER_WRITE_HANDLED_EVENT, readLauncherLedger } from '@/intents/launcherWrites'
 import { isAndroid } from '@/native/platform'
 
@@ -12,8 +12,22 @@ import { isAndroid } from '@/native/platform'
 // reads is not pushed and the snapshot's stamp only moves on a real change.
 let lastFingerprint: string | null = null
 
+// When a sync road last completed, as the app reports it; set by App through
+// configureLauncherHeartbeat so this module needs no engine refs.
+let syncedAtSource: () => string | null = () => null
+
+export function configureLauncherHeartbeat(getSyncedAt: () => string | null): void {
+  syncedAtSource = getSyncedAt
+}
+
+// The heartbeat rides every build, changed or not: the launcher measures
+// staleness from it (docs/launcher-integration.md, "Freshness").
+export async function touchHeartbeatNow(): Promise<void> {
+  await touchLauncherHeartbeat({ checkedAt: Date.now(), syncedAt: syncedAtSource() })
+}
+
 // Loads the data, builds the launcher snapshot and hands it to native when it
-// changed. Best-effort, never throws.
+// changed, then touches the heartbeat either way. Best-effort, never throws.
 export async function pushLauncherSnapshotNow(): Promise<void> {
   try {
     const categories = await getCategories()
@@ -35,9 +49,11 @@ export async function pushLauncherSnapshotNow(): Promise<void> {
       handledWrites: readLauncherLedger(),
     })
     const fingerprint = launcherSnapshotFingerprint(snapshot)
-    if (fingerprint === lastFingerprint) return
-    lastFingerprint = fingerprint
-    await pushLauncherSnapshot(JSON.stringify(snapshot))
+    if (fingerprint !== lastFingerprint) {
+      lastFingerprint = fingerprint
+      await pushLauncherSnapshot(JSON.stringify(snapshot))
+    }
+    await touchHeartbeatNow()
   } catch {
     // The launcher keeps its last snapshot; the app is unaffected.
   }
@@ -69,7 +85,7 @@ export function useLauncherSnapshot(): void {
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') { void pushLauncherSnapshotNow(); return }
       const day = dayjs().format('YYYY-MM-DD')
-      if (day !== lastDay) { lastDay = day; void pushLauncherSnapshotNow() }
+      if (day !== lastDay) { lastDay = day; void pushLauncherSnapshotNow() } else void touchHeartbeatNow()
     }
     document.addEventListener('visibilitychange', onVisibility)
 

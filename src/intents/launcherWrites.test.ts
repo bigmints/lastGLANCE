@@ -141,3 +141,40 @@ describe('the ledger', () => {
     expect(readLauncherLedger(storage)).toEqual([{ clientId: 'a', action: 'create', entityId: null, at: '' }])
   })
 })
+
+describe('REFRESH', () => {
+  const write = (clientId: string) => ({ action: LG_LAUNCHER_ACTIONS.REFRESH, payload: {}, clientId })
+
+  it('runs every road, re-stamps the heartbeat, records the outcome, and never touches the ledger', async () => {
+    const calls: string[] = []
+    const recorded: unknown[] = []
+    const state = io()
+    const hooks = {
+      runSyncCycle: async () => { calls.push('sync') },
+      touchHeartbeat: () => { calls.push('heartbeat') },
+      record: (r: unknown) => { recorded.push(r) },
+    }
+    expect(await handleLauncherIntent(write('rf-1'), fakeContext(), state.io, hooks)).toMatchObject({ success: true })
+    expect(calls).toEqual(['sync', 'heartbeat'])
+    expect(recorded).toEqual([expect.objectContaining({ clientId: 'rf-1', outcome: 'ran' })])
+    expect(state.ledger).toEqual([])
+    expect(await handleLauncherIntent(write('rf-1'), fakeContext(), state.io, hooks)).toMatchObject({ success: true, deduped: true })
+    expect(calls).toEqual(['sync', 'heartbeat'])
+  })
+
+  it('records a failure with its reason and still re-stamps the heartbeat', async () => {
+    const recorded: Array<{ outcome: string; reason?: string }> = []
+    let touched = 0
+    const hooks = {
+      runSyncCycle: async () => { throw new Error('vault 503') },
+      touchHeartbeat: () => { touched++ },
+      record: (r: { outcome: string; reason?: string }) => { recorded.push(r) },
+    }
+    expect(await handleLauncherIntent(write('rf-2'), fakeContext(), io().io, hooks)).toMatchObject({ success: false, error: 'vault 503' })
+    expect(recorded[0]).toMatchObject({ outcome: 'failed', reason: 'vault 503' })
+    expect(touched).toBe(1)
+    const rec2: Array<{ outcome: string; reason?: string }> = []
+    expect(await handleLauncherIntent(write('rf-3'), fakeContext(), io().io, { record: (r) => { rec2.push(r) } })).toMatchObject({ success: false })
+    expect(rec2[0]).toMatchObject({ outcome: 'failed', reason: 'no sync cycle available' })
+  })
+})

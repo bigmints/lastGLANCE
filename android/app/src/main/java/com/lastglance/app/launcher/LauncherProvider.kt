@@ -31,7 +31,12 @@ class LauncherProvider : ContentProvider() {
         if (matcher.match(uri) != 1) return null
         val ctx = context ?: return null
         val collection = uri.lastPathSegment ?: return null
-        val rows = LauncherSnapshotRows.rows(SharedDataStore.readLauncherSnapshot(ctx), collection) ?: return null
+        val rows = LauncherSnapshotRows.rows(
+            SharedDataStore.readLauncherSnapshot(ctx), collection,
+            heartbeatJson = SharedDataStore.readLauncherHeartbeat(ctx),
+            refreshLogJson = SharedDataStore.readLauncherRefreshLog(ctx),
+            rendererAlive = LauncherBridgePlugin.rendererAlive,
+        ) ?: return null
         val cursor = MatrixCursor(LauncherSnapshotRows.COLUMNS, rows.size)
         rows.forEachIndexed { i, row -> cursor.addRow(arrayOf<Any?>(i, row.id, row.json)) }
         cursor.setNotificationUri(ctx.contentResolver, CONTENT_URI)

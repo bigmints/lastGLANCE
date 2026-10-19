@@ -12,6 +12,10 @@ export interface LauncherBridgePlugin {
   // Return and clear the queued launcher writes, a JSON array string of
   // `{ action, payload, clientId, receivedAt }` entries in arrival order.
   drainPendingIntents(): Promise<{ intents: string }>
+  // Merge the heartbeat ({ checkedAt, syncedAt }) and notify the provider's observers.
+  touchHeartbeat(options: { json: string }): Promise<void>
+  // Record a REFRESH's outcome ({ clientId, outcome, reason?, durationMs }) in the native log.
+  recordRefresh(options: { json: string }): Promise<void>
 }
 
 const LauncherBridge = registerPlugin<LauncherBridgePlugin>('LauncherBridge')
@@ -52,5 +56,42 @@ export async function drainLauncherIntents(): Promise<LauncherIntent[]> {
     return out
   } catch {
     return []
+  }
+}
+
+export interface LauncherHeartbeat {
+  // When the app last looked (ms since the epoch).
+  checkedAt: number
+  // When a sync road last completed a cycle (ISO), or null without one.
+  syncedAt: string | null
+}
+
+export type RefreshOutcome = 'ran' | 'failed'
+
+export interface RefreshRecord {
+  clientId: string
+  outcome: RefreshOutcome
+  reason?: string
+  durationMs: number
+}
+
+// The heartbeat (docs/launcher-integration.md, "Freshness"): written on every
+// run of the snapshot builder, changed or not, so the launcher measures
+// staleness from the last confirmation rather than the last change.
+export async function touchLauncherHeartbeat(heartbeat: LauncherHeartbeat): Promise<void> {
+  if (!isAndroid()) return
+  try {
+    await LauncherBridge.touchHeartbeat({ json: JSON.stringify(heartbeat) })
+  } catch {
+    // An older shell without the method: the launcher measures from updatedAt.
+  }
+}
+
+export async function recordLauncherRefresh(record: RefreshRecord): Promise<void> {
+  if (!isAndroid()) return
+  try {
+    await LauncherBridge.recordRefresh({ json: JSON.stringify(record) })
+  } catch {
+    // Best-effort: the log is diagnostics, not state.
   }
 }

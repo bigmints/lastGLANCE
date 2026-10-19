@@ -16,6 +16,7 @@
 import { ACTIONS } from '@glance-apps/intents'
 import { handleIntent, type IntentContext, type IntentResult } from './handleIntent'
 import { LOG_INTERACTION } from './androidIntents'
+import { recordLauncherRefresh, type RefreshRecord } from '@/native/launcherBridge'
 
 export const LAUNCHER_LEDGER_KEY = 'lg_launcher_handled'
 export const LAUNCHER_LEDGER_LIMIT = 500
@@ -27,12 +28,53 @@ export const LG_LAUNCHER_ACTIONS = {
   CREATE: 'com.lastglance.app.launcher.CREATE',
   COMPLETE: 'com.lastglance.app.launcher.COMPLETE',
   LOG_INTERACTION: 'com.lastglance.app.launcher.LOG_INTERACTION',
+  REFRESH: 'com.lastglance.app.launcher.REFRESH',
 } as const
+
+// REFRESH is launcher-only and not a write (docs/launcher-integration.md,
+// "Freshness"): it runs every sync road to completion, re-pushes, re-stamps the
+// heartbeat and records how it went. Never in the ledger.
+export const REFRESH = 'refresh'
 
 export const LAUNCHER_ACTION_MAP: Record<string, string> = {
   [LG_LAUNCHER_ACTIONS.CREATE]: ACTIONS.CREATE,
   [LG_LAUNCHER_ACTIONS.COMPLETE]: ACTIONS.COMPLETE,
   [LG_LAUNCHER_ACTIONS.LOG_INTERACTION]: LOG_INTERACTION,
+  [LG_LAUNCHER_ACTIONS.REFRESH]: REFRESH,
+}
+
+// What REFRESH needs from the app, beside the intent context.
+export interface LauncherRefreshHooks {
+  runSyncCycle?: () => Promise<void>
+  touchHeartbeat?: () => Promise<void> | void
+  record?: (record: RefreshRecord) => Promise<void> | void
+}
+
+const recentRefreshIds: string[] = []
+const REFRESH_MEMORY = 20
+
+async function refresh(clientId: string, hooks: LauncherRefreshHooks): Promise<IntentResult> {
+  if (recentRefreshIds.includes(clientId)) return { success: true, deduped: true }
+  recentRefreshIds.push(clientId)
+  if (recentRefreshIds.length > REFRESH_MEMORY) recentRefreshIds.shift()
+  const record = hooks.record ?? recordLauncherRefresh
+  const started = Date.now()
+  if (!hooks.runSyncCycle) {
+    await record({ clientId, outcome: 'failed', reason: 'no sync cycle available', durationMs: 0 })
+    return { success: false, error: 'no sync cycle available' }
+  }
+  try {
+    await hooks.runSyncCycle()
+    await hooks.touchHeartbeat?.()
+    const durationMs = Date.now() - started
+    await record({ clientId, outcome: 'ran', durationMs })
+    return { success: true, durationMs }
+  } catch (err) {
+    const reason = err instanceof Error ? err.message : String(err)
+    await hooks.touchHeartbeat?.()
+    await record({ clientId, outcome: 'failed', reason, durationMs: Date.now() - started })
+    return { success: false, error: reason }
+  }
 }
 
 export interface HandledWrite {
@@ -112,11 +154,13 @@ export async function handleLauncherIntent(
   write: LauncherWrite,
   ctx: IntentContext = {},
   io: LauncherWriteIO = {},
+  hooks: LauncherRefreshHooks = {},
 ): Promise<IntentResult> {
   const { action, payload = {}, clientId } = write
   const mapped = LAUNCHER_ACTION_MAP[action]
   if (!mapped) return { success: false, error: `Unknown launcher action: ${action}` }
   if (typeof clientId !== 'string' || !clientId) return { success: false, error: 'clientId required' }
+  if (mapped === REFRESH) return refresh(clientId, hooks)
 
   const ledger = io.ledger ?? readLauncherLedger()
   const persist = io.persist ?? ((next: HandledWrite[]) => writeLauncherLedger(next))

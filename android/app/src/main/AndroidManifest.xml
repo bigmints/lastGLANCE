@@ -75,6 +75,7 @@
                 <action android:name="com.lastglance.app.launcher.CREATE" />
                 <action android:name="com.lastglance.app.launcher.COMPLETE" />
                 <action android:name="com.lastglance.app.launcher.LOG_INTERACTION" />
+                <action android:name="com.lastglance.app.launcher.REFRESH" />
             </intent-filter>
         </receiver>
 
