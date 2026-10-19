@@ -57,6 +57,27 @@
             </intent-filter>
         </receiver>
 
+        <!-- GLANCElauncher (docs/launcher-integration.md): the launcher snapshot,
+             read-only, and the launcher's write receiver beside the automation
+             one. Both behind the launcher permission declared below; the
+             receiver does not consult the automation-intents toggle. -->
+        <provider
+            android:name=".launcher.LauncherProvider"
+            android:authorities="com.lastglance.app.launcher"
+            android:exported="true"
+            android:readPermission="com.lastglance.permission.LAUNCHER" />
+
+        <receiver
+            android:name=".launcher.LauncherIntentReceiver"
+            android:exported="true"
+            android:permission="com.lastglance.permission.LAUNCHER">
+            <intent-filter>
+                <action android:name="com.lastglance.app.launcher.CREATE" />
+                <action android:name="com.lastglance.app.launcher.COMPLETE" />
+                <action android:name="com.lastglance.app.launcher.LOG_INTERACTION" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -173,6 +194,19 @@
     </application>
 
     <!-- Permissions -->
+
+    <!-- The GLANCElauncher's permission to read the launcher snapshot and send
+         writes. signature|knownSigner: lastGLANCE's own signature, or one of the
+         LAUNCHER's certificates in res/values/launcher_certs.xml (release,
+         debug until public release, Play once it ships there). knownSigner
+         exists from Android 12; below that only the signature half applies and
+         the launcher stays in demo mode. -->
+    <permission
+        android:name="com.lastglance.permission.LAUNCHER"
+        android:label="@string/launcher_permission_label"
+        android:description="@string/launcher_permission_description"
+        android:protectionLevel="signature|knownSigner"
+        android:knownCerts="@array/launcher_known_certs" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Play Billing, declared ahead of the paywall integration: the Play Console

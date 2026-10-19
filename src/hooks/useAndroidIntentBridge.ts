@@ -9,6 +9,8 @@ import {
   nativeReportIntentResult,
   addPendingIntentListener,
 } from '@/native/intentsBridge'
+import { drainLauncherIntents } from '@/native/launcherBridge'
+import { handleLauncherIntent } from '@/intents/launcherWrites'
 
 // The Android/Tasker intents transport bridge (see
 // docs/tasker-intents-architecture.md §3.2), ported to Capacitor. Mounted once
@@ -20,6 +22,12 @@ import {
 //      action-string gotcha, §5);
 //   3. runs the pure handleIntent(), then reports the result back to native
 //      under the ORIGINAL action so the sender's %action matches.
+//
+// The GLANCElauncher's writes (docs/launcher-integration.md) share the wake
+// signal and the drain but not the slot or the toggle: its receiver queues them
+// natively behind the launcher permission, and each drain empties that queue
+// first, through handleLauncherIntent, which dedupes on the write's client id.
+// No RESULT is reported for them; the launcher reads the next snapshot.
 //
 // No-op off Android. `onChanged` refreshes derived UI (the heatmap) after a
 // mutating action.
@@ -37,7 +45,19 @@ export function useAndroidIntentBridge(onChanged?: () => void): void {
     let draining = false
     let rerun = false
 
+    const drainLauncher = async (): Promise<void> => {
+      for (const write of await drainLauncherIntents()) {
+        if (cancelled) return
+        try {
+          await handleLauncherIntent(write, buildIntentContext(() => onChangedRef.current?.(), 'GLANCElauncher'))
+        } catch {
+          // A failed write is not recorded, so the launcher re-sends it.
+        }
+      }
+    }
+
     const drainOnce = async (): Promise<void> => {
+      await drainLauncher()
       const intent = await nativeGetPendingIntent()
       if (!intent || cancelled) return
       const { action, payload } = intent

@@ -29,6 +29,7 @@ import { UsersContext } from '@/multiuser/UsersContext'
 import { useUsers } from '@/multiuser/useUsers'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useWidgetSnapshot } from '@/hooks/useWidgetSnapshot'
+import { useLauncherSnapshot } from '@/hooks/useLauncherSnapshot'
 import { useReminders } from '@/hooks/useReminders'
 import { usePeopleIntents } from '@/hooks/usePeopleIntents'
 import { usePendingCompletions } from '@/hooks/usePendingCompletions'
@@ -170,6 +171,7 @@ function AppInner() {
   const { showToast } = useToast()
   useNotifications()
   useWidgetSnapshot()
+  useLauncherSnapshot()
   useReminders()
   usePeopleIntents()
   usePendingCompletions()
