@@ -33,4 +33,6 @@
     <string name="widget_days_ago">hace %1$d d</string>
     <string name="widget_count_overdue">%1$d vencidas</string>
     <string name="widget_count_soon">%1$d por vencer</string>
+    <string name="launcher_permission_label">Leer datos de lastGLANCE para GLANCElauncher</string>
+    <string name="launcher_permission_description">Permite a GLANCElauncher leer tus tareas y personas, y enviarle tareas para añadir o registrar y contactos para anotar.</string>
 </resources>

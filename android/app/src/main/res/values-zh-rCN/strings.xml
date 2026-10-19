@@ -33,4 +33,6 @@
     <string name="widget_days_ago">%1$d 天前</string>
     <string name="widget_count_overdue">%1$d 个逾期</string>
     <string name="widget_count_soon">%1$d 个即将到期</string>
+    <string name="launcher_permission_label">为 GLANCElauncher 读取 lastGLANCE 数据</string>
+    <string name="launcher_permission_description">允许 GLANCElauncher 读取您的家务和联系人，并向其发送要添加或记录的家务以及要记录的联络。</string>
 </resources>

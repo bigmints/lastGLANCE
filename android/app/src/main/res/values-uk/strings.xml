@@ -33,4 +33,6 @@
     <string name="widget_days_ago">%1$d дн. тому</string>
     <string name="widget_count_overdue">Протерміновано: %1$d</string>
     <string name="widget_count_soon">Незабаром: %1$d</string>
+    <string name="launcher_permission_label">Читання даних lastGLANCE для GLANCElauncher</string>
+    <string name="launcher_permission_description">Дозволяє GLANCElauncher читати ваші справи та людей і надсилати йому справи для додавання чи відмітки та контакти для запису.</string>
 </resources>

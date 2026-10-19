@@ -29,6 +29,7 @@ import { UsersContext } from '@/multiuser/UsersContext'
 import { useUsers } from '@/multiuser/useUsers'
 import { useNotifications } from '@/hooks/useNotifications'
 import { useWidgetSnapshot } from '@/hooks/useWidgetSnapshot'
+import { useLauncherSnapshot, configureLauncherHeartbeat, touchHeartbeatNow } from '@/hooks/useLauncherSnapshot'
 import { useReminders } from '@/hooks/useReminders'
 import { usePeopleIntents } from '@/hooks/usePeopleIntents'
 import { usePendingCompletions } from '@/hooks/usePendingCompletions'
@@ -73,7 +74,7 @@ type AppMode = 'chores' | 'people'
 const MODE_KEY = 'lg-mode'
 // Events that open something in the chores view (notification taps, widgets,
 // launcher shortcuts, shares). In People mode they switch back to chores.
-const CHORE_EVENTS = ['lg:open-chore', 'lg:open-chore-pending', 'lg:open-search', 'lg:new-chore', 'lg:widget-filter-soon']
+const CHORE_EVENTS = ['lg:open-chore', 'lg:open-chore-pending', 'lg:open-search', 'lg:new-chore', 'lg:widget-filter-soon', 'lg:open-chores']
 
 function buildHeaderHeatmap(counts: Map<string, number>): HeatDay[][] {
   const today = dayjs()
@@ -170,6 +171,7 @@ function AppInner() {
   const { showToast } = useToast()
   useNotifications()
   useWidgetSnapshot()
+  useLauncherSnapshot()
   useReminders()
   usePeopleIntents()
   usePendingCompletions()
@@ -567,9 +569,32 @@ function AppInner() {
     onKeyNeeded: () => setShowPassphrase(true),
   })
   const runDirectAccessSync = directAccessSync.runSync
+  // The launcher heartbeat's syncedAt: the latest completed cycle across the
+  // roads that are on (file, vault); null without one.
+  useEffect(() => {
+    configureLauncherHeartbeat(() => {
+      const stamps = [engineRef.current?.getLastSynced?.() ?? null, dbEngineRef.current?.getLastSynced?.() ?? null]
+        .filter((v): v is string => typeof v === 'string' && !Number.isNaN(Date.parse(v)))
+      if (!stamps.length) return null
+      return new Date(Math.max(...stamps.map(v => Date.parse(v)))).toISOString()
+    })
+  }, [])
+  // The launcher's REFRESH: every road to completion, then the heartbeat.
+  const runLauncherSyncCycle = useCallback(async () => {
+    const jobs: Promise<unknown>[] = []
+    const file = engineRef.current
+    if (file) jobs.push(file.sync())
+    const vault = dbEngineRef.current
+    if (vault) jobs.push(vault.dbSyncCycle())
+    const peopleFile = peopleFileEngineRef.current
+    if (peopleFile) jobs.push(peopleFile.sync())
+    const peopleVault = peopleDbEngineRef.current
+    if (peopleVault) jobs.push(peopleVault.dbSyncCycle())
+    await Promise.all(jobs)
+  }, [])
   // Android/Tasker intents transport — lets another Android app drive lastGLANCE
   // via app.lastglance.* intents. No-op off native Android.
-  useAndroidIntentBridge(loadHeatmap)
+  useAndroidIntentBridge(loadHeatmap, { runSyncCycle: runLauncherSyncCycle, touchHeartbeat: touchHeartbeatNow })
   // OUTBOUND: drain the durable intents outbox on mount, on focus, and on the
   // poll cadence (enqueue also triggers a flush). Guarantees queued intents are
   // delivered/retried and never lost across restarts.

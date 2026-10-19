@@ -25,6 +25,7 @@ public class MainActivity extends BridgeActivity {
         // Register app-local plugins before the bridge starts.
         registerPlugin(WidgetBridgePlugin.class);
         registerPlugin(IntentsBridgePlugin.class);
+        registerPlugin(com.lastglance.app.launcher.LauncherBridgePlugin.class);
         registerPlugin(BillingBridgePlugin.class);
         registerPlugin(WebDavHttpPlugin.class);
         registerPlugin(SecureStorePlugin.class);
@@ -178,6 +179,11 @@ public class MainActivity extends BridgeActivity {
             return syncId != null ? host + ":" + syncId : null;
         } else if ("people".equals(host)) {
             return "people";
+        } else if ("chores".equals(host)) {
+            // The chores counterpart of "people": switch to Chores and nothing
+            // more (a launcher's Chores card). Without it a plain launch lands
+            // on whichever mode was last open.
+            return "chores";
         } else if ("action".equals(host)) {
             String action = data.getLastPathSegment();
             if ("search".equals(action)) return "action:search";
