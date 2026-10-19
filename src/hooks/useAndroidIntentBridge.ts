@@ -10,7 +10,7 @@ import {
   addPendingIntentListener,
 } from '@/native/intentsBridge'
 import { drainLauncherIntents } from '@/native/launcherBridge'
-import { handleLauncherIntent } from '@/intents/launcherWrites'
+import { handleLauncherIntent, type LauncherRefreshHooks } from '@/intents/launcherWrites'
 
 // The Android/Tasker intents transport bridge (see
 // docs/tasker-intents-architecture.md §3.2), ported to Capacitor. Mounted once
@@ -31,9 +31,11 @@ import { handleLauncherIntent } from '@/intents/launcherWrites'
 //
 // No-op off Android. `onChanged` refreshes derived UI (the heatmap) after a
 // mutating action.
-export function useAndroidIntentBridge(onChanged?: () => void): void {
+export function useAndroidIntentBridge(onChanged?: () => void, launcherHooks?: LauncherRefreshHooks): void {
   const onChangedRef = useRef(onChanged)
   onChangedRef.current = onChanged
+  const hooksRef = useRef(launcherHooks)
+  hooksRef.current = launcherHooks
 
   useEffect(() => {
     if (!isAndroid()) return
@@ -49,7 +51,7 @@ export function useAndroidIntentBridge(onChanged?: () => void): void {
       for (const write of await drainLauncherIntents()) {
         if (cancelled) return
         try {
-          await handleLauncherIntent(write, buildIntentContext(() => onChangedRef.current?.(), 'GLANCElauncher'))
+          await handleLauncherIntent(write, buildIntentContext(() => onChangedRef.current?.(), 'GLANCElauncher'), {}, hooksRef.current ?? {})
         } catch {
           // A failed write is not recorded, so the launcher re-sends it.
         }

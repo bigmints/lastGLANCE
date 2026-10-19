@@ -23,19 +23,32 @@ object LauncherSnapshotRows {
 
     data class Row(val id: String, val json: String)
 
-    /** The rows of [collection] in [snapshotJson], or null for an unknown collection. */
-    fun rows(snapshotJson: String?, collection: String): List<Row>? {
+    /**
+     * The rows of [collection] in [snapshotJson], or null for an unknown collection.
+     * `meta` also carries the heartbeat ([heartbeatJson]: checkedAt, syncedAt), the
+     * refresh log and the renderer's liveness as of this read. A heartbeat without
+     * a snapshot still yields a meta row.
+     */
+    fun rows(snapshotJson: String?, collection: String, heartbeatJson: String? = null, refreshLogJson: String? = null, rendererAlive: Boolean? = null): List<Row>? {
         if (collection !in COLLECTIONS) return null
-        if (snapshotJson.isNullOrEmpty()) return emptyList()
-        val root = try { JSONObject(snapshotJson) } catch (e: Exception) { return emptyList() }
-        return when (collection) {
-            "meta" -> {
-                val meta = JSONObject()
+        if (collection == "meta") {
+            val meta = JSONObject()
+            val root = snapshotJson?.let { try { JSONObject(it) } catch (e: Exception) { null } }
+            if (root != null) {
                 for (key in listOf("version", "updatedAt", "timezone", "today", "handledWrites")) {
                     if (root.has(key)) meta.put(key, root.get(key))
                 }
-                listOf(Row("meta", meta.toString()))
             }
+            heartbeatJson?.let { try { JSONObject(it) } catch (e: Exception) { null } }?.let { hb ->
+                for (key in hb.keys()) meta.put(key, hb.get(key))
+            }
+            refreshLogJson?.let { try { JSONArray(it) } catch (e: Exception) { null } }?.let { meta.put("refreshLog", it) }
+            rendererAlive?.let { meta.put("rendererAlive", it) }
+            return if (root == null && heartbeatJson == null) emptyList() else listOf(Row("meta", meta.toString()))
+        }
+        if (snapshotJson.isNullOrEmpty()) return emptyList()
+        val root = try { JSONObject(snapshotJson) } catch (e: Exception) { return emptyList() }
+        return when (collection) {
             else -> {
                 val arr: JSONArray = root.optJSONArray(collection) ?: return emptyList()
                 val out = ArrayList<Row>(arr.length())

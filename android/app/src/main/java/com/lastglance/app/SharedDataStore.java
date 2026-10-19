@@ -141,6 +141,85 @@ public final class SharedDataStore {
         return raw;
     }
 
+    // The launcher heartbeat (src/native/launcherHeartbeat.ts): {checkedAt, syncedAt},
+    // written on every run of the snapshot builder whether or not the snapshot
+    // changed, and merged into the provider's meta row.
+    private static final String KEY_LAUNCHER_HEARTBEAT = "launcher_heartbeat";
+    // The last few launcher REFRESH requests and how each went, newest last.
+    private static final String KEY_LAUNCHER_REFRESH_LOG = "launcher_refresh_log";
+    private static final int MAX_LAUNCHER_REFRESH_LOG = 20;
+
+    public static void mergeLauncherHeartbeat(Context context, String json) {
+        try {
+            JSONObject incoming = new JSONObject(json);
+            String existing = prefs(context).getString(KEY_LAUNCHER_HEARTBEAT, null);
+            JSONObject merged = existing != null ? new JSONObject(existing) : new JSONObject();
+            for (java.util.Iterator<String> it = incoming.keys(); it.hasNext(); ) {
+                String key = it.next();
+                merged.put(key, incoming.get(key));
+            }
+            prefs(context).edit().putString(KEY_LAUNCHER_HEARTBEAT, merged.toString()).apply();
+        } catch (Exception e) {
+            // A malformed heartbeat is the web layer's bug; the last good one stands.
+        }
+    }
+
+    public static String readLauncherHeartbeat(Context context) {
+        return prefs(context).getString(KEY_LAUNCHER_HEARTBEAT, null);
+    }
+
+    public static String readLauncherRefreshLog(Context context) {
+        String raw = prefs(context).getString(KEY_LAUNCHER_REFRESH_LOG, null);
+        return raw != null ? raw : "[]";
+    }
+
+    private static JSONArray launcherRefreshEntries(Context context) {
+        try {
+            return new JSONArray(readLauncherRefreshLog(context));
+        } catch (Exception e) {
+            return new JSONArray();
+        }
+    }
+
+    public static boolean launcherRefreshSeen(Context context, String clientId) {
+        JSONArray arr = launcherRefreshEntries(context);
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject e = arr.optJSONObject(i);
+            if (e != null && clientId.equals(e.optString("clientId"))) return true;
+        }
+        return false;
+    }
+
+    public static JSONObject lastLauncherRefresh(Context context) {
+        JSONArray arr = launcherRefreshEntries(context);
+        return arr.length() == 0 ? null : arr.optJSONObject(arr.length() - 1);
+    }
+
+    public static void appendLauncherRefresh(Context context, JSONObject entry) {
+        JSONArray arr = launcherRefreshEntries(context);
+        arr.put(entry);
+        while (arr.length() > MAX_LAUNCHER_REFRESH_LOG) arr.remove(0);
+        prefs(context).edit().putString(KEY_LAUNCHER_REFRESH_LOG, arr.toString()).apply();
+    }
+
+    public static void updateLauncherRefresh(Context context, String clientId, JSONObject patch) {
+        JSONArray arr = launcherRefreshEntries(context);
+        for (int i = arr.length() - 1; i >= 0; i--) {
+            JSONObject e = arr.optJSONObject(i);
+            if (e == null || !clientId.equals(e.optString("clientId"))) continue;
+            try {
+                for (java.util.Iterator<String> it = patch.keys(); it.hasNext(); ) {
+                    String key = it.next();
+                    e.put(key, patch.get(key));
+                }
+            } catch (Exception ex) {
+                return;
+            }
+            prefs(context).edit().putString(KEY_LAUNCHER_REFRESH_LOG, arr.toString()).apply();
+            return;
+        }
+    }
+
     // Master switch for the Android/Tasker automation-intents transport. OFF by
     // default: the app.lastglance.* surface is open to every installed app (an
     // exported receiver in, unrestricted RESULT/NOTIFY broadcasts out), so it

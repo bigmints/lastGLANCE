@@ -22,6 +22,49 @@ import com.lastglance.app.SharedDataStore
 @CapacitorPlugin(name = "LauncherBridge")
 class LauncherBridgePlugin : Plugin() {
 
+    override fun load() {
+        rendererAlive = true
+    }
+
+    override fun handleOnDestroy() {
+        rendererAlive = false
+    }
+
+    /** The heartbeat ({checkedAt, syncedAt}), merged and announced; see docs/launcher-integration.md "Freshness". */
+    @PluginMethod
+    fun touchHeartbeat(call: PluginCall) {
+        val json = call.getString("json")
+        if (json == null) {
+            call.reject("missing json")
+            return
+        }
+        SharedDataStore.mergeLauncherHeartbeat(context, json)
+        context.contentResolver.notifyChange(LauncherProvider.CONTENT_URI, null)
+        call.resolve()
+    }
+
+    /** The outcome of a launcher REFRESH ({clientId, outcome, reason?, durationMs}), merged into its log entry. */
+    @PluginMethod
+    fun recordRefresh(call: PluginCall) {
+        val json = call.getString("json")
+        if (json == null) {
+            call.reject("missing json")
+            return
+        }
+        try {
+            val entry = org.json.JSONObject(json)
+            val clientId = entry.optString("clientId")
+            if (clientId.isNotEmpty()) {
+                entry.put("finishedAt", System.currentTimeMillis())
+                SharedDataStore.updateLauncherRefresh(context, clientId, entry)
+                context.contentResolver.notifyChange(LauncherProvider.CONTENT_URI, null)
+            }
+        } catch (e: Exception) {
+            // A malformed record is the web layer's bug; the log keeps what it had.
+        }
+        call.resolve()
+    }
+
     @PluginMethod
     fun updateSnapshot(call: PluginCall) {
         val json = call.getString("json")
@@ -39,5 +82,16 @@ class LauncherBridgePlugin : Plugin() {
         val ret = JSObject()
         ret.put("intents", SharedDataStore.readAndClearPendingLauncherIntents(context))
         call.resolve(ret)
+    }
+
+    companion object {
+        /**
+         * True while the Capacitor bridge (and so the WebView) is loaded in this
+         * process. A static, so a dead process answers false by construction; the
+         * launcher receiver routes REFRESH on it.
+         */
+        @JvmStatic
+        @Volatile
+        var rendererAlive: Boolean = false
     }
 }
