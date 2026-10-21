@@ -188,6 +188,8 @@ public class MainActivity extends BridgeActivity {
             String action = data.getLastPathSegment();
             if ("search".equals(action)) return "action:search";
             if ("add".equals(action)) return "action:add";
+            // The launcher's Add person: People, with the add-person form open.
+            if ("addPerson".equals(action)) return "action:add-person";
         }
         return null;
     }

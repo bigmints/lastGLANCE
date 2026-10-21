@@ -108,6 +108,16 @@ the public transport exactly as before. No RESULT broadcast is sent for
 launcher writes; the launcher reads the outcome from the next snapshot. The
 activity log names the sender ("via GLANCElauncher").
 
+## Links the launcher opens
+
+Besides its writes, the launcher opens the app through `lastglance://` links
+(`MainActivity.linkFromUri` maps each to a pending token the web app routes):
+`chore/<id>`, `person/<id>`, `log/<id>`, `people`, `chores`, `filter/soon`,
+`action/search`, `action/add` (the new-chore form) and `action/addPerson`
+(People, with the add-person form open; the launcher's Add person). Adding a
+person stays in the app's own form rather than a launcher write: a person has
+circles, dates and a cadence that a one-line write would leave unset.
+
 ## Permission
 
 Both the provider and the receiver sit behind `com.lastglance.permission.LAUNCHER`,
