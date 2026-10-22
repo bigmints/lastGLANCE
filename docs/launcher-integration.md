@@ -65,9 +65,20 @@ receiver routes it by liveness and logs every request with the liveness it saw:
 
 | Outcome | When |
 | --- | --- |
-| `queued` | the renderer is alive: queued and woken; the web layer runs every road (chores and People, file and vault) to completion, re-pushes, re-stamps the heartbeat, then reports `ran` (with `durationMs`) or `failed` (with `reason`) into the same entry |
+| `queued` | the renderer is alive: queued and woken, and held awake (below); the web layer runs every road (chores and People, file and vault) to completion, re-pushes, re-stamps the heartbeat, then reports `ran` (with `durationMs`) or `failed` (with `reason`) into the same entry |
 | `coalesced` | a queued refresh from the last minute has no outcome yet |
 | `deferred` | no renderer in the process: nothing can run the sync (lastGLANCE stays on this path; a headless Capacitor bridge is a separate spike) |
+
+Alive is not the same as running. Android freezes a backgrounded app's
+processes, the WebView's renderer among them, a couple of minutes after it goes
+idle: the receiver is thawed for the broadcast, the web layer is not, and a
+queued refresh would wait for the user to next open the app. So with every
+`queued` request the receiver also starts `LauncherAwakeWorker`, an expedited
+WorkManager job (an app running a job is not frozen) that runs nothing itself:
+it waits, at most the 60-second in-flight window, for the web layer to record
+an outcome on the entry, then ends so the app can be frozen again. The cycle is
+still the app's own, in its one WebView. Ported from dayGLANCE's worker of the
+same name.
 
 The launcher measures staleness per app from `syncedAt` when sync is
 configured and from `checkedAt` otherwise, and shows the log in its
@@ -158,9 +169,13 @@ With the launcher's real digests in `launcher_certs.xml` and both apps installed
    With the app alive, `meta.refreshLog` shows the entry go `queued` then
    `ran`; with the process killed (`adb shell am kill com.lastglance.app`,
    never `force-stop`), the entry is `deferred` and `rendererAlive` reads false.
+   Frozen: leave the app in the background until `adb shell dumpsys activity
+   processes com.lastglance.app` shows `isFrozen=true`, then send a refresh
+   with a new `clientId`; the entry still goes `queued` then `ran` within
+   seconds, not when the app is next opened.
 6. Permission: from any app without the permission the query is refused
    with a `SecurityException` and the broadcast is not delivered.
 
 Unit tests: `npx vitest run src/native/launcherSnapshot.test.ts
 src/intents/launcherWrites.test.ts` and, on the Android side,
-`./gradlew :app:testDebugUnitTest --tests '*LauncherSnapshotRowsTest*'`.
+`./gradlew :app:testDebugUnitTest --tests '*LauncherSnapshotRowsTest*' --tests '*LauncherRefreshWaitTest*'`.

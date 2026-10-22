@@ -59,8 +59,9 @@ class LauncherIntentReceiver : BroadcastReceiver() {
 
     /**
      * REFRESH, routed by liveness (docs/launcher-integration.md, "Freshness").
-     * Alive: queued and woken; the web layer runs every sync road and re-pushes,
-     * reporting `ran` or `failed` into the log entry. Dead: `deferred`, since
+     * Alive: queued and woken, with [LauncherAwakeWorker] holding the app awake
+     * so a frozen renderer runs it; the web layer runs every sync road and
+     * re-pushes, reporting `ran` or `failed` into the log entry. Dead: `deferred`, since
      * nothing can run the sync; the launcher shows the honest age. A second
      * request inside [INFLIGHT_MS] of one still running is `coalesced`.
      */
@@ -85,6 +86,10 @@ class LauncherIntentReceiver : BroadcastReceiver() {
         SharedDataStore.appendLauncherRefresh(context, entry)
         context.contentResolver.notifyChange(LauncherProvider.CONTENT_URI, null)
         if (entry.optString("outcome") == "queued") {
+            // Hold the app awake until the web layer answers: a backgrounded app is
+            // frozen soon after it goes idle, and the wake below would sit unread.
+            // After the log entry, which the hold polls for its outcome.
+            LauncherAwakeWorker.schedule(context, clientId)
             context.sendBroadcast(Intent(IntentReceiver.INTENT_RECEIVED).setPackage(context.packageName))
         }
     }
