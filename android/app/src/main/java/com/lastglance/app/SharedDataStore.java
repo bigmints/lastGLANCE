@@ -190,6 +190,16 @@ public final class SharedDataStore {
         return false;
     }
 
+    // The log entry for clientId, or null once it has been pruned (or was never written).
+    public static JSONObject launcherRefreshEntry(Context context, String clientId) {
+        JSONArray arr = launcherRefreshEntries(context);
+        for (int i = arr.length() - 1; i >= 0; i--) {
+            JSONObject e = arr.optJSONObject(i);
+            if (e != null && clientId.equals(e.optString("clientId"))) return e;
+        }
+        return null;
+    }
+
     public static JSONObject lastLauncherRefresh(Context context) {
         JSONArray arr = launcherRefreshEntries(context);
         return arr.length() == 0 ? null : arr.optJSONObject(arr.length() - 1);
