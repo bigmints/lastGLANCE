@@ -148,6 +148,18 @@ public final class SharedDataStore {
     // The last few launcher REFRESH requests and how each went, newest last.
     private static final String KEY_LAUNCHER_REFRESH_LOG = "launcher_refresh_log";
     private static final int MAX_LAUNCHER_REFRESH_LOG = 20;
+    // When the last headless refresh started (ms): the floor between runs
+    // (launcher/HeadlessRefreshPolicy.kt). Stamped at the start, so a run that
+    // crashed still counts.
+    private static final String KEY_LAUNCHER_HEADLESS_LAST_RUN = "launcher_headless_last_run";
+
+    public static long launcherHeadlessLastRunAt(Context context) {
+        return prefs(context).getLong(KEY_LAUNCHER_HEADLESS_LAST_RUN, 0L);
+    }
+
+    public static void setLauncherHeadlessLastRunAt(Context context, long at) {
+        prefs(context).edit().putLong(KEY_LAUNCHER_HEADLESS_LAST_RUN, at).apply();
+    }
 
     public static void mergeLauncherHeartbeat(Context context, String json) {
         try {

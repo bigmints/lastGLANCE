@@ -22,6 +22,10 @@ public class MainActivity extends BridgeActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // The reverse lock (launcher/LauncherRefreshWorker.kt): a headless
+        // refresh in flight shares this app's storage and is torn down here, on
+        // this thread, before the bridge loads the live renderer.
+        com.lastglance.app.launcher.LauncherRefreshWorker.abortForLiveInstance();
         // Register app-local plugins before the bridge starts.
         registerPlugin(WidgetBridgePlugin.class);
         registerPlugin(IntentsBridgePlugin.class);
