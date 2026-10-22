@@ -61,9 +61,11 @@ class LauncherIntentReceiver : BroadcastReceiver() {
      * REFRESH, routed by liveness (docs/launcher-integration.md, "Freshness").
      * Alive: queued and woken, with [LauncherAwakeWorker] holding the app awake
      * so a frozen renderer runs it; the web layer runs every sync road and
-     * re-pushes, reporting `ran` or `failed` into the log entry. Dead: `deferred`, since
-     * nothing can run the sync; the launcher shows the honest age. A second
-     * request inside [INFLIGHT_MS] of one still running is `coalesced`.
+     * re-pushes, reporting `ran` or `failed` into the log entry. Dead:
+     * [LauncherRefreshWorker] is scheduled to run the same roads headlessly and
+     * the entry reads `scheduled` until it reports; only a failed enqueue is
+     * `deferred`. A second request inside [INFLIGHT_MS] of one still queued or
+     * scheduled is `coalesced`.
      */
     private fun refresh(context: Context, clientId: String) {
         if (SharedDataStore.launcherRefreshSeen(context, clientId)) return
@@ -71,10 +73,18 @@ class LauncherIntentReceiver : BroadcastReceiver() {
         val alive = LauncherBridgePlugin.rendererAlive
         val last = SharedDataStore.lastLauncherRefresh(context)
         val entry = JSONObject().put("clientId", clientId).put("requestedAt", now).put("liveness", if (alive) "alive" else "dead")
-        val inFlight = last != null && last.optString("outcome") == "queued" && !last.has("finishedAt") && now - last.optLong("requestedAt") < INFLIGHT_MS
+        val inFlight = last != null && last.optString("outcome") in IN_FLIGHT && !last.has("finishedAt") && now - last.optLong("requestedAt") < INFLIGHT_MS
         when {
             inFlight -> entry.put("outcome", "coalesced").put("reason", "a refresh is in flight")
-            !alive -> entry.put("outcome", "deferred").put("reason", "process not running")
+            !alive -> {
+                try {
+                    LauncherRefreshWorker.schedule(context, clientId)
+                    entry.put("outcome", "scheduled").put("reason", "process not running: headless run scheduled")
+                } catch (e: Exception) {
+                    Log.w(TAG, "Could not schedule a headless refresh", e)
+                    entry.put("outcome", "deferred").put("reason", "process not running, and no headless run could be scheduled: ${e.message}")
+                }
+            }
             else -> {
                 entry.put("outcome", "queued")
                 SharedDataStore.appendPendingLauncherIntent(
@@ -96,7 +106,9 @@ class LauncherIntentReceiver : BroadcastReceiver() {
 
     companion object {
         private const val TAG = "LauncherIntents"
+        /** A queued or scheduled refresh older than this with no outcome is treated as lost, not in flight. */
         private const val INFLIGHT_MS = 60_000L
+        private val IN_FLIGHT = setOf("queued", "scheduled")
         const val ACTION_CREATE = "com.lastglance.app.launcher.CREATE"
         const val ACTION_COMPLETE = "com.lastglance.app.launcher.COMPLETE"
         const val ACTION_LOG_INTERACTION = "com.lastglance.app.launcher.LOG_INTERACTION"
