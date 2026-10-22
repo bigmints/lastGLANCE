@@ -32,6 +32,20 @@ class HeadlessRefreshPolicyTest {
     }
 
     @Test
+    fun `a report replaces the scheduling reason, with none when it gives none`() {
+        val ran = HeadlessRefreshPolicy.reportPatch("""{"clientId":"c1","outcome":"ran","durationMs":348}""", now)
+        assertEquals("ran", ran.getString("outcome"))
+        assertTrue(ran.has("reason") && ran.isNull("reason"))
+        assertEquals(348, ran.getInt("durationMs"))
+        assertEquals(now, ran.getLong("finishedAt"))
+        val failed = HeadlessRefreshPolicy.reportPatch("""{"clientId":"c1","outcome":"failed","reason":"file: offline","durationMs":9}""", now)
+        assertEquals("file: offline", failed.getString("reason"))
+        val garbled = HeadlessRefreshPolicy.reportPatch("not json", now)
+        assertEquals("failed", garbled.getString("outcome"))
+        assertEquals("unreadable report", garbled.getString("reason"))
+    }
+
+    @Test
     fun `an unreported run is named by what stopped it, abort first`() {
         assertEquals("aborted" to "app opened", HeadlessRefreshPolicy.unreportedOutcome(aborted = true, timedOut = true, rendererGone = true))
         assertEquals("failed" to "timed out after 120 s", HeadlessRefreshPolicy.unreportedOutcome(false, true, false))
