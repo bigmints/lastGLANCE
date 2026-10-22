@@ -1,5 +1,7 @@
 package com.lastglance.app.launcher
 
+import org.json.JSONObject
+
 /**
  * What a scheduled headless refresh does when its worker finally runs. Pure,
  * so the decision is testable without WorkManager or a WebView; the worker is
@@ -45,6 +47,22 @@ object HeadlessRefreshPolicy {
     /** The log entry's reason for a throttled run. */
     fun throttledReason(sinceLastMs: Long): String =
         "a headless run finished ${sinceLastMs / 1000} s ago (floor ${MIN_INTERVAL_MS / 60_000} min)"
+
+    /**
+     * The log-entry patch for the web layer's report ({clientId, outcome,
+     * reason?, durationMs}). The reason always comes from the report, null when
+     * it gives none: the entry still carries the receiver's "headless run
+     * scheduled", which would otherwise read as the reason a run that ran had.
+     */
+    fun reportPatch(json: String, now: Long): JSONObject {
+        val report = try { JSONObject(json) } catch (e: Exception) { JSONObject().put("outcome", "failed").put("reason", "unreadable report") }
+        val patch = JSONObject()
+            .put("outcome", report.optString("outcome").ifEmpty { "failed" })
+            .put("reason", report.opt("reason")?.takeUnless { it == JSONObject.NULL } ?: JSONObject.NULL)
+            .put("finishedAt", now)
+        if (report.has("durationMs")) patch.put("durationMs", report.get("durationMs"))
+        return patch
+    }
 
     /** The outcome the worker records when the web layer did not report one itself. */
     fun unreportedOutcome(aborted: Boolean, timedOut: Boolean, rendererGone: Boolean, started: Boolean = true): Pair<String, String> = when {

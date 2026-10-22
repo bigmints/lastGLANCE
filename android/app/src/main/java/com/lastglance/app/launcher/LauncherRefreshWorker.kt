@@ -184,10 +184,7 @@ class LauncherRefreshWorker(
 
     /** The web layer's report ({clientId, outcome, reason?, durationMs}) into the log entry. */
     private fun recordReport(clientId: String, json: String) {
-        val report = try { JSONObject(json) } catch (e: Exception) { JSONObject().put("outcome", "failed").put("reason", "unreadable report") }
-        val patch = JSONObject().put("finishedAt", System.currentTimeMillis())
-        for (key in listOf("outcome", "reason", "durationMs")) if (report.has(key)) patch.put(key, report.get(key))
-        patch(clientId, patch)
+        patch(clientId, HeadlessRefreshPolicy.reportPatch(json, System.currentTimeMillis()))
     }
 
     private fun buildWebView(run: Run): WebView {
