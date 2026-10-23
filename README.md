@@ -163,6 +163,8 @@ npm run build
 
 ### Build from Source
 
+[![Launch on PicoRunner](https://picorunner.com/badges/launch.svg)](https://picorunner.com/launch/?repository=https%3A%2F%2Fgithub.com%2Fkrelltunez%2FlastGLANCE)
+
 ```bash
 npm install
 npm run dev        # Vite dev server at http://localhost:5173
